@@ -11,8 +11,8 @@
     <Company>Software Ateliers</Company>
     <Description>ASP.NET Core + Vue.js starter project</Description>
     <Copyright>MIT 2020 Software Ateliers</Copyright>
-    <AssemblyName>pjfm</AssemblyName>
-    <RootNamespace>pjfm</RootNamespace>
+    <AssemblyName>Pjfm.WebClient</AssemblyName>
+    <RootNamespace>Pjfm.WebClient</RootNamespace>
 	<Version>2.5.1</Version>
 	<AssemblyVersion>2.5.1.0</AssemblyVersion>
 	<FileVersion>2.5.1.0</FileVersion>
