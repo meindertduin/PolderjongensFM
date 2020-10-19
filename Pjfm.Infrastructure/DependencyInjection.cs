@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Identity;
-using Pjfm.Infrastructure.Persistance;
+using Pjfm.Infrastructure.Persistence;
 
 namespace Pjfm.Infrastructure
 {
@@ -44,9 +44,22 @@ namespace Pjfm.Infrastructure
                 .AddDefaultTokenProviders();
 
             var identityServiceBuilder = services.AddIdentityServer();
+            identityServiceBuilder.AddAspNetIdentity<IdentityUser>();
 
             if (webHostEnvironment.IsDevelopment())
             {
+                identityServiceBuilder.AddConfigurationStore(options =>
+                    {
+                        options.ConfigureDbContext = builder => builder.UseInMemoryDatabase("DevIdentity");
+                    })
+                    .AddOperationalStore(options =>
+                    {
+                        options.ConfigureDbContext = builder => builder.UseInMemoryDatabase("DevIdentity");
+                    })
+                    .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
+                    .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
+                    .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
+                
                 identityServiceBuilder.AddDeveloperSigningCredential();
             }
 
@@ -67,7 +80,6 @@ namespace Pjfm.Infrastructure
                         ApplicationIdentityConstants.Roles.Mod);
                 });
             });
-
             
             return services;
         }

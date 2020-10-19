@@ -1,0 +1,39 @@
+﻿@page
+@model Pjfm.WebClient.Pages.Account.Login
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<div class="container">
+    <div class="row justify-content-center align-content-center login-form">
+        <div class="col-md-6">
+            <h3>Login</h3>
+            <form method="post">
+                <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
+                <div class="form-group">
+                    <a asp-page="/Account/Register" asp-route-returnUrl="@Model.Form.ReturnUrl" class="btnForgetPwd">Register</a>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="userNameForm">UserName</label>
+                    <span class="valSpan" asp-validation-for="Form.Username"></span>
+                    <input type="text" class="form-control" id="userNameForm" placeholder="Your UserName *" asp-for="Form.Username"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="passwordForm">Password</label>
+                    <span class="valSpan" asp-validation-for="Form.Password"></span>
+                    <input type="password" class="form-control" id="passwordForm" placeholder="Your Password *" asp-for="Form.Password"/>
+                    <span asp-validation-for="Form.Password"></span>
+                </div>
+                <div class="form-group">
+                    <div class="row justify-content-center">
+                        <input type="submit" class="btnSubmit" value="Login" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

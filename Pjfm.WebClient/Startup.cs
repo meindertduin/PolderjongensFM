@@ -30,6 +30,12 @@ namespace pjfm
 
             services.AddRazorPages();
 
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Account/Login";
+                config.LogoutPath = "/api/auth/logout";
+            });
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
