@@ -37,44 +37,68 @@ namespace Pjfm.Application.Spotify.Commands
         
         public async Task<Response<string>> Handle(UpdateUserTopTracksCommand request, CancellationToken cancellationToken)
         {
-            var client = _httpClientFactory.CreateClient(ApplicationConstants.HttpClientNames.SpotifyApiClient);
+            var client = _httpClientFactory
+                .CreateClient(ApplicationConstants.HttpClientNames.SpotifyApiClient);
+            
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",request.AccessToken);
 
-            List<TopTrack> topTracks = new List<TopTrack>();
+            var topTracks = await SerializeTopTracks(request, client);
             
+            await _ctx.TopTracks.AddRangeAsync(topTracks, CancellationToken.None);
+            await _ctx.SaveChangesAsync(CancellationToken.None);
+            
+            
+            return Response.Ok("succeeded", "toptracks have been saved to the database");
+        }
+
+        private async Task<List<TopTrack>> SerializeTopTracks(UpdateUserTopTracksCommand request, HttpClient client)
+        {
+            List<TopTrack> topTracks = new List<TopTrack>();
+
             for (int i = 0; i < terms.Length; i++)
             {
-                var result = client.GetAsync($"v1/me/top/tracks?limit=50&time_range={terms[i]}").Result;
+                var trackResult = await GetSpotifyTrackInfo(client, i);
 
-                var jsonResult = await result.Content.ReadAsStringAsync();
-                
-                var objectResult = JsonConvert.DeserializeObject<dynamic>(jsonResult, new JsonSerializerSettings()
+                if (trackResult != null)
                 {
-                    ContractResolver = new UnderScorePropertyNamesContractResolver()
-                });
-                if (objectResult != null)
-                {
-                    foreach (var item in objectResult.items)
-                    {
-                        List<string> artistNames = new List<string>();
-
-                        foreach (var artist in item.artists)
-                        {
-                            artistNames.Add((string) artist.name);
-                        }
-                        
-                        topTracks.Add(new TopTrack
-                        {
-                            Id = item.id,
-                            Title = item.name,
-                            Term = (TopTrackTerm) i,
-                            ApplicationUserId = request.User.Id,
-                        });
-                    }
+                    MapTopTrackItems(request, trackResult, topTracks, i);
                 }
-                    
             }
-            return Response.Ok<string>("succeeded", "toptracks have been saved to the database");
+            
+            return topTracks;
+        }
+        
+        private async Task<dynamic> GetSpotifyTrackInfo(HttpClient client, int i)
+        {
+            var jsonResult = await client.GetAsync($"v1/me/top/tracks?limit=50&time_range={terms[i]}").Result.Content
+                .ReadAsStringAsync();
+
+            var objectResult = JsonConvert.DeserializeObject<dynamic>(jsonResult, new JsonSerializerSettings()
+            {
+                ContractResolver = new UnderScorePropertyNamesContractResolver()
+            });
+            return objectResult;
+        }
+
+        private void MapTopTrackItems(UpdateUserTopTracksCommand request, dynamic trackResult, List<TopTrack> topTracks, int i)
+        {
+            foreach (var item in trackResult.items)
+            {
+                List<string> artistNames = new List<string>();
+
+                foreach (var artist in item.artists)
+                {
+                    artistNames.Add((string) artist.name);
+                }
+
+                topTracks.Add(new TopTrack
+                {
+                    Id = item.id,
+                    Title = item.name,
+                    Term = (TopTrackTerm) i,
+                    ApplicationUserId = request.User.Id,
+                });
+            }
         }
     }
 }
