@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Pjfm.Application.Auth.Querys;
 
 namespace Pjfm.WebClient.Pages.Account
 {
@@ -15,21 +17,27 @@ namespace Pjfm.WebClient.Pages.Account
             Form = new LoginForm() {ReturnUrl = returnUrl};
         }
         
-        public async Task<IActionResult> OnPost([FromServices] SignInManager<IdentityUser> signInManager)
+        public async Task<IActionResult> OnPost([FromServices] IMediator mediator)
         {
             if (ModelState.IsValid == false)
             {
                 return Page();
             }
 
-            var signingResult = await signInManager.PasswordSignInAsync(Form.Username, Form.Password, true, false);
-
-            if (signingResult.Succeeded)
+            var loginResult = await mediator.Send(new LoginCommand()
             {
-                return Redirect("/");
+                Username = Form.Username,
+                Password = Form.Password,
+            });
+            
+            
+            if (loginResult.Error)
+            {
+                return Page();
             }
+            
+            return Redirect("/");
 
-            return Page();
         }
     }
     
