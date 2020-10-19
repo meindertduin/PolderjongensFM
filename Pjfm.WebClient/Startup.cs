@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
+using Pjfm.Application.Common;
 using Pjfm.Infrastructure;
 using VueCliMiddleware;
 
@@ -29,6 +31,16 @@ namespace pjfm
             services.AddControllersWithViews();
 
             services.AddRazorPages();
+            
+            services.AddHttpClient(ApplicationConstants.HttpClientNames.SpotifyApiClient, client =>
+            {
+                client.BaseAddress = new Uri("https://api.spotify.com");
+            });
+
+            services.AddHttpClient(ApplicationConstants.HttpClientNames.SpotifyAccountClient, client =>
+            {
+                client.BaseAddress = new Uri("https://accounts.spotify.com");
+            });
 
             services.ConfigureApplicationCookie(config =>
             {
