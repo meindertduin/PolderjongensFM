@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Identity;
+using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 
 namespace Pjfm.Infrastructure
@@ -15,6 +16,9 @@ namespace Pjfm.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
+            services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
+            
+            
             services.AddDbContext<AppDbContext>(config =>
             {
                 config.UseInMemoryDatabase("DevIdentity");
@@ -63,13 +67,12 @@ namespace Pjfm.Infrastructure
                 identityServiceBuilder.AddDeveloperSigningCredential();
             }
 
-            services.AddLocalApiAuthentication();
+            services.AddAuthentication();
             
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(ApplicationIdentityConstants.Policies.User, builder =>
                 {
-                    builder.AddAuthenticationSchemes(IdentityServerConstants.LocalApi.AuthenticationScheme);
                     builder.RequireAuthenticatedUser();
                 });
                 options.AddPolicy(ApplicationIdentityConstants.Policies.Mod, builder =>

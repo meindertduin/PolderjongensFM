@@ -1,4 +1,5 @@
 using System;
+using IdentityServer4;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
 using Pjfm.Application.Common;
+using Pjfm.Application.Identity;
 using Pjfm.Infrastructure;
 using VueCliMiddleware;
 
@@ -47,7 +49,7 @@ namespace pjfm
                 config.LoginPath = "/Account/Login";
                 config.LogoutPath = "/api/auth/logout";
             });
-
+            
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
@@ -66,11 +68,14 @@ namespace pjfm
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-
+            
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
