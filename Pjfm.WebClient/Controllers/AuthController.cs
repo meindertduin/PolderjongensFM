@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using IdentityServer4.Services;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Application.Auth.Querys;
 
 namespace pjfm.Controllers
 {
@@ -9,21 +11,27 @@ namespace pjfm.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        [HttpGet("logout")]
-        public async Task<IActionResult> Logout(string logoutId,
-            [FromServices] SignInManager<IdentityUser> signInManager,
-            [FromServices] IIdentityServerInteractionService interactionService)
+        private readonly IMediator _mediator;
+
+        public AuthController(IMediator mediator)
         {
-            await signInManager.SignOutAsync();
+            _mediator = mediator;
+        }
+        
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout(string logoutId)
+        {
+            var logoutResult = await _mediator.Send(new LogoutCommand()
+            {
+                LogoutId = logoutId,
+            });
 
-            var logoutContext = await interactionService.GetLogoutContextAsync(logoutId);
-
-            if (string.IsNullOrEmpty(logoutContext.PostLogoutRedirectUri))
+            if (logoutResult.Error)
             {
                 return BadRequest();
             }
 
-            return Redirect(logoutContext.PostLogoutRedirectUri);
+            return Redirect(logoutResult.Data);
         } 
     }
 }

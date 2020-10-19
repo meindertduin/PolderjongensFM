@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Auth\Querys" />
       <Folder Include="Common" />
     </ItemGroup>
 
@@ -15,6 +16,8 @@
     <ItemGroup>
       <PackageReference Include="IdentityServer4" Version="4.1.1" />
       <PackageReference Include="IdentityServer4.EntityFramework.Storage" Version="4.1.1" />
+      <PackageReference Include="MediatR" Version="9.0.0" />
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9" />
     </ItemGroup>
 
