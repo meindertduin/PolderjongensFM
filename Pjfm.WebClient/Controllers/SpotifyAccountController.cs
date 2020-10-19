@@ -22,12 +22,14 @@ namespace pjfm.Controllers
         [HttpGet("authenticate")]
         public async Task<IActionResult> AuthenticateSpotify(string state, string code)
         {
+            var user = HttpContext.User;
+
             var result = await _mediator.Send(new AccessTokensRequestCommand()
             {
                 ClientSecret = _configuration["Spotify:ClientSecret"],
                 ClientId = _configuration["Spotify:ClientId"],
                 Code = code,
-                RedirectUri = "https://localhost:5001/api/spotify/account/authenticate",
+                RedirectUri = _configuration["Spotify:AuthenticateUri"],
             });
 
             return Ok(result.Data);

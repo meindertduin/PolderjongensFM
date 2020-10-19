@@ -15,12 +15,12 @@ namespace Pjfm.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
-            services.AddDbContext<ApplicationIdentityDbContext>(config =>
+            services.AddDbContext<AppDbContext>(config =>
             {
                 config.UseInMemoryDatabase("DevIdentity");
             });
             
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
                     if (webHostEnvironment.IsDevelopment())
@@ -40,11 +40,11 @@ namespace Pjfm.Infrastructure
                         options.Password.RequireNonAlphanumeric = false;
                     }
                 })
-                .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+                .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
             var identityServiceBuilder = services.AddIdentityServer();
-            identityServiceBuilder.AddAspNetIdentity<IdentityUser>();
+            identityServiceBuilder.AddAspNetIdentity<ApplicationUser>();
 
             if (webHostEnvironment.IsDevelopment())
             {

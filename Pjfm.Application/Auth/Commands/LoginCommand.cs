@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 
@@ -14,9 +15,9 @@ namespace Pjfm.Application.Auth.Querys
 
     public class LoginCommandHandler : IHandlerWrapper<LoginCommand, string>
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public LoginCommandHandler(SignInManager<IdentityUser> signInManager)
+        public LoginCommandHandler(SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
         }

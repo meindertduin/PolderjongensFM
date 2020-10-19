@@ -15,11 +15,11 @@ namespace pjfm
             var host = CreateWebHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                var testUser = new IdentityUser("test"){ Email = "test@mail.com"};
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var testUser = new ApplicationUser("test"){ Email = "test@mail.com"};
                 userManager.CreateAsync(testUser, "password").GetAwaiter().GetResult();
                 
-                var mod = new IdentityUser("mod"){Email = "mod@mail.com"};
+                var mod = new ApplicationUser("mod"){Email = "mod@mail.com"};
                 userManager.CreateAsync(mod, "password").GetAwaiter().GetResult();
                 userManager.AddClaimAsync(mod,
                     new Claim(ApplicationIdentityConstants.Claims.Role, 
