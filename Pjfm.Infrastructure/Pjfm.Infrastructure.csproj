@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Identity" />
+      <Folder Include="Persistance" />
+      <Folder Include="Service" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Pjfm.Application\Pjfm.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.9" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9" />
+    </ItemGroup>
+
+</Project>

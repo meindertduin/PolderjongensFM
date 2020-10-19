@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pjfm.Application;
+using Pjfm.Infrastructure;
 using VueCliMiddleware;
 
 namespace pjfm
@@ -19,6 +21,9 @@ namespace pjfm
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplication();
+            services.AddInfrastructure(Configuration);
+            
             services.AddControllersWithViews();
 
             services.AddRazorPages();
