@@ -16,14 +16,14 @@
   })
   export default class About extends Vue{
     private getUserMessage(){
-      Axios.get('https://localhost:5001/api/test/user')
+      Axios.get('/api/test/user')
         .then((response) => {
         console.log(response.data);
       })
     }
 
     private getModMessage(){
-      Axios.get('https://localhost:5001/api/test/mod')
+      Axios.get('/api/test/mod')
               .then((response) => {
                 console.log(response.data);
               })
