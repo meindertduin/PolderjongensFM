@@ -49,6 +49,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp" />
+    <Folder Include="ClientApp\src\helpers" />
     <Folder Include="Services" />
   </ItemGroup>
 
