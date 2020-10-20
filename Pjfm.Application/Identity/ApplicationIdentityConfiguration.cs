@@ -34,7 +34,34 @@ namespace Pjfm.Application.Identity
         
         public static IEnumerable<Client> GetClients()
         {
-            return new List<Client>();
+            return new List<Client>
+            {
+                new Client
+                {
+                    ClientId = "pjfm_web_client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequireClientSecret = false,
+
+                    RedirectUris = new[]
+                    {
+                        "https://localhost:5001/oidc-callback",
+                    },
+                    PostLogoutRedirectUris = new[]
+                    {
+                        "https://localhost:5001",
+                    },
+
+                    AllowedScopes = new[]
+                    {
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.LocalApi.ScopeName,
+                    },
+
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = true,
+                }
+            };
         }
     }
 }

@@ -35,10 +35,11 @@
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
+      
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <RouterView />
     </v-main>
   </v-app>
 </template>
@@ -53,6 +54,7 @@ export default Vue.extend({
   components: {
     HelloWorld,
   },
+  
 
   data: () => ({
     //
