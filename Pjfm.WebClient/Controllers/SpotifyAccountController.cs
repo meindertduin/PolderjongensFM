@@ -30,6 +30,11 @@ namespace pjfm.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
+            if (user == null)
+            {
+                Forbid();
+            }
+
             var result = await _mediator.Send(new AccessTokensRequestCommand()
             {
                 ClientSecret = _configuration["Spotify:ClientSecret"],

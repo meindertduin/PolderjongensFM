@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
+using Pjfm.Infrastructure.Service;
 
 namespace Pjfm.Infrastructure
 {
@@ -17,7 +18,7 @@ namespace Pjfm.Infrastructure
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
-            
+            services.AddTransient<ISpotifyTopTracksClient, SpotifyTopTracksClient>();
             
             services.AddDbContext<AppDbContext>(config =>
             {

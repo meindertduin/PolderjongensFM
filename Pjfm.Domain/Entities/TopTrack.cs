@@ -1,4 +1,5 @@
-﻿using Pjfm.Application.Identity;
+﻿using System;
+using Pjfm.Application.Identity;
 using Pjfm.Domain.Enums;
 
 namespace Pjfm.Domain.Entities
@@ -12,5 +13,7 @@ namespace Pjfm.Domain.Entities
 
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
+
+        public DateTime TimeAdded { get; set; }
     }
 }
