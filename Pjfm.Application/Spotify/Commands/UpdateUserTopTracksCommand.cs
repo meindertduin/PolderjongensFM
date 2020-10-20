@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Common;
-using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
 
