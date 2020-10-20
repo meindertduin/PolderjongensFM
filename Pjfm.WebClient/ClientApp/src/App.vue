@@ -36,6 +36,12 @@
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
       
+      <v-btn v-if="!oidcUser" @click="signInOidcClient">
+        Sign in
+      </v-btn>
+      <v-btn v-else @click="signOutOidcClient">
+        Sign out
+      </v-btn>
     </v-app-bar>
 
     <v-main>
@@ -46,18 +52,21 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import Component from "vue-class-component";
 
-export default Vue.extend({
+@Component({
   name: 'App',
-
-  components: {
-    HelloWorld,
-  },
+})
+export default class App extends Vue{
+  get oidcUser():any|null{
+    return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+  }
+  private signInOidcClient(){
+    this.$store.dispatch('oidcStore/authenticateOidc');
+  }
   
-
-  data: () => ({
-    //
-  }),
-});
+  private signOutOidcClient(){
+    this.$store.dispatch('oidcStore/signOutOidc');
+  }
+}
 </script>

@@ -1,7 +1,9 @@
 using System;
+using System.Threading.Tasks;
 using IdentityServer4;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,16 +41,19 @@ namespace pjfm
                 client.BaseAddress = new Uri("https://api.spotify.com");
             });
 
-            services.AddHttpClient(ApplicationConstants.HttpClientNames.SpotifyAccountClient, client =>
+            services.AddCors(options =>
             {
-                client.BaseAddress = new Uri("https://accounts.spotify.com");
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder
+                            .AllowCredentials()
+                            .WithOrigins("https://localhost:5001")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
-
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.LoginPath = "/Account/Login";
-                config.LogoutPath = "/api/auth/logout";
-            });
+            
             
             services.AddSpaStaticFiles(configuration =>
             {
@@ -69,14 +74,19 @@ namespace pjfm
                 app.UseHttpsRedirection();
             }
             
+            app.UseCors("AllowAllOrigins");
+            
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseAuthorization();
+            
+            app.UseIdentityServer();
 
+            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -86,13 +96,14 @@ namespace pjfm
                 if (env.IsDevelopment())
                 {
                     endpoints.MapToVueCliProxy(
-                        "{*path}",
+                        @"{*path}",
                         new SpaOptions { SourcePath = "ClientApp" },
                         npmScript: "serve",
                         regex: "Compiled successfully");
                 }
 
                 endpoints.MapRazorPages();
+                
             });
 
             app.UseSpa(spa =>

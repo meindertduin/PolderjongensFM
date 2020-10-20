@@ -68,7 +68,13 @@ namespace Pjfm.Infrastructure
                 identityServiceBuilder.AddDeveloperSigningCredential();
             }
 
-            services.AddAuthentication();
+            services.AddLocalApiAuthentication();
+            
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Account/Login";
+                config.LogoutPath = "/api/auth/logout";
+            });
             
             services.AddAuthorization(options =>
             {

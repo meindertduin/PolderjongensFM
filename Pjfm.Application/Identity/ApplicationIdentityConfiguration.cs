@@ -40,7 +40,7 @@ namespace Pjfm.Application.Identity
                 {
                     ClientId = "pjfm_web_client",
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequireClientSecret = false,
+                    
 
                     RedirectUris = new[]
                     {
@@ -56,10 +56,12 @@ namespace Pjfm.Application.Identity
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.LocalApi.ScopeName,
+                        ApplicationIdentityConstants.Claims.Role,
                     },
 
-                    AllowAccessTokensViaBrowser = true,
-                    RequireConsent = true,
+                    RequirePkce = true,
+                    AllowAccessTokensViaBrowser = false,
+                    RequireClientSecret = false,
                 }
             };
         }

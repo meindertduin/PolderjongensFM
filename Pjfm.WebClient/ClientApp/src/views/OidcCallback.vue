@@ -7,7 +7,6 @@
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
-
     
     @Component({
         name: 'OidcCallback',
@@ -18,6 +17,7 @@
         }
         
         created(){
+            console.log("oidc callback")
             this.oidcSignInCallback()
                 .then((redirectPath) => {
                     this.$router.push(redirectPath)
