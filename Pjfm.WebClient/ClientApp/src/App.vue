@@ -9,15 +9,25 @@
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
       <v-toolbar-title class="display-1 font-weight-bold">PolderjongensFM</v-toolbar-title>
       <v-spacer></v-spacer>
-
-      <v-toolbar-title>Goededag {{userName}}</v-toolbar-title>
       
       <v-btn v-if="!oidcAuthenticated" @click="signInOidcClient">
         Sign in
       </v-btn>
-      <v-btn v-else @click="signOutOidcClient">
+      <v-btn text v-else @click="signOutOidcClient">
         Sign out
       </v-btn>
+      
+      <v-menu bottom offset-y close-on-click="false">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon text v-bind="attrs" v-on="on">
+            <v-icon>mdi-cogs</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <DisplaySettingsItemGroup />
+        </v-list>
+      </v-menu>
+      
     </v-app-bar>
 
     <v-main>
@@ -29,13 +39,15 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from "vue-class-component";
+import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySettingsItemGroup.vue";
 
 @Component({
   name: 'App',
+  components: {
+    DisplaySettingsItemGroup,
+  }
 })
 export default class App extends Vue{
-  private userName:string = "";
-  
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }

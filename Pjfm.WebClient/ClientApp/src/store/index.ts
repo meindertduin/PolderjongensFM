@@ -1,7 +1,8 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, {ActionTree, GetterTree, MutationTree} from 'vuex'
 import {vuexOidcCreateStoreModule} from "vuex-oidc";
 import {oidcSettings} from "@/config/oidc";
+import ProfileModule from "@/store/profileModule";
 
 Vue.use(Vuex)
 
@@ -11,9 +12,7 @@ export default new Vuex.Store({
         oidcSettings, 
         {namespaced: true, isAuthenticatedBy: "access_token"},
         {
-          userLoaded: (user) => {
-              console.log("user loaded");
-          },
+          userLoaded: (user) => console.log("OIDC user is loaded"),
           userUnloaded: () => console.log('OIDC user is unloaded'),
           accessTokenExpiring: () => console.log('Access token will expire'),
           accessTokenExpired: () => console.log('Access token did expire'),
@@ -21,6 +20,7 @@ export default new Vuex.Store({
           userSignedOut: () => console.log('OIDC user is signed out'),
           oidcError: (payload) => console.log('OIDC error', payload),
           automaticSilentRenewError: (payload) => console.log('OIDC automaticSilentRenewError', payload)
-        })
+        }), 
+      profileModule: ProfileModule,
   }
 })
