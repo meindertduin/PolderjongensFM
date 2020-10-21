@@ -40,6 +40,9 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySettingsItemGroup.vue";
+import vuetify from "@/plugins/vuetify";
+import {defaultSettings} from "@/common/objects";
+import {userSettings} from "@/common/types";
 
 @Component({
   name: 'App',
@@ -48,6 +51,14 @@ import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySetti
   }
 })
 export default class App extends Vue{
+  created(){
+    this.setUserPreferences();
+  }
+  
+  private setUserPreferences():void{
+    const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
+    this.$vuetify.theme.dark = userSettings.darkMode;
+  }
   
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];

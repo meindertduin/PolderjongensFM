@@ -3,8 +3,12 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
 import store from '@/store'
+import vuetify from "@/plugins/vuetify";
 import OidcCallback from "@/views/OidcCallback.vue";
 import OidcCallbackError from "@/views/OidcCallbackError.vue";
+
+import {defaultSettings} from "@/common/objects";
+import {userSettings} from "@/common/types";
 
 Vue.use(VueRouter)
 

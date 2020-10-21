@@ -5,9 +5,9 @@
                 <v-list-item-title v-text="'DisplaySettings'"></v-list-item-title>
             </v-list-item-content>
         </template>
-        <v-list-item @click.stop.prevent>
+        <v-list-item>
             <v-list-item-content class="pa-2">
-                <v-switch
+                <v-switch @click.stop.prevent
                         v-model="darkModeSwitch"
                         flat
                         label="Dark Mode"
@@ -26,11 +26,19 @@
         name: 'DisplaySettingsItemGroup',
     })
     export default class DisplaySettingsItemGroup extends Vue {
+        
         private darkModeSwitch:boolean = false;
+
+        created(){
+            this.darkModeSwitch = this.$store.getters['userSettings/getDarkModeState'];
+        }
         
         @Watch('darkModeSwitch')
         private onDarkModeSwitchChanged(newValue:boolean, oldValue:boolean){
-            this.$vuetify.theme.dark = newValue;
+            const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
+            this.$vuetify.theme.dark = !userSettings.darkMode;
+            console.log(newValue)
+            this.$store.dispatch('userSettingsModule/setDarkMode', newValue);
         }
     }
 </script>

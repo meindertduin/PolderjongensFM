@@ -9,7 +9,6 @@ axios.defaults.baseURL = process.env.API_BASE_URL;
 
 Vue.config.productionTip = false;
 
-
 new Vue({
   router,
   store,

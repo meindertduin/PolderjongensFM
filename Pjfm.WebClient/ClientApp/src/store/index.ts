@@ -3,7 +3,7 @@ import Vuex, {ActionTree, GetterTree, MutationTree} from 'vuex'
 import {vuexOidcCreateStoreModule} from "vuex-oidc";
 import {oidcSettings} from "@/config/oidc";
 import ProfileModule from "@/store/profileModule";
-import SettingsModule from "@/store/settingsModule";
+import UserSettingsModule from "@/store/userSettingsModule";
 
 Vue.use(Vuex)
 
@@ -23,5 +23,6 @@ export default new Vuex.Store({
           automaticSilentRenewError: (payload) => console.log('OIDC automaticSilentRenewError', payload)
         }), 
       profileModule: ProfileModule,
+      userSettingsModule: UserSettingsModule,
   }
 })
