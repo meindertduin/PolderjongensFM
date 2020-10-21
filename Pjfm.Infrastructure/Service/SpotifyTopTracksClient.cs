@@ -16,7 +16,7 @@ namespace Pjfm.Infrastructure.Service
     public class SpotifyTopTracksClient : ISpotifyTopTracksClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string[] terms = new[] {"short_term", "medium_term", "long_term" };
+        private readonly string[] terms = {"short_term", "medium_term", "long_term" };
 
         public SpotifyTopTracksClient(IHttpClientFactory httpClientFactory)
         {
@@ -66,6 +66,7 @@ namespace Pjfm.Infrastructure.Service
                 {
                     Id = item.id,
                     Title = item.name,
+                    Artists = artistNames.ToArray(),
                     Term = (TopTrackTerm) term,
                     ApplicationUserId = userId,
                     TimeAdded = DateTime.Now,
