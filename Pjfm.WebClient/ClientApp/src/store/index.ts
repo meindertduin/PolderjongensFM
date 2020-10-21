@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {vuexOidcCreateStoreModule} from "vuex-oidc";
 import {oidcSettings} from "@/config/oidc";
-import {setupInterceptor} from "@/helpers/axiosInterceptor"
 
 Vue.use(Vuex)
 
@@ -13,7 +12,7 @@ export default new Vuex.Store({
         {namespaced: true, isAuthenticatedBy: "access_token"},
         {
           userLoaded: (user) => {
-              
+              console.log("user loaded");
           },
           userUnloaded: () => console.log('OIDC user is unloaded'),
           accessTokenExpiring: () => console.log('Access token will expire'),

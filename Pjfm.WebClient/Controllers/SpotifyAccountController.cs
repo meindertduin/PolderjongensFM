@@ -54,13 +54,16 @@ namespace pjfm.Controllers
             
             if (user.SpotifyAuthenticated)
             {
-                var updateResult = await _mediator.Send(new UpdateUserTopTracksCommand()
+                var updateTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
                 {
                     AccessToken = result.Data.AccessToken,
                     User = user,
                 });
                 
-                return Ok(result.Data);
+                if (updateTopTracksResult.Error == false)
+                {
+                    return Ok(result.Data);
+                }
             }
             
             var setTopTracksResult = await _mediator.Send(new SetUserTopTracksCommand()
@@ -73,9 +76,10 @@ namespace pjfm.Controllers
             {
                 trackedUserProfile.SpotifyAuthenticated = true;
                 await _ctx.SaveChangesAsync(CancellationToken.None);
+                return Ok(result.Data);
             }
-            
-            return Ok(result.Data);
+
+            return BadRequest();
         }
     }
 }
