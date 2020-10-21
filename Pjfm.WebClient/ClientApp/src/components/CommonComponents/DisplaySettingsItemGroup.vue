@@ -20,12 +20,18 @@
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
+    import {Watch} from "vue-property-decorator";
 
     @Component({
         name: 'DisplaySettingsItemGroup',
     })
     export default class DisplaySettingsItemGroup extends Vue {
         private darkModeSwitch:boolean = false;
+        
+        @Watch('darkModeSwitch')
+        private onDarkModeSwitchChanged(newValue:boolean, oldValue:boolean){
+            this.$vuetify.theme.dark = newValue;
+        }
     }
 </script>
 

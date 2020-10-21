@@ -4,6 +4,7 @@ import { GetterTree, MutationTree, ActionTree } from "vuex"
 
 class State {
     public userProfile: profileModel | null = null; 
+    
 }
 
 const mutations = <MutationTree<State>>{
@@ -19,7 +20,7 @@ const actions = <ActionTree<State, any>>{
         return Axios.get('api/auth/profile')
             .then(({data}) => commit('SET_USER_PROFILE', data.data))
             .catch(err => console.log(err));
-    }
+    },
 }
 
 const ProfileModule = {

@@ -3,6 +3,7 @@ import Vuex, {ActionTree, GetterTree, MutationTree} from 'vuex'
 import {vuexOidcCreateStoreModule} from "vuex-oidc";
 import {oidcSettings} from "@/config/oidc";
 import ProfileModule from "@/store/profileModule";
+import SettingsModule from "@/store/settingsModule";
 
 Vue.use(Vuex)
 

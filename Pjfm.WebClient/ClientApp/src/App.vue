@@ -17,7 +17,7 @@
         Sign out
       </v-btn>
       
-      <v-menu bottom offset-y close-on-click="false">
+      <v-menu bottom offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon text v-bind="attrs" v-on="on">
             <v-icon>mdi-cogs</v-icon>
@@ -48,6 +48,7 @@ import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySetti
   }
 })
 export default class App extends Vue{
+  
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }
