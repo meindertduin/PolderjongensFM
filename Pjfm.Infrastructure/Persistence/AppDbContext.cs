@@ -31,6 +31,9 @@ namespace Pjfm.Infrastructure.Persistence
                 .HasConversion(
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+
+            builder.Entity<TopTrack>()
+                .HasKey(o => new {o.Id, o.ApplicationUserId, o.Term});
         }
     }
 }

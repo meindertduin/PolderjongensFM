@@ -7,7 +7,7 @@
     <ItemGroup>
       <Folder Include="Events" />
       <Folder Include="Exceptions" />
-      <Folder Include="ValueObjects" />
+      <Folder Include="Extensions" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
-using IdentityServer4.Services;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Auth.Querys;
 

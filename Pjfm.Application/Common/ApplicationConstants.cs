@@ -6,6 +6,7 @@
         {
             public const string SpotifyApiClient = nameof(SpotifyApiClient);
             public const string SpotifyAccountClient = nameof(SpotifyAccountClient);
+            public const string ApiClient = nameof(ApiClient);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
+using Pjfm.Domain.ValueObjects;
 
 namespace pjfm.Controllers
 {
@@ -31,10 +33,11 @@ namespace pjfm.Controllers
             _userManager = userManager;
             _ctx = ctx;
         }
-
-        [HttpGet("authenticate")]
+        
+        
+        [HttpGet("callback")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task<IActionResult> AuthenticateSpotify(string state, string code)
+        public async Task<IActionResult> FinalizeAuthentication(string state, string code)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var trackedUserProfile = _ctx.ApplicationUsers.FirstOrDefault(a => a.Id == user.Id);
@@ -49,7 +52,7 @@ namespace pjfm.Controllers
                 ClientSecret = _configuration["Spotify:ClientSecret"],
                 ClientId = _configuration["Spotify:ClientId"],
                 Code = code,
-                RedirectUri = _configuration["Spotify:AuthenticateUri"],
+                RedirectUri = _configuration["Spotify:CallbackUrl"],
             });
             
             if (user.SpotifyAuthenticated)
@@ -62,7 +65,7 @@ namespace pjfm.Controllers
                 
                 if (updateTopTracksResult.Error == false)
                 {
-                    return Ok(result.Data);
+                    return Redirect("https://localhost:5001");
                 }
             }
             
@@ -76,7 +79,7 @@ namespace pjfm.Controllers
             {
                 trackedUserProfile.SpotifyAuthenticated = true;
                 await _ctx.SaveChangesAsync(CancellationToken.None);
-                return Ok(result.Data);
+                return Redirect("https://localhost:5001");
             }
 
             return BadRequest();

@@ -40,6 +40,11 @@ namespace pjfm
             {
                 client.BaseAddress = new Uri("https://api.spotify.com");
             });
+            
+            services.AddHttpClient(ApplicationConstants.HttpClientNames.ApiClient, client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001");
+            });
 
             services.AddCors(options =>
             {

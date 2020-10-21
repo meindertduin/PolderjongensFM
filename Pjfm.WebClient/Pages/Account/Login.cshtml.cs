@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Pjfm.Application.Auth.Querys;
+using Pjfm.Application.Spotify.Commands;
 
 namespace Pjfm.WebClient.Pages.Account
 {
@@ -29,8 +32,7 @@ namespace Pjfm.WebClient.Pages.Account
                 Username = Form.Username,
                 Password = Form.Password,
             });
-            
-            
+
             if (loginResult.Error)
             {
                 return Page();
