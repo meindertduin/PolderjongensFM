@@ -2,6 +2,7 @@
   <div class="about">
     <v-btn @click="getUserMessage">User</v-btn>
     <v-btn @click="getModMessage">Mod</v-btn>
+    <v-btn @click="getUserTopTracks">Top Tracks</v-btn>
   </div>
 </template>
 
@@ -27,6 +28,13 @@
               .then((response) => {
                 console.log(response.data);
               })
+    }
+    
+    private getUserTopTracks(){
+      Axios.get('/api/test/toptracks')
+        .then((response) => {
+          console.log(response.data);
+        })
     }
   }
 </script>

@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <Folder Include="Auth\Querys" />
+      <Folder Include="Test\Commands" />
     </ItemGroup>
 
     <ItemGroup>
