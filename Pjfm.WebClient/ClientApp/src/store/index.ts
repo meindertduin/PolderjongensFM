@@ -4,6 +4,7 @@ import {vuexOidcCreateStoreModule} from "vuex-oidc";
 import {oidcSettings} from "@/config/oidc";
 import ProfileModule from "@/store/profileModule";
 import UserSettingsModule from "@/store/userSettingsModule";
+import LiveChatModule from "@/store/liveChatModule";
 
 Vue.use(Vuex)
 
