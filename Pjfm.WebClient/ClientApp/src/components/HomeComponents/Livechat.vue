@@ -24,6 +24,7 @@
     import Message from "@/components/HomeComponents/LiveChatComponents/Message.vue";
     import MessageInput from "@/components/HomeComponents/LiveChatComponents/MessageInput.vue";
     import {liveChatMessageModel} from "@/common/types";
+    import {Watch} from "vue-property-decorator";
     
     @Component({
         name: 'Livechat',
@@ -37,6 +38,13 @@
         private socketConnection: HubConnection | null = null;
         private messages: Array<liveChatMessageModel> = [];
 
+        @Watch('messages')
+        onMessageAdded(newValue:Array<liveChatMessageModel>, oldValue:Array<liveChatMessageModel>){
+            setTimeout(() => {
+                this.messageBoxScrollToBottom();
+            }, 50);
+        }
+        
         get oidcAuthenticated(){
             return this.$store.getters['oidcStore/oidcIsAuthenticated'];
         }
@@ -56,7 +64,7 @@
 
             this.socketConnection.start()
                 .then(() => this.socketConnection?.on("ReceiveMessage", (message: liveChatMessageModel) => {
-                    let options = {hour: "numeric", minute: "numeric"};
+                    const options = {hour: "numeric", minute: "numeric"};
                     message.timeSend = Intl.DateTimeFormat("nl-NL", options).format(Date.parse(message.timeSend));
                     this.messages.push(message);
                 }));
@@ -90,7 +98,7 @@
     }
     
     .message-container{
-        max-height: 300px;
+        height: 300px;
         overflow-y: scroll;
         overflow-x: hidden;
         padding: 5px;
