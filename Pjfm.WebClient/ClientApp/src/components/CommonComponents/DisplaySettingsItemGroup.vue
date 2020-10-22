@@ -30,15 +30,16 @@
         private darkModeSwitch:boolean = false;
 
         created(){
-            this.darkModeSwitch = this.$store.getters['userSettings/getDarkModeState'];
+            this.darkModeSwitch = this.$store.getters['userSettingsModule/getDarkModeState'];
         }
         
         @Watch('darkModeSwitch')
         private onDarkModeSwitchChanged(newValue:boolean, oldValue:boolean){
-            const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
-            this.$vuetify.theme.dark = !userSettings.darkMode;
-            console.log(newValue)
-            this.$store.dispatch('userSettingsModule/setDarkMode', newValue);
+            if(typeof newValue !== 'undefined'){
+                console.log(newValue);
+                this.$vuetify.theme.dark = newValue;
+                this.$store.dispatch('userSettingsModule/setDarkMode', newValue);
+            }
         }
     }
 </script>
