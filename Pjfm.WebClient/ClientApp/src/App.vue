@@ -10,7 +10,6 @@
       dense
       src="skyline-night.png"
       fade-img-on-scroll
-      scroll-target="#scrolling-techniques-3"
       height="150px"
     >
       <v-app-bar-nav-icon></v-app-bar-nav-icon>

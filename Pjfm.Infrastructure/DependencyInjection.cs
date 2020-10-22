@@ -1,4 +1,5 @@
 ﻿using IdentityServer4;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -69,7 +70,31 @@ namespace Pjfm.Infrastructure
             }
 
             services.AddLocalApiAuthentication();
-            
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie("Cookie")
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    options.SignInScheme = "Cookies";
+
+                    options.Authority = "https://localhost:5001";
+                    options.RequireHttpsMetadata = false;
+                    options.ClientSecret = "secret";
+                    options.ClientId = "mvc";
+
+                    options.ResponseType = "code id_token";
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+
+                    options.Scope.Add("offline_access");
+                    options.Scope.Add("api1");
+                    options.ClaimActions.MapJsonKey("website", "website");
+                });
+
             services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/Login";

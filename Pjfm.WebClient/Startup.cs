@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
+using pjfm.Hubs;
 using Pjfm.Infrastructure;
 using VueCliMiddleware;
 
@@ -34,6 +35,8 @@ namespace pjfm
             
             services.AddControllersWithViews();
 
+            services.AddSignalR();
+            
             services.AddRazorPages();
             
             services.AddHttpClient(ApplicationConstants.HttpClientNames.SpotifyApiClient, client =>
@@ -94,6 +97,8 @@ namespace pjfm
             
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<RadioHub>("/radio");
+                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
