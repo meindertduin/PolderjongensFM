@@ -15,6 +15,7 @@ namespace pjfm.Hubs
     public class RadioHub : Hub
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        
         private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
