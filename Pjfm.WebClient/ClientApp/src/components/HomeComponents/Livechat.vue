@@ -63,11 +63,20 @@
                 .build();
 
             this.socketConnection.start()
-                .then(() => this.socketConnection?.on("ReceiveMessage", (message: liveChatMessageModel) => {
-                    const options = {hour: "numeric", minute: "numeric"};
-                    message.timeSend = Intl.DateTimeFormat("nl-NL", options).format(Date.parse(message.timeSend));
-                    this.messages.push(message);
-                }));
+                .then(() => {
+                    this.socketConnection?.on("ReceiveMessage", (message: liveChatMessageModel) => {
+                        this.addMessage(message);
+                    });
+                    this.socketConnection?.on("LoadMessages", (messages: Array<liveChatMessageModel>) => {
+                        messages.forEach(m => this.addMessage(m));
+                    })
+                });
+        }
+        
+        addMessage(message: liveChatMessageModel):void{
+            const options = {hour: "numeric", minute: "numeric"};
+            message.timeSend = Intl.DateTimeFormat("nl-NL", options).format(Date.parse(message.timeSend));
+            this.messages.push(message);
         }
 
         messageBoxScrollToBottom(){

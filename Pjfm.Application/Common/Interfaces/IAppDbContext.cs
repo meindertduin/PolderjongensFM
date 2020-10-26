@@ -11,6 +11,8 @@ namespace Pjfm.Domain.Interfaces
         DbSet<TopTrack> TopTracks { get; set; }
         DbSet<ApplicationUser> ApplicationUsers { get; set; }
         
+        DbSet<LiveChatMessage> LiveChatMessages { get; set; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
