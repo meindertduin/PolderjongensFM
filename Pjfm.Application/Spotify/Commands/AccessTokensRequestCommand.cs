@@ -47,7 +47,7 @@ namespace Pjfm.Application.Spotify.Commands
 
             try
             {
-                var result = client.PostAsync("https://accounts.spotify.com/api/token", formContent).Result;
+                var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent);
 
                 var contentString = await result.Content.ReadAsStringAsync();
                 
