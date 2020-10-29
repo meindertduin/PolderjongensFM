@@ -36,6 +36,7 @@ namespace Pjfm.Infrastructure.Service
         {
             var nextTrack = _tracksQueue.Dequeue();
             await AddRandomSongToQueue(1);
+            PlayTrackOnListenerDevice();
             return nextTrack.SongDurationMs;
         }
 
@@ -62,13 +63,16 @@ namespace Pjfm.Infrastructure.Service
         }
         private void PlayTrackOnListenerDevice()
         {
-            
+            // Todo: add functionality for playing tracks on all listeners devices
         }
 
         public async Task StartPlayingTracks()
         {
             IsCurrentlyPlaying = true;
             await AddRandomSongToQueue(_tracksQueueLength);
+
+            // Todo: add implementation for tuning in and synchronising with player
+            
         }
 
         public void StopPlayingTracks()
@@ -77,17 +81,32 @@ namespace Pjfm.Infrastructure.Service
             _tracksQueue = new Queue<TopTrack>();
             _recentlyPlayed = new List<TopTrack>();
             
-            // implement stopping playback on all devices
+            // Todo: implement stopping playback on all devices
         }
 
-        public void AddListener(ApplicationUser user)
+        public async Task AddListener(ApplicationUser user)
         {
             _connectedUsers[user.Id] = user;
+            
+            if (IsCurrentlyPlaying == false)
+            {
+                await StartPlayingTracks();
+            }
+            else
+            {
+                // Todo add functionality for tuning in and synchronising with the player
+            }
         }
 
         public ApplicationUser RemoveListener(string userId)
         {
             _connectedUsers.TryRemove(userId, out ApplicationUser user);
+
+            if (_connectedUsers.IsEmpty)
+            {
+                StopPlayingTracks();    
+            }
+            
             return user;
         }
     }

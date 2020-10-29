@@ -10,7 +10,7 @@ namespace Pjfm.Domain.Interfaces
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();
         void StopPlayingTracks();
-        void AddListener(ApplicationUser user);
+        Task AddListener(ApplicationUser user);
         ApplicationUser RemoveListener(string userId);
     }
 }

@@ -27,7 +27,7 @@ namespace pjfm.Services
                     await Task.Delay(nextSongDuration);
                 }
 
-                await Task.Delay(5000);
+                await Task.Delay(1000);
             }
         }
     }
