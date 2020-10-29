@@ -50,7 +50,6 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\src\helpers" />
-    <Folder Include="Services" />
   </ItemGroup>
 
   <ItemGroup>

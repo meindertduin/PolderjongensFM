@@ -6,18 +6,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Pjfm.Application.Common;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace Pjfm.Application.Spotify.Commands
 {
     public class AccessTokensRequestCommand : IRequestWrapper<AccessTokensRequestResult>
     {
-        public string ClientId { get; set; }
-        public string ClientSecret { get; set; }
         public string Code { get; set; }
         public string RedirectUri { get; set; }
     }
@@ -25,16 +22,18 @@ namespace Pjfm.Application.Spotify.Commands
     public class AccessTokenRequestCommandHandler : IHandlerWrapper<AccessTokensRequestCommand, AccessTokensRequestResult>
     {
         private readonly IHttpClientFactory _factory;
+        private readonly IConfiguration _configuration;
 
-        public AccessTokenRequestCommandHandler(IHttpClientFactory factory)
+        public AccessTokenRequestCommandHandler(IHttpClientFactory factory, IConfiguration configuration)
         {
             _factory = factory;
+            _configuration = configuration;
         }
         
         public async Task<Response<AccessTokensRequestResult>> Handle(AccessTokensRequestCommand request, CancellationToken cancellationToken)
         {
             var client = _factory.CreateClient();
-            var authString = Encoding.ASCII.GetBytes($"{request.ClientId}:{request.ClientSecret}");
+            var authString = Encoding.ASCII.GetBytes($"{_configuration["Spotify:ClientId"]}:{_configuration["Spotify:ClientSecret"]}");
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authString));
             

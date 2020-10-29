@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Pjfm.Application.Common;
-using Pjfm.Application.MediatR;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Common;
 using Pjfm.Domain.Entities;

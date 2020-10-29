@@ -22,15 +22,13 @@ namespace Pjfm.Application.Spotify.Commands
         private readonly IHttpClientFactory _clientFactory;
         private readonly IAppDbContext _appDbContext;
         private readonly IMediator _mediator;
-        private readonly IConfiguration _configuration;
 
         public AuthenticatedApiRequestCommandHandler(IHttpClientFactory clientFactory, IAppDbContext appDbContext, 
-            IMediator mediator, IConfiguration configuration)
+            IMediator mediator)
         {
             _clientFactory = clientFactory;
             _appDbContext = appDbContext;
             _mediator = mediator;
-            _configuration = configuration;
         }
         
         public async Task<Response<HttpResponseMessage>> Handle(AuthenticatedApiRequestCommand request, CancellationToken cancellationToken)
@@ -42,8 +40,6 @@ namespace Pjfm.Application.Spotify.Commands
                 {
                     var refreshResult = await _mediator.Send(new AccessTokenRefreshCommand()
                     {
-                        ClientSecret = _configuration["Spotify:ClientSecret"],
-                        ClientId = _configuration["Spotify:ClientId"],
                         UserId = request.UserId,
                     });
 

@@ -13,6 +13,7 @@ using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
+using pjfm.Services;
 using VueCliMiddleware;
 
 namespace pjfm
@@ -32,6 +33,8 @@ namespace pjfm
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration, WebHostEnvironment);
+
+            services.AddHostedService<SongsPlayerBackGroundService>();
             
             services.AddControllersWithViews();
 

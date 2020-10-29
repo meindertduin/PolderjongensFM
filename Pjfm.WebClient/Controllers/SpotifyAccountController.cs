@@ -49,8 +49,6 @@ namespace pjfm.Controllers
 
             var result = await _mediator.Send(new AccessTokensRequestCommand()
             {
-                ClientSecret = _configuration["Spotify:ClientSecret"],
-                ClientId = _configuration["Spotify:ClientId"],
                 Code = code,
                 RedirectUri = _configuration["Spotify:CallbackUrl"],
             });

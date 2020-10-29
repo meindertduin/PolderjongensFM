@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
@@ -16,8 +17,6 @@ namespace Pjfm.Application.Spotify.Commands
 {
     public class AccessTokenRefreshCommand : IRequestWrapper<string>
     {
-        public string ClientId { get; set; }
-        public string ClientSecret { get; set; }
         public string UserId { get; set; }
     }
     
@@ -25,18 +24,20 @@ namespace Pjfm.Application.Spotify.Commands
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IAppDbContext _appDbContext;
+        private readonly IConfiguration _configuration;
 
-        public AccessTokenRefreshCommandHandler(IHttpClientFactory clientFactory, IAppDbContext appDbContext)
+        public AccessTokenRefreshCommandHandler(IHttpClientFactory clientFactory, IAppDbContext appDbContext, IConfiguration configuration)
         {
             _clientFactory = clientFactory;
             _appDbContext = appDbContext;
+            _configuration = configuration;
         }
         
         public async Task<Response<string>> Handle(AccessTokenRefreshCommand request, CancellationToken cancellationToken)
         {
             using (var client = _clientFactory.CreateClient())
             {
-                var authString = Encoding.ASCII.GetBytes($"{request.ClientId}:{request.ClientSecret}");
+                var authString = Encoding.ASCII.GetBytes($"{_configuration["Spotify:ClientId"]}:{_configuration["Spotify:ClientSecret"]}");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authString));
 
                 var user = _appDbContext.ApplicationUsers.FirstOrDefault(u => u.Id == request.UserId);
