@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.Models;
 using MediatR;
+using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
@@ -18,6 +21,9 @@ namespace Pjfm.Infrastructure.Service
         private Queue<TopTrack> _tracksQueue = new Queue<TopTrack>();
 
         private readonly IMediator _mediator;
+        
+        private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
+            = new ConcurrentDictionary<string, ApplicationUser>();
 
         public SpotifyPlaybackManager(IMediator mediator)
         {
@@ -71,12 +77,18 @@ namespace Pjfm.Infrastructure.Service
             _tracksQueue = new Queue<TopTrack>();
             _recentlyPlayed = new List<TopTrack>();
             
-            // implement login for stopping playback on all devices
+            // implement stopping playback on all devices
         }
 
-        public void TuneIn()
+        public void AddListener(ApplicationUser user)
         {
-            
+            _connectedUsers[user.Id] = user;
+        }
+
+        public ApplicationUser RemoveListener(string userId)
+        {
+            _connectedUsers.TryRemove(userId, out ApplicationUser user);
+            return user;
         }
     }
 }

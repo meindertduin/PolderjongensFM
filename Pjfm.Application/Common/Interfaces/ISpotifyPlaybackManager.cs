@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Pjfm.Application.Identity;
 using Pjfm.Domain.Entities;
 
 namespace Pjfm.Domain.Interfaces
@@ -9,6 +10,7 @@ namespace Pjfm.Domain.Interfaces
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();
         void StopPlayingTracks();
-        void TuneIn();
+        void AddListener(ApplicationUser user);
+        ApplicationUser RemoveListener(string userId);
     }
 }
