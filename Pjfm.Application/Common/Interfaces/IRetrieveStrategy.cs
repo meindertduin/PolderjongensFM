@@ -4,8 +4,8 @@ using Pjfm.Domain.Entities;
 
 namespace Pjfm.Domain.Interfaces
 {
-    public interface ISpotifyTopTracksClient
+    public interface IRetrieveStrategy
     {
-        public Task<List<TopTrack>> GetTopTracks(string accessToken, int term, string userId);
+        public Task<List<TopTrack>> RetrieveItems(string accessToken, int term, string userId);
     }
 }

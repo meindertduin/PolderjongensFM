@@ -21,12 +21,12 @@ namespace Pjfm.Application.Spotify.Commands
     public class UpdateUserTopTracksCommandHandler : IHandlerWrapper<UpdateUserTopTracksCommand, string>
     {
         private readonly IAppDbContext _ctx;
-        private readonly ISpotifyTopTracksClient _spotifyTopTracksClient;
+        private readonly IRetrieveStrategy _retrieveStrategy;
 
-        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, ISpotifyTopTracksClient spotifyTopTracksClient)
+        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, IRetrieveStrategy retrieveStrategy)
         {
             _ctx = ctx;
-            _spotifyTopTracksClient = spotifyTopTracksClient;
+            _retrieveStrategy = retrieveStrategy;
         }
         
         public async Task<Response<string>> Handle(UpdateUserTopTracksCommand request, CancellationToken cancellationToken)
@@ -40,7 +40,7 @@ namespace Pjfm.Application.Spotify.Commands
                     .SelectMany(x => x.TopTracks.Where(t => t.Term == (TopTrackTerm) term))
                     .ToList();
 
-                termTopTracks = await _spotifyTopTracksClient.GetTopTracks(request.AccessToken, term, request.User.Id);
+                termTopTracks = await _retrieveStrategy.RetrieveItems(request.AccessToken, term, request.User.Id);
                 await _ctx.SaveChangesAsync(cancellationToken);
             }
             

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using MediatR;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pjfm.Application.Common;
+using Pjfm.Application.MediatR;
+using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Common;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
@@ -13,23 +16,19 @@ using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Infrastructure.Service
 {
-    public class SpotifyTopTracksClient : ISpotifyTopTracksClient
+    public class SpotifyTopTracksRetrieveStrategy : IRetrieveStrategy
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IMediator _mediator;
         private readonly string[] terms = {"short_term", "medium_term", "long_term" };
 
-        public SpotifyTopTracksClient(IHttpClientFactory httpClientFactory)
+        public SpotifyTopTracksRetrieveStrategy(IMediator mediator)
         {
-            _httpClientFactory = httpClientFactory;
+            _mediator = mediator;
         }
 
-        public async Task<List<TopTrack>> GetTopTracks(string accessToken, int term, string userId)
+        public async Task<List<TopTrack>> RetrieveItems(string accessToken, int term, string userId)
         {
-            using var client = _httpClientFactory.CreateClient(ApplicationConstants.HttpClientNames.SpotifyApiClient);
-            
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                
-            var trackResult = await GetSpotifyTrackInfo(client, term);
+            var trackResult = await GetSpotifyTrackInfo(term, accessToken, userId);
                 
             var topTracks = new List<TopTrack>();
             
@@ -38,11 +37,20 @@ namespace Pjfm.Infrastructure.Service
             return topTracks;
         }
         
-        private async Task<dynamic> GetSpotifyTrackInfo(HttpClient client, int i)
+        private async Task<dynamic> GetSpotifyTrackInfo(int term, string accessToken, string userId)
         {
-            var jsonResult = await client.GetAsync($"v1/me/top/tracks?limit=50&time_range={terms[i]}").Result.Content
-                .ReadAsStringAsync();
+            var httpRequest = new HttpRequestMessage {Method = HttpMethod.Get};
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpRequest.RequestUri = new Uri($"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range={terms[term]}");
 
+            var response = await _mediator.Send(new AuthenticatedApiRequestCommand()
+            {
+                RequestMessage = httpRequest,
+                UserId = userId,
+            });
+
+            var jsonResult = await response.Data.Content.ReadAsStringAsync();
+            
             JObject objectResult = JsonConvert.DeserializeObject<dynamic>(jsonResult, new JsonSerializerSettings()
             {
                 ContractResolver = new UnderScorePropertyNamesContractResolver()

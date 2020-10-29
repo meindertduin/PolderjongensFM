@@ -19,7 +19,7 @@ namespace Pjfm.Infrastructure
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
-            services.AddTransient<ISpotifyTopTracksClient, SpotifyTopTracksClient>();
+            services.AddTransient<IRetrieveStrategy, SpotifyTopTracksRetrieveStrategy>();
             
             services.AddDbContext<AppDbContext>(config =>
             {

@@ -27,12 +27,12 @@ namespace Pjfm.Application.Spotify.Commands
     public class SetUserTopTracksCommandHandler : IHandlerWrapper<SetUserTopTracksCommand, string>
     {
         private readonly IAppDbContext _ctx;
-        private readonly ISpotifyTopTracksClient _spotifyTopTracksClient;
+        private readonly IRetrieveStrategy _retrieveStrategy;
 
-        public SetUserTopTracksCommandHandler(IAppDbContext ctx, ISpotifyTopTracksClient spotifyTopTracksClient)
+        public SetUserTopTracksCommandHandler(IAppDbContext ctx, IRetrieveStrategy retrieveStrategy)
         {
             _ctx = ctx;
-            _spotifyTopTracksClient = spotifyTopTracksClient;
+            _retrieveStrategy = retrieveStrategy;
         }
         
         public async Task<Response<string>> Handle(SetUserTopTracksCommand request, CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ namespace Pjfm.Application.Spotify.Commands
 
             for (int i = 0; i < 3; i++)
             {
-                var termTopTracks = await _spotifyTopTracksClient.GetTopTracks(request.AccessToken, i, request.User.Id);
+                var termTopTracks = await _retrieveStrategy.RetrieveItems(request.AccessToken, i, request.User.Id);
                 topTracks.AddRange(termTopTracks);
             }
 

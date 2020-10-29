@@ -78,6 +78,8 @@ namespace pjfm.Controllers
             if (setTopTracksResult.Error == false)
             {
                 trackedUserProfile.SpotifyAuthenticated = true;
+                trackedUserProfile.SpotifyAccessToken = result.Data.AccessToken;
+                trackedUserProfile.SpotifyRefreshToken = result.Data.RefreshToken;
                 await _ctx.SaveChangesAsync(CancellationToken.None);
                 return Redirect("https://localhost:5001");
             }
