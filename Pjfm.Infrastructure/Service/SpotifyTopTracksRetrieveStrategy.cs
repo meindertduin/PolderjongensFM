@@ -76,6 +76,7 @@ namespace Pjfm.Infrastructure.Service
                     Term = (TopTrackTerm) term,
                     ApplicationUserId = userId,
                     TimeAdded = DateTime.Now,
+                    SongDurationMs = item.duration_ms,
                 });
             }
         }

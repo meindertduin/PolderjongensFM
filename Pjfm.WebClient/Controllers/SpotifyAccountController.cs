@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
-using Pjfm.Domain.ValueObjects;
 
 namespace pjfm.Controllers
 {

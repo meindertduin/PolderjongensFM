@@ -11,8 +11,10 @@ using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
+using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
+using Pjfm.Infrastructure.Service;
 using pjfm.Services;
 using VueCliMiddleware;
 
@@ -33,9 +35,10 @@ namespace pjfm
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration, WebHostEnvironment);
-
-            services.AddHostedService<SongsPlayerBackGroundService>();
             
+            services.AddHostedService<SongsPlayerBackGroundService>();
+            services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
+
             services.AddControllersWithViews();
 
             services.AddSignalR();

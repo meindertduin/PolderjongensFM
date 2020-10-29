@@ -10,7 +10,7 @@ namespace Pjfm.Domain.Entities
         public string Title { get; set; }
         public string[] Artists { get; set; }
         public TopTrackTerm Term { get; set; }
-
+        public int SongDurationMs { get; set; }
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
