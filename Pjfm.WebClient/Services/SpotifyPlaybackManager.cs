@@ -29,7 +29,7 @@ namespace Pjfm.Infrastructure.Service
         private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
-        private List<IObserver<bool>> _observers = new List<IObserver<bool>>();
+        private static List<IObserver<bool>> _observers = new List<IObserver<bool>>();
         
         public SpotifyPlaybackManager(IMediator mediator, ISpotifyPlayerService spotifyPlayerService)
         {
@@ -43,18 +43,6 @@ namespace Pjfm.Infrastructure.Service
         {
             IsCurrentlyPlaying = true;
             NotifyObserversPlayingStatus(IsCurrentlyPlaying);
-            
-            await AddRandomSongToQueue(_tracksQueueLength);
-            
-            var responseTasks = new List<Task<HttpResponseMessage>>();
-            
-            foreach (var keyValuePair in _connectedUsers)
-            {
-                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty);
-                responseTasks.Add(playTask);
-            }
-            
-            await Task.WhenAll(responseTasks);
         }
 
         public void StopPlayingTracks()
@@ -70,11 +58,42 @@ namespace Pjfm.Infrastructure.Service
         
         public async Task<int> PlayNextTrack()
         {
+            await AddRandomSongToQueue(_tracksQueueLength);
             var nextTrack = _tracksQueue.Dequeue();
             await AddRandomSongToQueue(1);
-            PlayTrackOnListenerDevice(nextTrack);
+            
+            if (_recentlyPlayed.Count > 0)
+            {
+                await AddTrackToListenerQueue();
+            }
+            else
+            {
+                await InitializeFirstTrack(nextTrack);
+            }
             
             return nextTrack.SongDurationMs;
+        }
+
+        private async Task InitializeFirstTrack(TopTrack track)
+        {
+            var responseTasks = new List<Task<HttpResponseMessage>>();
+            
+            foreach (var keyValuePair in _connectedUsers)
+            {
+                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty, 
+                    new PlayRequestDto()
+                {
+                    Uris = new [] { $"spotify:track:{track.Id}"},
+                });
+                responseTasks.Add(playTask);
+            }
+            
+            await Task.WhenAll(responseTasks);
+        }
+
+        private async Task AddTrackToListenerQueue()
+        {
+            
         }
 
         private async Task AddRandomSongToQueue(int amount)
@@ -98,11 +117,6 @@ namespace Pjfm.Infrastructure.Service
                 await AddRandomSongToQueue(amount);
             }
         }
-        private void PlayTrackOnListenerDevice(TopTrack track)
-        {
-            // Todo: add functionality for playing tracks on all listeners devices
-        }
-
         public async Task AddListener(ApplicationUser user)
         {
             _connectedUsers[user.Id] = user;

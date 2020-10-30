@@ -1,24 +1,17 @@
 using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using IdentityServer4;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
 using Pjfm.Application.Common;
-using Pjfm.Application.Identity;
-using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Service;
-using pjfm.Services;
+using Pjfm.WebClient.Services;
 using VueCliMiddleware;
 
 namespace pjfm
@@ -38,10 +31,10 @@ namespace pjfm
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration, WebHostEnvironment);
-
-            services.AddHostedService<SongsPlayerBackGroundService>();
-            services.AddTransient<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
-
+            
+            services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
+            services.AddSingleton<ITrackTimerService, TrackTimerService>();
+            
             services.AddControllersWithViews();
 
             services.AddSignalR();
