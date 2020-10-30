@@ -37,6 +37,7 @@ namespace Pjfm.Infrastructure.Service
             var nextTrack = _tracksQueue.Dequeue();
             await AddRandomSongToQueue(1);
             PlayTrackOnListenerDevice();
+            
             return nextTrack.SongDurationMs;
         }
 

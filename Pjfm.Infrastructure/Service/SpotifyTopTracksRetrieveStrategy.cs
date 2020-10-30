@@ -17,11 +17,13 @@ namespace Pjfm.Infrastructure.Service
     public class SpotifyTopTracksRetrieveStrategy : IRetrieveStrategy
     {
         private readonly IMediator _mediator;
+        private readonly ISpotifyHttpClientService _spotifyHttpClientService;
         private readonly string[] terms = {"short_term", "medium_term", "long_term" };
 
-        public SpotifyTopTracksRetrieveStrategy(IMediator mediator)
+        public SpotifyTopTracksRetrieveStrategy(IMediator mediator, ISpotifyHttpClientService spotifyHttpClientService)
         {
             _mediator = mediator;
+            _spotifyHttpClientService = spotifyHttpClientService;
         }
 
         public async Task<List<TopTrack>> RetrieveItems(string accessToken, int term, string userId)
@@ -40,14 +42,10 @@ namespace Pjfm.Infrastructure.Service
             var httpRequest = new HttpRequestMessage {Method = HttpMethod.Get};
             httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             httpRequest.RequestUri = new Uri($"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range={terms[term]}");
+            
+            var response = await _spotifyHttpClientService.SendAuthenticatedRequest(httpRequest, userId);
 
-            var response = await _mediator.Send(new AuthenticatedApiRequestCommand()
-            {
-                RequestMessage = httpRequest,
-                UserId = userId,
-            });
-
-            var jsonResult = await response.Data.Content.ReadAsStringAsync();
+            var jsonResult = await response.Content.ReadAsStringAsync();
             
             JObject objectResult = JsonConvert.DeserializeObject<dynamic>(jsonResult, new JsonSerializerSettings()
             {
