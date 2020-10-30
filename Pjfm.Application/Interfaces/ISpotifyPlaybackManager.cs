@@ -9,8 +9,8 @@ namespace Pjfm.Domain.Interfaces
         bool IsCurrentlyPlaying { get; }
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();
-        void StopPlayingTracks();
+        Task StopPlayingTracks(int afterDelay);
         Task AddListener(ApplicationUser user);
-        ApplicationUser RemoveListener(string userId);
+        Task<ApplicationUser> RemoveListener(string userId);
     }
 }

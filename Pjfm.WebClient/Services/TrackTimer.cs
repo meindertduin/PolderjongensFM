@@ -13,24 +13,24 @@ namespace Pjfm.WebClient.Services
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
         private bool isPlaying = false;
-
+        
         public TrackTimer(SpotifyPlaybackManager spotifyPlaybackManager)
         {
             _spotifyPlaybackManager = spotifyPlaybackManager;
             _unsubscriber = _spotifyPlaybackManager.Subscribe(this);
         }
         
-        private async Task StartPlaying()
+        private async Task StartPlaying(CancellationToken token)
         {
             isPlaying = true;
             
-            while (true)
+            while (token.IsCancellationRequested == false)
             {
                 var nextTrackLength = await _spotifyPlaybackManager.PlayNextTrack();
-                await Task.Delay(nextTrackLength);
+                await Task.Delay(nextTrackLength, token);
             }
         }
-
+        
         public void OnCompleted()
         {
             throw new NotImplementedException();
@@ -45,11 +45,13 @@ namespace Pjfm.WebClient.Services
         {
             if (value && isPlaying == false)
             {
-                Task.Run(StartPlaying, _cts.Token);
+                _cts.Cancel();
+                _cts = new CancellationTokenSource();
+                Task.Run(() => StartPlaying(_cts.Token));
             }
             else
             {
-                _cts.CancelAfter(0);
+                _cts.Cancel();
                 isPlaying = false;
             }
         }
