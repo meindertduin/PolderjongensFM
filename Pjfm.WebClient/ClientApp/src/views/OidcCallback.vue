@@ -24,7 +24,7 @@
                         `?client_id=ebc49acde46148eda6128d944c067b5d` + 
                         `&response_type=code` +
                         `&redirect_uri=https://localhost:5001/api/spotify/account/callback` + 
-                        `&scope=user-top-read user-read-private streaming`;
+                        `&scope=user-top-read user-read-private streaming user-read-playback-state`;
                     
                     location.href = url;
                 })

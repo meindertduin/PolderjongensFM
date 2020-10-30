@@ -29,6 +29,8 @@ namespace Pjfm.Infrastructure.Service
         private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
+        private List<IObserver<bool>> _observers = new List<IObserver<bool>>();
+        
         public SpotifyPlaybackManager(IMediator mediator, ISpotifyPlayerService spotifyPlayerService)
         {
             _mediator = mediator;
@@ -37,11 +39,40 @@ namespace Pjfm.Infrastructure.Service
 
         public bool IsCurrentlyPlaying { get; private set; }
         
+        public async Task StartPlayingTracks()
+        {
+            IsCurrentlyPlaying = true;
+            NotifyObserversPlayingStatus(IsCurrentlyPlaying);
+            
+            await AddRandomSongToQueue(_tracksQueueLength);
+            
+            var responseTasks = new List<Task<HttpResponseMessage>>();
+            
+            foreach (var keyValuePair in _connectedUsers)
+            {
+                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty);
+                responseTasks.Add(playTask);
+            }
+            
+            await Task.WhenAll(responseTasks);
+        }
+
+        public void StopPlayingTracks()
+        {
+            IsCurrentlyPlaying = false;
+            NotifyObserversPlayingStatus(IsCurrentlyPlaying);
+            
+            _tracksQueue = new Queue<TopTrack>();
+            _recentlyPlayed = new List<TopTrack>();
+            
+            // Todo: implement stopping playback on all devices
+        }
+        
         public async Task<int> PlayNextTrack()
         {
             var nextTrack = _tracksQueue.Dequeue();
             await AddRandomSongToQueue(1);
-            PlayTrackOnListenerDevice();
+            PlayTrackOnListenerDevice(nextTrack);
             
             return nextTrack.SongDurationMs;
         }
@@ -67,35 +98,9 @@ namespace Pjfm.Infrastructure.Service
                 await AddRandomSongToQueue(amount);
             }
         }
-        private void PlayTrackOnListenerDevice()
+        private void PlayTrackOnListenerDevice(TopTrack track)
         {
             // Todo: add functionality for playing tracks on all listeners devices
-        }
-
-        public async Task StartPlayingTracks()
-        {
-            IsCurrentlyPlaying = true;
-            await AddRandomSongToQueue(_tracksQueueLength);
-
-            // Todo: add implementation for tuning in and synchronising with player
-            var responseTasks = new List<Task<HttpResponseMessage>>();
-            
-            foreach (var keyValuePair in _connectedUsers)
-            {
-                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty);
-                responseTasks.Add(playTask);
-            }
-            
-            await Task.WhenAll(responseTasks);
-        }
-
-        public void StopPlayingTracks()
-        {
-            IsCurrentlyPlaying = false;
-            _tracksQueue = new Queue<TopTrack>();
-            _recentlyPlayed = new List<TopTrack>();
-            
-            // Todo: implement stopping playback on all devices
         }
 
         public async Task AddListener(ApplicationUser user)
@@ -122,6 +127,41 @@ namespace Pjfm.Infrastructure.Service
             }
             
             return user;
+        }
+
+        public IDisposable Subscribe(IObserver<bool> observer)
+        {
+            if (_observers.Contains(observer) == false)
+            {
+                _observers.Add(observer);
+            }
+            return new UnSubscriber(_observers, observer);
+        }
+
+        private class UnSubscriber : IDisposable
+        {
+            private List<IObserver<bool>>_observers;
+            private IObserver<bool> _observer;
+
+            public UnSubscriber(List<IObserver<bool>> observers, IObserver<bool> observer)
+            {
+                _observers = observers;
+                _observer = observer;
+            }
+
+            public void Dispose()
+            {
+                if (_observer != null && _observers.Contains(_observer))
+                    _observers.Remove(_observer);
+            }
+        }
+
+        public void NotifyObserversPlayingStatus(bool isPlaying)
+        {
+            foreach (var observer in _observers)
+            {
+                observer.OnNext(isPlaying);
+            }
         }
     }
 }

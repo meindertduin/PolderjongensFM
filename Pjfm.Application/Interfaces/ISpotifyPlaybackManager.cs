@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Pjfm.Application.Identity;
 
 namespace Pjfm.Domain.Interfaces
 {
-    public interface ISpotifyPlaybackManager
+    public interface ISpotifyPlaybackManager : IObservable<bool>
     {
         bool IsCurrentlyPlaying { get; }
         Task<int> PlayNextTrack();
