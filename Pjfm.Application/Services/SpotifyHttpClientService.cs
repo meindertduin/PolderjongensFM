@@ -18,7 +18,6 @@ namespace Pjfm.Application.Services
         {
             _httpClient = httpClient;
             _mediator = mediator;
-            httpClient.BaseAddress = new Uri("https://api.spotify.com");
         }
 
         public async Task<HttpResponseMessage> SendAuthenticatedRequest(HttpRequestMessage requestMessage, string userId)
@@ -36,6 +35,5 @@ namespace Pjfm.Application.Services
             }
             return result;
         }
-        
     }
 }

@@ -2,9 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Entities;
@@ -21,13 +24,15 @@ namespace Pjfm.Infrastructure.Service
         private Queue<TopTrack> _tracksQueue = new Queue<TopTrack>();
 
         private readonly IMediator _mediator;
-        
+        private readonly ISpotifyPlayerService _spotifyPlayerService;
+
         private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
-        public SpotifyPlaybackManager(IMediator mediator)
+        public SpotifyPlaybackManager(IMediator mediator, ISpotifyPlayerService spotifyPlayerService)
         {
             _mediator = mediator;
+            _spotifyPlayerService = spotifyPlayerService;
         }
 
         public bool IsCurrentlyPlaying { get; private set; }
@@ -73,7 +78,15 @@ namespace Pjfm.Infrastructure.Service
             await AddRandomSongToQueue(_tracksQueueLength);
 
             // Todo: add implementation for tuning in and synchronising with player
+            var responseTasks = new List<Task<HttpResponseMessage>>();
             
+            foreach (var keyValuePair in _connectedUsers)
+            {
+                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty);
+                responseTasks.Add(playTask);
+            }
+            
+            await Task.WhenAll(responseTasks);
         }
 
         public void StopPlayingTracks()

@@ -1,6 +1,8 @@
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using IdentityServer4;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
@@ -35,15 +38,17 @@ namespace pjfm
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration, WebHostEnvironment);
-            
+
             services.AddHostedService<SongsPlayerBackGroundService>();
-            services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
+            services.AddTransient<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
 
             services.AddControllersWithViews();
 
             services.AddSignalR();
             
             services.AddRazorPages();
+
+            services.AddHttpClient();
             
             services.AddHttpClient(ApplicationConstants.HttpClientNames.SpotifyApiClient, client =>
             {

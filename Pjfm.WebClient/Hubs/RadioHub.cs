@@ -27,7 +27,7 @@ namespace pjfm.Hubs
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-            _spotifyPlaybackManager.AddListener(user);
+            await _spotifyPlaybackManager.AddListener(user);
             await base.OnConnectedAsync();
         }
 

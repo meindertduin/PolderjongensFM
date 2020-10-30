@@ -26,7 +26,7 @@ namespace Pjfm.Application.Spotify.Queries
             _ctx = ctx;
         }
         
-        public Task<Response<List<TopTrack>>> Handle(GetRandomTopTrackQuery request, CancellationToken cancellationToken)
+        public async Task<Response<List<TopTrack>>> Handle(GetRandomTopTrackQuery request, CancellationToken cancellationToken)
         {
             var randomTopTracks = _ctx.TopTracks
                 .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.Id) == false)
@@ -34,7 +34,7 @@ namespace Pjfm.Application.Spotify.Queries
                 .Take(request.RequestedAmount)
                 .ToList();
 
-            return Task.FromResult(Response.Ok("successfully queried result", randomTopTracks));
+            return Response.Ok("successfully queried result", randomTopTracks);
         }
     }
 }
