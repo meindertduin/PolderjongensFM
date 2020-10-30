@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using IdentityServer4.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
+using Pjfm.WebClient.Services;
 
 namespace Pjfm.Infrastructure.Service
 {
@@ -23,7 +25,7 @@ namespace Pjfm.Infrastructure.Service
         private List<TopTrack> _recentlyPlayed = new List<TopTrack>();
         private Queue<TopTrack> _tracksQueue = new Queue<TopTrack>();
 
-        private readonly IMediator _mediator;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
 
         private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
@@ -31,10 +33,14 @@ namespace Pjfm.Infrastructure.Service
 
         private static List<IObserver<bool>> _observers = new List<IObserver<bool>>();
         
-        public SpotifyPlaybackManager(IMediator mediator, ISpotifyPlayerService spotifyPlayerService)
+        private TrackTimer _timer;
+
+        public SpotifyPlaybackManager(IServiceProvider serviceProvider, ISpotifyPlayerService spotifyPlayerService)
         {
-            _mediator = mediator;
+            _serviceProvider = serviceProvider;
             _spotifyPlayerService = spotifyPlayerService;
+            
+            _timer = new TrackTimer(this);
         }
 
         public bool IsCurrentlyPlaying { get; private set; }
@@ -98,24 +104,36 @@ namespace Pjfm.Infrastructure.Service
 
         private async Task AddRandomSongToQueue(int amount)
         {
-            var result = await _mediator.Send(new GetRandomTopTrackQuery()
+            try
             {
-                NotIncludeTracks = _recentlyPlayed,
-                RequestedAmount = amount,
-            });
-            
-            if (result.Data.Count > 0)
-            {
-                foreach (var topTrack in result.Data)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    _tracksQueue.Enqueue(topTrack);
+                    var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    var result = await _mediator.Send(new GetRandomTopTrackQuery()
+                    {
+                        NotIncludeTracks = _recentlyPlayed,
+                        RequestedAmount = amount,
+                    });
+                    if (result.Data.Count > 0)
+                    {
+                        foreach (var topTrack in result.Data)
+                        {
+                            _tracksQueue.Enqueue(topTrack);
+                        }
+                    }
+                    else
+                    {
+                        _recentlyPlayed = new List<TopTrack>();
+                        await AddRandomSongToQueue(amount);
+                    }
                 }
             }
-            else
+            catch (Exception e)
             {
-                _recentlyPlayed = new List<TopTrack>();
-                await AddRandomSongToQueue(amount);
+                Console.WriteLine(e);
+                throw;
             }
+            
         }
         public async Task AddListener(ApplicationUser user)
         {

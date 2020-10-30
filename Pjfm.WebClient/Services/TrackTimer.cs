@@ -2,16 +2,19 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Pjfm.Domain.Interfaces;
+using Pjfm.Infrastructure.Service;
 
 namespace Pjfm.WebClient.Services
 {
-    public class TrackTimerService : ITrackTimerService
+    public class TrackTimer : IObserver<bool>
     {
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private IDisposable _unsubscriber;
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
-        public TrackTimerService(ISpotifyPlaybackManager spotifyPlaybackManager)
+        private bool isPlaying = false;
+
+        public TrackTimer(SpotifyPlaybackManager spotifyPlaybackManager)
         {
             _spotifyPlaybackManager = spotifyPlaybackManager;
             _unsubscriber = _spotifyPlaybackManager.Subscribe(this);
@@ -19,6 +22,8 @@ namespace Pjfm.WebClient.Services
         
         private async Task StartPlaying()
         {
+            isPlaying = true;
+            
             while (true)
             {
                 var nextTrackLength = await _spotifyPlaybackManager.PlayNextTrack();
@@ -38,13 +43,14 @@ namespace Pjfm.WebClient.Services
 
         public void OnNext(bool value)
         {
-            if (value)
+            if (value && isPlaying == false)
             {
                 Task.Run(StartPlaying, _cts.Token);
             }
             else
             {
                 _cts.CancelAfter(0);
+                isPlaying = false;
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices;
@@ -33,7 +34,8 @@ namespace pjfm
             services.AddInfrastructure(Configuration, WebHostEnvironment);
             
             services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
-            services.AddSingleton<ITrackTimerService, TrackTimerService>();
+
+            services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
             
             services.AddControllersWithViews();
 
