@@ -8,6 +8,7 @@ using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
+using Pjfm.WebClient.Services;
 
 namespace Pjfm.Application.Spotify.Queries
 {
@@ -15,6 +16,7 @@ namespace Pjfm.Application.Spotify.Queries
     {
         public List<TopTrack> NotIncludeTracks { get; set; }
         public int RequestedAmount { get; set; }
+        public TopTrackTermFilter TopTrackTermFilter { get; set; }
     }
 
     public class GetRandomTopTrackQueryHandler : IHandlerWrapper<GetRandomTopTrackQuery, List<TopTrack>>

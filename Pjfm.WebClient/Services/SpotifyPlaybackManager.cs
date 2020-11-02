@@ -41,6 +41,8 @@ namespace Pjfm.WebClient.Services
 
         public bool IsCurrentlyPlaying { get; private set; }
         
+        public TopTrackTermFilter CurrentTermFilter { get; private set; } = TopTrackTermFilter.AllTerms;
+
         public async Task StartPlayingTracks()
         {
             IsCurrentlyPlaying = true;
@@ -57,7 +59,18 @@ namespace Pjfm.WebClient.Services
             
             // Todo: implement stopping playback on all devices
         }
+
+        public void SetTermFilter(TopTrackTermFilter termFilter)
+        {
+            CurrentTermFilter = termFilter;
+        }
         
+        public async Task ResetPlayer(int afterDelay)
+        {
+            await StopPlayingTracks(afterDelay);
+            await StartPlayingTracks();
+        }
+
         public async Task<int> PlayNextTrack()
         {
             int nextTrackDuration;
@@ -109,6 +122,7 @@ namespace Pjfm.WebClient.Services
             {
                 NotIncludeTracks = _recentlyPlayed,
                 RequestedAmount = amount,
+                TopTrackTermFilter = CurrentTermFilter,
             });
                     
             if (result.Data.Count > 0)
