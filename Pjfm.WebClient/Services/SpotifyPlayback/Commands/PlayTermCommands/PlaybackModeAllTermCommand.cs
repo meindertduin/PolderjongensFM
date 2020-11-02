@@ -2,12 +2,12 @@
 
 namespace Pjfm.WebClient.Services
 {
-    public class PlayModeTermOffCommand : ICommand
+    public class PlaybackModeAllTermCommand : ICommand
     {
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private TopTrackTermFilter _previousTermFilter;
 
-        public PlayModeTermOffCommand(ISpotifyPlaybackManager spotifyPlaybackManager)
+        public PlaybackModeAllTermCommand(ISpotifyPlaybackManager spotifyPlaybackManager)
         {
             _spotifyPlaybackManager = spotifyPlaybackManager;
         } 

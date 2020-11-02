@@ -20,22 +20,25 @@ namespace Pjfm.WebClient.Services
             _offCommands[0] = new PlaybackOffCommand(_spotifyPlaybackManager);
 
             _onCommands[1] = new PlaybackModeShortTermCommand(_spotifyPlaybackManager);
-            _offCommands[1] = new PlayModeTermOffCommand(_spotifyPlaybackManager);
+            _offCommands[1] = new NoCommand();
             
             _onCommands[2] = new PlaybackModeMediumTermCommand(_spotifyPlaybackManager);
-            _offCommands[2] = new PlaybackOffCommand(_spotifyPlaybackManager);
+            _offCommands[2] = new NoCommand();
             
             _onCommands[3] = new PlaybackModeLongTermCommand(_spotifyPlaybackManager);
-            _offCommands[3] = new PlaybackOffCommand(_spotifyPlaybackManager);
+            _offCommands[3] = new NoCommand();
             
             _onCommands[4] = new PlaybackModeShortMediumTermCommand(_spotifyPlaybackManager);
-            _offCommands[4] = new PlaybackOffCommand(_spotifyPlaybackManager);
+            _offCommands[4] = new NoCommand();
             
             _onCommands[5] = new PlaybackModeMediumLongTermCommand(_spotifyPlaybackManager);
-            _offCommands[5] = new PlaybackOffCommand(_spotifyPlaybackManager);
+            _offCommands[5] = new NoCommand();
             
             _onCommands[5] = new ResetPlaybackCommand(_spotifyPlaybackManager);
             _offCommands[5] = new NoCommand();
+
+            _onCommands[6] = new PlaybackModeAllTermCommand(_spotifyPlaybackManager);
+            _offCommands[6] = new NoCommand();
         }
 
         public void TurnOn(PlaybackControllerCommands command)
