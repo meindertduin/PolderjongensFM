@@ -34,6 +34,7 @@ namespace pjfm
             services.AddInfrastructure(Configuration, WebHostEnvironment);
             
             services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
+            services.AddSingleton<IPlaybackListenerManager, PlaybackListenerManager>();
 
             services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
             

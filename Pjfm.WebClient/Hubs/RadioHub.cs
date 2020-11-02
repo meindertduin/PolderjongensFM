@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
+using Pjfm.WebClient.Services;
 
 namespace pjfm.Hubs
 {
@@ -16,18 +17,19 @@ namespace pjfm.Hubs
     public class RadioHub : Hub
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
-        public RadioHub(UserManager<ApplicationUser> userManager, ISpotifyPlaybackManager spotifyPlaybackManager)
+        private readonly IPlaybackListenerManager _playbackListenerManager;
+
+        public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager)
         {
             _userManager = userManager;
-            _spotifyPlaybackManager = spotifyPlaybackManager;
+            _playbackListenerManager = playbackListenerManager;
         }
         
         public override async Task OnConnectedAsync()
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-            await _spotifyPlaybackManager.AddListener(user);
+            await _playbackListenerManager.AddListener(user);
             await base.OnConnectedAsync();
         }
 
@@ -35,7 +37,7 @@ namespace pjfm.Hubs
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-            _spotifyPlaybackManager.RemoveListener(user.Id);
+            _playbackListenerManager.RemoveListener(user.Id);
             await base.OnDisconnectedAsync(exception);
         }
     }
