@@ -128,7 +128,7 @@ namespace Pjfm.WebClient.Services
         {
             var synchedRequestData = GetSynchronisedRequestData(out int songIndex);
             await _spotifyPlayerService.Play(userId, accessToken, String.Empty, synchedRequestData);
-            for (int i = songIndex + 1; i < _recentlyPlayed.Count; i++)
+            for (int i = songIndex; i < _recentlyPlayed.Count; i++)
             {
                 await _spotifyPlayerService.AddTrackToQueue(userId, accessToken, _recentlyPlayed[i].Id);
             }
@@ -156,7 +156,7 @@ namespace Pjfm.WebClient.Services
 
                     requestInfo.Uris = new[] {$"spotify:track:{_recentlyPlayed[i].Id}"};
                     requestInfo.PositionMs = (int) songMilliseconds;
-                    index = 1;
+                    index = i;
                     break;
                 }
             }
