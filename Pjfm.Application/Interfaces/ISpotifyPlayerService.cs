@@ -8,5 +8,8 @@ namespace Pjfm.Domain.Interfaces
     {
         Task<HttpResponseMessage> Play(string userId, string accessToken, string deviceId,
             PlayRequestDto playRequestDto = null);
+
+        Task<HttpResponseMessage> AddTrackToQueue(string userId, string accessToken, string trackId,
+            string deviceId = null);
     }
 }

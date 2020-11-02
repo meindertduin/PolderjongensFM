@@ -1,33 +1,26 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
-using IdentityServer4.Models;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
-using Pjfm.WebClient.Services;
 
-namespace Pjfm.Infrastructure.Service
+namespace Pjfm.WebClient.Services
 {
     public class SpotifyPlaybackManager : ISpotifyPlaybackManager
     {
-        private int _tracksQueueLength = 3;
+        private int _initialQueueLength = 3;
 
         private DateTime _playerInitTime;
         
         private TopTrack _currentPlayingTrack;
         private List<TopTrack> _recentlyPlayed = new List<TopTrack>();
-        private Queue<TopTrack> _tracksQueue = new Queue<TopTrack>();
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
@@ -35,7 +28,7 @@ namespace Pjfm.Infrastructure.Service
         private static readonly ConcurrentDictionary<string, ApplicationUser> _connectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
-        private static List<IObserver<bool>> _observers = new List<IObserver<bool>>();
+        private static readonly List<IObserver<bool>> _observers = new List<IObserver<bool>>();
         
         private TrackTimer _timer;
 
@@ -63,7 +56,6 @@ namespace Pjfm.Infrastructure.Service
                 IsCurrentlyPlaying = false;
                 NotifyObserversPlayingStatus(IsCurrentlyPlaying);
             
-                _tracksQueue = new Queue<TopTrack>();
                 _recentlyPlayed = new List<TopTrack>();
             
                 // Todo: implement stopping playback on all devices
@@ -76,37 +68,44 @@ namespace Pjfm.Infrastructure.Service
             
             if (_recentlyPlayed.Count > 0)
             {
-                await AddRandomSongToQueue(1);
+                var randomTracks = await GetRandomTracks(1);
                 
-                var nextTrack = _tracksQueue.Dequeue();
-                nextTrackDuration = nextTrack.SongDurationMs;
-                
-                await SpotifyQueueNextTrack();
+                nextTrackDuration = randomTracks[0].SongDurationMs;
+
+                _recentlyPlayed.AddRange(randomTracks);
+                await SpotifyQueueNextTrack(randomTracks[0]);
             }
             else
             {
-                await AddRandomSongToQueue(_tracksQueueLength);
+                var randomTracks = await GetRandomTracks(_initialQueueLength);
                 
-                var nextTrack = _tracksQueue.Dequeue();
-                nextTrackDuration = nextTrack.SongDurationMs;
-                
-                await InitializePlayer(nextTrack);
+                nextTrackDuration = randomTracks[0].SongDurationMs;
+
+                _recentlyPlayed.AddRange(randomTracks);
+                await InitializePlayer(randomTracks);
             }
 
             return nextTrackDuration;
 
         }
 
-        private async Task InitializePlayer(TopTrack track)
+        private async Task InitializePlayer(List<TopTrack> tracks)
         {
             var responseTasks = new List<Task<HttpResponseMessage>>();
+
+            string[] uris = new string[tracks.Count];
+
+            for (int i = 0; i < tracks.Count; i++)
+            {
+                uris[i] = $"spotify:track:{tracks[i].Id}";
+            }
             
             foreach (var keyValuePair in _connectedUsers)
             {
                 var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty, 
                     new PlayRequestDto()
                 {
-                    Uris = new [] { $"spotify:track:{track.Id}"},
+                    Uris = uris,
                 });
                 responseTasks.Add(playTask);
             }
@@ -116,15 +115,27 @@ namespace Pjfm.Infrastructure.Service
         }
         
         
-        private async Task SpotifyQueueNextTrack()
+        private async Task SpotifyQueueNextTrack(TopTrack nextTrack)
         {
+            _recentlyPlayed.Add(nextTrack);
             
+            var responseTasks = new List<Task<HttpResponseMessage>>();
+
+            foreach (var keyValuePair in _connectedUsers)
+            {
+                var queueTask = _spotifyPlayerService.AddTrackToQueue(keyValuePair.Key,
+                    keyValuePair.Value.SpotifyAccessToken, nextTrack.Id);
+                
+                responseTasks.Add(queueTask);
+            }
+
+            await Task.WhenAll(responseTasks);
         }
 
         private async Task SynchWithCurrentPlayer(string userId, string accessToken)
         {
             var synchedRequestData = GetSynchronisedRequestData();
-            await  _spotifyPlayerService.Play(userId, accessToken, String.Empty, synchedRequestData);
+             await  _spotifyPlayerService.Play(userId, accessToken, String.Empty, synchedRequestData);
         }
 
         private PlayRequestDto GetSynchronisedRequestData()
@@ -133,6 +144,8 @@ namespace Pjfm.Infrastructure.Service
             var msPassed = timePassed.TotalMilliseconds;
 
             double timeIncremented = 0;
+            
+            var requestInfo = new PlayRequestDto();
 
             foreach (var track in _recentlyPlayed)
             {
@@ -143,46 +156,40 @@ namespace Pjfm.Infrastructure.Service
                 else
                 {
                     var songMilliseconds = msPassed - timeIncremented;
-                    return new PlayRequestDto()
-                    {
-                        Uris = new [] { $"spotify:track:{track.Id}"},
-                        PositionMs = (int) songMilliseconds,
-                    };
+
+                    requestInfo.Uris = new[] {$"spotify:track:{track.Id}"};
+                    requestInfo.PositionMs = (int) songMilliseconds;
+                    break;
                 }
             }
-
+            return requestInfo;
         }
 
-        private async Task AddRandomSongToQueue(int amount)
+        private async Task<List<TopTrack>> GetRandomTracks(int amount)
         {
-            try
+            using (var scope = _serviceProvider.CreateScope())
             {
-                using (var scope = _serviceProvider.CreateScope())
+                var tracks = new List<TopTrack>();
+                    
+                var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                var result = await _mediator.Send(new GetRandomTopTrackQuery()
                 {
-                    var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                    var result = await _mediator.Send(new GetRandomTopTrackQuery()
+                    NotIncludeTracks = _recentlyPlayed,
+                    RequestedAmount = amount,
+                });
+                    
+                if (result.Data.Count > 0)
+                {
+                    foreach (var topTrack in result.Data)
                     {
-                        NotIncludeTracks = _recentlyPlayed,
-                        RequestedAmount = amount,
-                    });
-                    if (result.Data.Count > 0)
-                    {
-                        foreach (var topTrack in result.Data)
-                        {
-                            _tracksQueue.Enqueue(topTrack);
-                        }
+                        tracks.Add(topTrack);
                     }
-                    else
-                    {
-                        _recentlyPlayed = new List<TopTrack>();
-                        await AddRandomSongToQueue(amount);
-                    }
+
+                    return tracks;
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+
+                _recentlyPlayed = new List<TopTrack>();
+                return await GetRandomTracks(amount);
             }
             
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Domain.Common;
+using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Application.Services
@@ -49,6 +51,26 @@ namespace Pjfm.Application.Services
             }
             
             return _httpClientService.SendAuthenticatedRequest(requestMessage, userId);
+        }
+
+        public Task<HttpResponseMessage> AddTrackToQueue(string userId, string accessToken, string trackId ,string deviceId = null)
+        {
+            var requestMessage = new HttpRequestMessage();
+            
+            requestMessage.Method = HttpMethod.Post;
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var requestUri = $"https://api.spotify.com/v1/me/player/queue?uri=spotify:track:{trackId}";
+            
+            if (string.IsNullOrEmpty(deviceId) == false)
+            {
+                requestUri.Concat($"&device_id={deviceId}");
+            }
+            
+            requestMessage.RequestUri = new Uri(requestUri);
+
+            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId);
+
+
         }
     }
 }
