@@ -11,5 +11,7 @@ namespace Pjfm.Domain.Interfaces
 
         Task<HttpResponseMessage> AddTrackToQueue(string userId, string accessToken, string trackId,
             string deviceId = null);
+
+        Task<HttpResponseMessage> SkipSong(string userId, string accessToken, string deviceId = null);
     }
 }

@@ -35,6 +35,7 @@ namespace pjfm
             
             services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
             services.AddSingleton<IPlaybackListenerManager, PlaybackListenerManager>();
+            
             services.AddTransient<IPlaybackController, PlaybackController>();
 
             services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);

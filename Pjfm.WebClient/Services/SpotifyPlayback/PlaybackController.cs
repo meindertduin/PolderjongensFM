@@ -7,8 +7,8 @@ namespace Pjfm.WebClient.Services
     {
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         
-        private readonly List<ICommand> _onCommands = new List<ICommand>();
-        private readonly List<ICommand> _offCommands = new List<ICommand>();
+        private readonly ICommand[] _onCommands = new ICommand[10];
+        private readonly ICommand[] _offCommands = new ICommand[10];
         private ICommand _undoCommand;
 
         public PlaybackController(ISpotifyPlaybackManager spotifyPlaybackManager)
@@ -30,15 +30,15 @@ namespace Pjfm.WebClient.Services
             
             _onCommands[4] = new PlaybackModeShortMediumTermCommand(_spotifyPlaybackManager);
             _offCommands[4] = new NoCommand();
-            
-            _onCommands[5] = new PlaybackModeMediumLongTermCommand(_spotifyPlaybackManager);
-            _offCommands[5] = new NoCommand();
-            
+
             _onCommands[5] = new ResetPlaybackCommand(_spotifyPlaybackManager);
             _offCommands[5] = new NoCommand();
 
             _onCommands[6] = new PlaybackModeAllTermCommand(_spotifyPlaybackManager);
             _offCommands[6] = new NoCommand();
+            
+            _onCommands[7] = new PlaybackModeMediumLongTermCommand(_spotifyPlaybackManager);
+            _offCommands[7] = new NoCommand();
         }
 
         public void TurnOn(PlaybackControllerCommands command)

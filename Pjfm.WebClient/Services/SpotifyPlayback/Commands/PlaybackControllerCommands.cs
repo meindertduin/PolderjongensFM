@@ -7,7 +7,8 @@
         MediumTermFilterMode = 2,
         LongTermFilterMode = 3,
         ShortMediumTermFilterMode = 4,
-        MediumLongTermFilterMode = 5,
+        ResetPlaybackCommand = 5,
         AllTermFilterMode = 6,
+        MediumLongTermFilterMode = 7,
     }
 }

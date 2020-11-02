@@ -6,7 +6,6 @@ using Pjfm.WebClient.Services;
 
 namespace pjfm.Controllers
 {
-    [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
     [ApiController]
     [Route("api/spotiy/playback")]
     public class SpotifyWebPlaybackController : ControllerBase
@@ -22,14 +21,14 @@ namespace pjfm.Controllers
         public IActionResult TurnOnPlaybackController()
         {
             _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
-            return Ok();
+            return Accepted();
         }
 
         [HttpPut("off")]
         public IActionResult TurnOffPlaybackController()
         {
             _playbackController.TurnOff(PlaybackControllerCommands.TrackPlayerOnOff);
-            return Ok();
+            return Accepted();
         }
 
         [HttpPut("term")]
@@ -50,7 +49,7 @@ namespace pjfm.Controllers
                     _playbackController.TurnOn(PlaybackControllerCommands.ShortMediumTermFilterMode);
                     break;
                 case TopTrackTermFilter.MediumLongTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.MediumTermFilterMode);
+                    _playbackController.TurnOn(PlaybackControllerCommands.MediumLongTermFilterMode);
                     break;
                 case TopTrackTermFilter.AllTerms:
                     _playbackController.TurnOn(PlaybackControllerCommands.AllTermFilterMode);
@@ -59,7 +58,14 @@ namespace pjfm.Controllers
                     return BadRequest();
             }
 
-            return Ok();
+            return Accepted();
+        }
+
+        [HttpPut("reset")]
+        public IActionResult ResetPlayer()
+        {
+            _playbackController.TurnOn(PlaybackControllerCommands.ResetPlaybackCommand);
+            return Accepted();
         }
     }
 }

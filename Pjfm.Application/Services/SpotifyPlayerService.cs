@@ -69,8 +69,22 @@ namespace Pjfm.Application.Services
             requestMessage.RequestUri = new Uri(requestUri);
 
             return _httpClientService.SendAuthenticatedRequest(requestMessage, userId);
+        }
 
+        public Task<HttpResponseMessage> SkipSong(string userId, string accessToken, string deviceId = null)
+        {
+            var requestMessage = new HttpRequestMessage();
+            
+            requestMessage.Method = HttpMethod.Post;
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var requestUri = $"https://api.spotify.com/v1/me/player/next";
 
+            if (string.IsNullOrEmpty(deviceId) == false)
+            {
+                requestUri.Concat($"?device_id={deviceId}");
+            }
+
+            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId);
         }
     }
 }

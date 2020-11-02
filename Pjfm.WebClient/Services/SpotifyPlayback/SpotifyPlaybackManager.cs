@@ -68,7 +68,23 @@ namespace Pjfm.WebClient.Services
         public async Task ResetPlayer(int afterDelay)
         {
             await StopPlayingTracks(afterDelay);
+            await SkipSongsForAllListeners(3);
             await StartPlayingTracks();
+        }
+
+        public Task SkipSongsForAllListeners(int skipAmount)
+        {
+            List<Task> skipTask = new List<Task>();
+            
+            foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
+            {
+                for (int i = 0; i < skipAmount; i++)
+                {
+                    var playTask = _spotifyPlayerService.SkipSong(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken);
+                    skipTask.Add(playTask);
+                }
+            }
+            return Task.WhenAll(skipTask);
         }
 
         public async Task<int> PlayNextTrack()
@@ -222,7 +238,7 @@ namespace Pjfm.WebClient.Services
 
                     requestInfo.Uris = new[] {$"spotify:track:{_recentlyPlayed[i].Id}"};
                     requestInfo.PositionMs = (int) songMilliseconds;
-                    index = i;
+                    index = i + 1;
                     break;
                 }
             }
