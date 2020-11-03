@@ -1,5 +1,5 @@
 ﻿import {userSettings} from "@/common/types";
 
 export const defaultSettings: userSettings = {
-    darkMode: false,    
+    darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,    
 }
