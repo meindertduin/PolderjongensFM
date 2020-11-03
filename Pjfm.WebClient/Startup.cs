@@ -109,6 +109,7 @@ namespace pjfm
             {
                 endpoints.MapHub<RadioHub>("/radio");
                 endpoints.MapHub<LiveChatHub>("/livechat");
+                endpoints.MapHub<DjHub>("/radio/dj");
                 
                 endpoints.MapControllerRoute(
                     name: "default",
