@@ -23,7 +23,10 @@
             const connection = new HubConnectionBuilder()
                 .withUrl("/radio")
                 .build();
-            
+
+            connection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
+                console.log(trackInfo);
+            })
             connection.start()
                 .then(() => console.log("connection started"));
             

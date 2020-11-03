@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Domain.Entities;
@@ -14,16 +15,15 @@ namespace Pjfm.WebClient.Services
         
         private static readonly List<IObserver<bool>> _observers = new List<IObserver<bool>>();
         
-        private TrackTimer _timer;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly IPlaybackQueue _playbackQueue;
 
+        private Timer _trackTimer;
+        private AutoResetEvent _trackTimerautoEvent;
         public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, IPlaybackQueue playbackQueue)
         {
             _spotifyPlayerService = spotifyPlayerService;
             _playbackQueue = playbackQueue;
-
-            _timer = new TrackTimer(this);
         }
 
         public bool IsCurrentlyPlaying { get; private set; }
@@ -35,14 +35,36 @@ namespace Pjfm.WebClient.Services
         {
             IsCurrentlyPlaying = true;
             NotifyObserversPlayingStatus(IsCurrentlyPlaying);
+
+            var nextTrackDuration = await PlayNextTrack();
+            CreateTimer();
+            
+            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+            _trackTimerautoEvent.WaitOne();
         }
 
+        private void CreateTimer()
+        {
+            _trackTimerautoEvent = new AutoResetEvent(false);
+            _trackTimer = new Timer(TimerDone, new AutoResetEvent(false), 0, 0);
+        }
+        
+        private async void TimerDone(object stateInfo)
+        {
+            _trackTimerautoEvent.Set();
+            var nextTrackDuration = await PlayNextTrack();
+            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+            _trackTimerautoEvent.WaitOne();
+        }
+        
         public async Task StopPlayingTracks(int afterDelay)
         {
             await Task.Delay(afterDelay);
             IsCurrentlyPlaying = false;
             NotifyObserversPlayingStatus(IsCurrentlyPlaying);
             _playbackQueue.Reset();
+            
+            await _trackTimer.DisposeAsync();
         }
         
         public async Task ResetPlayer(int afterDelay)

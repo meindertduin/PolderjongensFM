@@ -20,15 +20,17 @@ namespace pjfm.Hubs
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly IPlaybackController _playbackController;
-        
+        private readonly IHubContext<RadioHub> _hubContext;
+
         private IDisposable _unsubscriber;
 
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackController playbackController)
+            IPlaybackController playbackController, IHubContext<RadioHub> hubContext)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
             _playbackController = playbackController;
+            _hubContext = hubContext;
 
             _unsubscriber = _playbackController.SubscribeToPlayingStatus(this);
         }
@@ -71,7 +73,7 @@ namespace pjfm.Hubs
                     StartingTime = playingTrackInfo.Item2,
                 };
 
-                Clients.All.SendAsync("ReceivePlayingTrackInfo", trackInfo);
+                _hubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", trackInfo);
             }
         }
     }

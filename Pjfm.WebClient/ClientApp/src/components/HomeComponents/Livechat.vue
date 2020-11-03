@@ -67,6 +67,7 @@
                     this.socketConnection?.on("ReceiveMessage", (message: liveChatMessageModel) => {
                         this.addMessage(message);
                     });
+                    
                     this.socketConnection?.on("LoadMessages", (messages: Array<liveChatMessageModel>) => {
                         messages.forEach(m => this.addMessage(m));
                     })
