@@ -8,8 +8,6 @@ namespace Pjfm.Domain.Interfaces
     public interface ISpotifyPlaybackManager : IObservable<bool>
     {
         bool IsCurrentlyPlaying { get; }
-        TopTrackTermFilter CurrentTermFilter { get; }
-        void SetTermFilter(TopTrackTermFilter termFilter);
         Task ResetPlayer(int afterDelay);
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();

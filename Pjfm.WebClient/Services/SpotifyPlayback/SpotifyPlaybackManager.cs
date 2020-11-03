@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,34 +16,30 @@ namespace Pjfm.WebClient.Services
 {
     public class SpotifyPlaybackManager : ISpotifyPlaybackManager
     {
-        private int _initialQueueLength = 3;
+        private int _fillerQueueLength = 50;
 
-        private DateTime _playbackInitTime;
+        private DateTime _trackStartTime;
         
-        private TopTrack _currentPlayingTrack;
-        private List<TopTrack> _recentlyPlayed = new List<TopTrack>();
-
         private int _nextTrackIndex = 0;
 
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ISpotifyPlayerService _spotifyPlayerService;
+        private TopTrack _currentPlayingTrack;
         
         private static readonly List<IObserver<bool>> _observers = new List<IObserver<bool>>();
         
         private TrackTimer _timer;
+        private readonly ISpotifyPlayerService _spotifyPlayerService;
+        private readonly IPlaybackQueue _playbackQueue;
 
-        public SpotifyPlaybackManager(IServiceProvider serviceProvider, ISpotifyPlayerService spotifyPlayerService)
+        public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, IPlaybackQueue playbackQueue)
         {
-            _serviceProvider = serviceProvider;
             _spotifyPlayerService = spotifyPlayerService;
-            
+            _playbackQueue = playbackQueue;
+
             _timer = new TrackTimer(this);
         }
 
         public bool IsCurrentlyPlaying { get; private set; }
         
-        public TopTrackTermFilter CurrentTermFilter { get; private set; } = TopTrackTermFilter.AllTerms;
-
         public async Task StartPlayingTracks()
         {
             IsCurrentlyPlaying = true;
@@ -54,119 +51,34 @@ namespace Pjfm.WebClient.Services
             await Task.Delay(afterDelay);
             IsCurrentlyPlaying = false;
             NotifyObserversPlayingStatus(IsCurrentlyPlaying);
-            
-            _recentlyPlayed = new List<TopTrack>();
-            
-            // Todo: implement stopping playback on all devices
+            _playbackQueue.Reset();
         }
-
-        public void SetTermFilter(TopTrackTermFilter termFilter)
-        {
-            CurrentTermFilter = termFilter;
-        }
+        
         
         public async Task ResetPlayer(int afterDelay)
         {
             await StopPlayingTracks(afterDelay);
-            await SkipSongsForAllListeners(3);
             await StartPlayingTracks();
         }
-
-        public Task SkipSongsForAllListeners(int skipAmount)
-        {
-            List<Task> skipTask = new List<Task>();
-            
-            foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
-            {
-                for (int i = 0; i < skipAmount; i++)
-                {
-                    var playTask = _spotifyPlayerService.SkipSong(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken);
-                    skipTask.Add(playTask);
-                }
-            }
-            return Task.WhenAll(skipTask);
-        }
-
+        
         public async Task<int> PlayNextTrack()
         {
-            int nextTrackDuration;
+            if (_playbackQueue.RecentlyPlayedCount() <= 0)
+            {
+                await _playbackQueue.AddToFillerQueue(_fillerQueueLength);
+            }
             
-            if (_recentlyPlayed.Count > 0)
-            {
-                nextTrackDuration = await QueueNextTrack();
-            }
-            else
-            {
-                nextTrackDuration = await StartPlayer();
-            }
-
-            return nextTrackDuration;
-        }
-        
-        private async Task<int> QueueNextTrack()
-        {
-            var randomTracks = await GetRandomTracks(1);
-
-            int nextTrackDuration = _recentlyPlayed[_nextTrackIndex].SongDurationMs;
-            _nextTrackIndex += 1;
-
-            _recentlyPlayed.AddRange(randomTracks);
-            await SpotifyQueueNextTrackForAll(randomTracks[0]);
-            return nextTrackDuration;
-        }
-        
-        private async Task<int> StartPlayer()
-        {
-            var randomTracks = await GetRandomTracks(_initialQueueLength);
-
-            int nextTrackDuration = randomTracks[0].SongDurationMs;
-            _nextTrackIndex = 1;
-
-            _recentlyPlayed.AddRange(randomTracks);
-            await InitializeTracks(randomTracks);
-            return nextTrackDuration;
-        }
-        
-        private async Task<List<TopTrack>> GetRandomTracks(int amount)
-        {
-            using var scope = _serviceProvider.CreateScope();
+            var nextTrack = await _playbackQueue.GetNextQueuedTrack();
             
-            var tracks = new List<TopTrack>();
-                    
-            var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            var result = await _mediator.Send(new GetRandomTopTrackQuery()
-            {
-                NotIncludeTracks = _recentlyPlayed,
-                RequestedAmount = amount,
-                TopTrackTermFilter = CurrentTermFilter,
-            });
-                    
-            if (result.Data.Count > 0)
-            {
-                foreach (var topTrack in result.Data)
-                {
-                    tracks.Add(topTrack);
-                }
+            _currentPlayingTrack = nextTrack;
+            _trackStartTime = DateTime.Now;
 
-                return tracks;
-            }
-
-            _recentlyPlayed = new List<TopTrack>();
-            return await GetRandomTracks(amount);
+            await PlayTrackForAll(nextTrack);
+            
+            return nextTrack.SongDurationMs;
         }
         
-        private async Task InitializeTracks(List<TopTrack> tracks)
-        {
-            _playbackInitTime = DateTime.Now;
-            await StartPlayTrackForAll(tracks[0]);
-
-            for (int i = 1; i < tracks.Count; i++)
-            {
-                await SpotifyQueueNextTrackForAll(tracks[i]);
-            }
-        }
-
-        private async Task StartPlayTrackForAll(TopTrack track)
+        private async Task PlayTrackForAll(TopTrack track)
         {
             var responseTasks = new List<Task<HttpResponseMessage>>();
 
@@ -182,69 +94,26 @@ namespace Pjfm.WebClient.Services
             
             await Task.WhenAll(responseTasks);
         }
-
-        private async Task SpotifyQueueNextTrackForAll(TopTrack nextTrack)
-        {
-            var responseTasks = new List<Task<HttpResponseMessage>>();
-
-            foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
-            {
-                var queueTask = _spotifyPlayerService.AddTrackToQueue(keyValuePair.Key,
-                    keyValuePair.Value.SpotifyAccessToken, nextTrack.Id);
-                
-                responseTasks.Add(queueTask);
-            }
-
-            await Task.WhenAll(responseTasks);
-        }
-
+        
         public async Task SynchWithCurrentPlayer(string userId, string accessToken)
         {
-            var synchedRequestData = GetSynchronisedRequestData(out int songIndex);
+            var synchedRequestData = GetSynchronisedRequestData();
             await _spotifyPlayerService.Play(userId, accessToken, String.Empty, synchedRequestData);
-            for (int i = songIndex; i < _recentlyPlayed.Count; i++)
-            {
-                await _spotifyPlayerService.AddTrackToQueue(userId, accessToken, _recentlyPlayed[i].Id);
-            }
         }
 
-        private PlayRequestDto GetSynchronisedRequestData(out int songIndex)
+        private PlayRequestDto GetSynchronisedRequestData()
         {
-            var timePassed = DateTime.Now - _playbackInitTime;
-            var msPassed = timePassed.TotalMilliseconds;
-            int index = 0;
+            var timeSpan = DateTime.Now - _trackStartTime;
 
-            double timeIncremented = 0;
-            
-            var requestInfo = new PlayRequestDto();
-
-            songIndex = GetCurrentPlayingTrackInfo(timeIncremented, msPassed, requestInfo, index);
+            var requestInfo = new PlayRequestDto()
+            {
+                Uris = new[] {$"spotify:track:{_currentPlayingTrack.Id}"},
+                PositionMs = (int) timeSpan.TotalMilliseconds,
+            };
             
             return requestInfo;
         }
-
-        private int GetCurrentPlayingTrackInfo(double timeIncremented, double msPassed, PlayRequestDto requestInfo,
-            int index)
-        {
-            for (int i = 0; i < _recentlyPlayed.Count; i++)
-            {
-                if (timeIncremented + _recentlyPlayed[i].SongDurationMs < msPassed)
-                {
-                    timeIncremented += _recentlyPlayed[i].SongDurationMs;
-                }
-                else
-                {
-                    var songMilliseconds = msPassed - timeIncremented;
-
-                    requestInfo.Uris = new[] {$"spotify:track:{_recentlyPlayed[i].Id}"};
-                    requestInfo.PositionMs = (int) songMilliseconds;
-                    index = i + 1;
-                    break;
-                }
-            }
-            return index;
-        }
-
+        
         public IDisposable Subscribe(IObserver<bool> observer)
         {
             if (_observers.Contains(observer) == false)

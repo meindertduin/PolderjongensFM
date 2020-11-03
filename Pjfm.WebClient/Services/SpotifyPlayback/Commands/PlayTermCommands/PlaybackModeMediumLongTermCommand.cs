@@ -4,23 +4,23 @@ namespace Pjfm.WebClient.Services
 {
     public class PlaybackModeMediumLongTermCommand : ICommand
     {
-        private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
+        private readonly IPlaybackQueue _playbackQueue;
         private TopTrackTermFilter _previousTermFilter;
 
-        public PlaybackModeMediumLongTermCommand(ISpotifyPlaybackManager spotifyPlaybackManager)
+        public PlaybackModeMediumLongTermCommand(IPlaybackQueue playbackQueue)
         {
-            _spotifyPlaybackManager = spotifyPlaybackManager;
+            _playbackQueue = playbackQueue;
         } 
         
         public void Execute()
         {
-            _previousTermFilter = _spotifyPlaybackManager.CurrentTermFilter;
-            _spotifyPlaybackManager.SetTermFilter(TopTrackTermFilter.MediumLongTerm);
+            _previousTermFilter = _playbackQueue.CurrentTermFilter;
+            _playbackQueue.SetTermFilter(TopTrackTermFilter.MediumLongTerm);
         }
 
         public void Undo()
         {
-            _spotifyPlaybackManager.SetTermFilter(_previousTermFilter);
+            _playbackQueue.SetTermFilter(_previousTermFilter);
         }
     }
 }

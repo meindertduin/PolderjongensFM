@@ -13,7 +13,6 @@ namespace Pjfm.Domain.Entities
         public int SongDurationMs { get; set; }
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
-
         public DateTime TimeAdded { get; set; }
     }
 }
