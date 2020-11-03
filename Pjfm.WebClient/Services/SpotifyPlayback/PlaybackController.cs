@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.WebClient.Services
@@ -60,6 +62,29 @@ namespace Pjfm.WebClient.Services
         {
             _undoCommand.Execute();
         }
-        
+
+        public void AddPriorityTrack(TopTrack track)
+        {
+            _playbackQueue.AddPriorityTrack(track);
+        }
+
+        public List<TopTrack> GetPriorityQueueTracks()
+        {
+            return _playbackQueue.GetPriorityQueueTracks();
+        }
+
+        public List<TopTrack> GetFillerQueueTracks()
+        {
+            return _playbackQueue.GetFillerQueueTracks();
+        }
+
+        public Tuple<TopTrack, DateTime> GetPlayingTrackInfo()
+        {
+            var result = new Tuple<TopTrack, DateTime>(
+                _spotifyPlaybackManager.CurrentPlayingTrack,
+                _spotifyPlaybackManager.CurrentTrackStartTime);
+
+            return result;
+        }
     }
 }

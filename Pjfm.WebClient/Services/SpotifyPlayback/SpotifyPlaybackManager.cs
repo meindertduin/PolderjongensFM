@@ -17,12 +17,6 @@ namespace Pjfm.WebClient.Services
     public class SpotifyPlaybackManager : ISpotifyPlaybackManager
     {
         private int _fillerQueueLength = 50;
-
-        private DateTime _trackStartTime;
-        
-        private int _nextTrackIndex = 0;
-
-        private TopTrack _currentPlayingTrack;
         
         private static readonly List<IObserver<bool>> _observers = new List<IObserver<bool>>();
         
@@ -40,6 +34,9 @@ namespace Pjfm.WebClient.Services
 
         public bool IsCurrentlyPlaying { get; private set; }
         
+        public DateTime CurrentTrackStartTime { get; private set; }
+        public TopTrack CurrentPlayingTrack { get; private set; }
+        
         public async Task StartPlayingTracks()
         {
             IsCurrentlyPlaying = true;
@@ -53,7 +50,6 @@ namespace Pjfm.WebClient.Services
             NotifyObserversPlayingStatus(IsCurrentlyPlaying);
             _playbackQueue.Reset();
         }
-        
         
         public async Task ResetPlayer(int afterDelay)
         {
@@ -70,8 +66,8 @@ namespace Pjfm.WebClient.Services
             
             var nextTrack = await _playbackQueue.GetNextQueuedTrack();
             
-            _currentPlayingTrack = nextTrack;
-            _trackStartTime = DateTime.Now;
+            CurrentPlayingTrack = nextTrack;
+            CurrentTrackStartTime = DateTime.Now;
 
             await PlayTrackForAll(nextTrack);
             
@@ -103,11 +99,11 @@ namespace Pjfm.WebClient.Services
 
         private PlayRequestDto GetSynchronisedRequestData()
         {
-            var timeSpan = DateTime.Now - _trackStartTime;
+            var timeSpan = DateTime.Now - CurrentTrackStartTime;
 
             var requestInfo = new PlayRequestDto()
             {
-                Uris = new[] {$"spotify:track:{_currentPlayingTrack.Id}"},
+                Uris = new[] {$"spotify:track:{CurrentPlayingTrack.Id}"},
                 PositionMs = (int) timeSpan.TotalMilliseconds,
             };
             
