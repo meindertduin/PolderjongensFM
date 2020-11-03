@@ -14,7 +14,7 @@ namespace Pjfm.WebClient.Services
         
         private object _timerSetLock = new object();
 
-        private bool isPlaying = false;
+        private bool _isPlaying = false;
         
         public TrackTimer(SpotifyPlaybackManager spotifyPlaybackManager)
         {
@@ -24,7 +24,7 @@ namespace Pjfm.WebClient.Services
         
         private async Task StartPlaying(CancellationToken token)
         {
-            isPlaying = true;
+            _isPlaying = true;
             
             while (token.IsCancellationRequested == false)
             {
@@ -47,16 +47,16 @@ namespace Pjfm.WebClient.Services
         {
             lock (_timerSetLock)
             {
-                if (value && isPlaying == false)
+                if (value && _isPlaying == false)
                 {
                     _cts.Cancel();
                     _cts = new CancellationTokenSource();
                     Task.Run(() => StartPlaying(_cts.Token));
                 }
-                else
+                else if (value == false && _isPlaying)
                 {
                     _cts.Cancel();
-                    isPlaying = false;
+                    _isPlaying = false;
                 }
             }
         }

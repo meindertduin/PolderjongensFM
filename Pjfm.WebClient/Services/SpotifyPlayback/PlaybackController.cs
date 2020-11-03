@@ -86,5 +86,10 @@ namespace Pjfm.WebClient.Services
 
             return result;
         }
+
+        public IDisposable SubscribeToPlayingStatus(IObserver<bool> observer)
+        {
+            return _spotifyPlaybackManager.Subscribe(observer);
+        }
     }
 }

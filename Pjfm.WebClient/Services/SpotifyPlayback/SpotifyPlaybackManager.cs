@@ -64,6 +64,7 @@ namespace Pjfm.WebClient.Services
             CurrentTrackStartTime = DateTime.Now;
 
             await PlayTrackForAll(nextTrack);
+            NotifyObserversPlayingStatus(IsCurrentlyPlaying);
             
             return nextTrack.SongDurationMs;
         }

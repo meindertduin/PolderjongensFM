@@ -13,5 +13,6 @@ namespace Pjfm.WebClient.Services
         List<TopTrack> GetPriorityQueueTracks();
         List<TopTrack> GetFillerQueueTracks();
         Tuple<TopTrack, DateTime> GetPlayingTrackInfo();
+        IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
     }
 }
