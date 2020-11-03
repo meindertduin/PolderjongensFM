@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
-using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 

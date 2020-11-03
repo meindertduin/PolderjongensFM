@@ -11,6 +11,8 @@ namespace Pjfm.WebClient.Services
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private IDisposable _unsubscriber;
         private CancellationTokenSource _cts = new CancellationTokenSource();
+        
+        private object _timerSetLock = new object();
 
         private bool isPlaying = false;
         
@@ -43,16 +45,19 @@ namespace Pjfm.WebClient.Services
 
         public void OnNext(bool value)
         {
-            if (value && isPlaying == false)
+            lock (_timerSetLock)
             {
-                _cts.Cancel();
-                _cts = new CancellationTokenSource();
-                Task.Run(() => StartPlaying(_cts.Token));
-            }
-            else
-            {
-                _cts.Cancel();
-                isPlaying = false;
+                if (value && isPlaying == false)
+                {
+                    _cts.Cancel();
+                    _cts = new CancellationTokenSource();
+                    Task.Run(() => StartPlaying(_cts.Token));
+                }
+                else
+                {
+                    _cts.Cancel();
+                    isPlaying = false;
+                }
             }
         }
     }
