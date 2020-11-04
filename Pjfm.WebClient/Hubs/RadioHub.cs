@@ -15,24 +15,18 @@ using Pjfm.WebClient.Services;
 namespace pjfm.Hubs
 {
     [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-    public class RadioHub : Hub, IObserver<bool>
+    public class RadioHub : Hub
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlaybackListenerManager _playbackListenerManager;
-        private readonly IPlaybackController _playbackController;
-        private readonly IHubContext<RadioHub> _hubContext;
-
-        private IDisposable _unsubscriber;
+        private readonly IPlaybackEventTransmitter _playbackEventTransmitter;
 
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackController playbackController, IHubContext<RadioHub> hubContext)
+            IPlaybackEventTransmitter playbackEventTransmitter)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
-            _playbackController = playbackController;
-            _hubContext = hubContext;
-
-            _unsubscriber = _playbackController.SubscribeToPlayingStatus(this);
+            _playbackEventTransmitter = playbackEventTransmitter;
         }
         
         public override async Task OnConnectedAsync()
@@ -50,31 +44,6 @@ namespace pjfm.Hubs
             _playbackListenerManager.RemoveListener(user.Id);
             await base.OnDisconnectedAsync(exception);
         }
-
-        public void OnCompleted()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnError(Exception error)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnNext(bool value)
-        {
-            if (value)
-            {
-                var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
-                
-                var trackInfo = new PlayerUpdateInfoModel
-                {
-                    CurrentPlayingTrack = playingTrackInfo.Item1,
-                    StartingTime = playingTrackInfo.Item2,
-                };
-
-                _hubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", trackInfo);
-            }
-        }
+        
     }
 }

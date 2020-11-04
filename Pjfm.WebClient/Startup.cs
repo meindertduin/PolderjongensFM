@@ -40,6 +40,7 @@ namespace pjfm
             services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
             services.AddSingleton<IPlaybackListenerManager, PlaybackListenerManager>();
             services.AddSingleton<IPlaybackQueue, PlaybackQueue>();
+            services.AddSingleton<IPlaybackEventTransmitter, PlaybackEventTransmitter>();
             
             services.AddTransient<IPlaybackController, PlaybackController>();
 

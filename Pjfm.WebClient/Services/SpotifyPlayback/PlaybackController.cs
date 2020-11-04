@@ -10,6 +10,7 @@ namespace Pjfm.WebClient.Services
     {
         private readonly IPlaybackQueue _playbackQueue;
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
+        private readonly IPlaybackEventTransmitter _playbackEventTransmitter;
 
         private readonly ICommand[] _onCommands = new ICommand[10];
         private readonly ICommand[] _offCommands = new ICommand[10];
@@ -19,7 +20,7 @@ namespace Pjfm.WebClient.Services
         {
             _playbackQueue = playbackQueue;
             _spotifyPlaybackManager = spotifyPlaybackManager;
-            
+
             _undoCommand = new NoCommand();
 
             _onCommands[0] = new PlaybackOnCommand(_spotifyPlaybackManager);
@@ -48,6 +49,9 @@ namespace Pjfm.WebClient.Services
             
             _onCommands[8] = new PlaybackSkipCommand(_spotifyPlaybackManager);
             _offCommands[8] = new NoCommand();
+            
+            
+
         }
 
         public void TurnOn(PlaybackControllerCommands command)
