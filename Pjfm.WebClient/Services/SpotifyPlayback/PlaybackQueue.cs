@@ -47,7 +47,7 @@ namespace Pjfm.WebClient.Services
             _priorityQueue.Enqueue(track);
         }
 
-        public void AddSecondary(TrackDto track)
+        public void AddSecondaryTrack(TrackDto track)
         {
             _secondaryQueue.Enqueue(track);
         }
