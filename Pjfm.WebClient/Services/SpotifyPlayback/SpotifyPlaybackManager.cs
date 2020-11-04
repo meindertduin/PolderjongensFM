@@ -34,7 +34,6 @@ namespace Pjfm.WebClient.Services
         public async Task StartPlayingTracks()
         {
             IsCurrentlyPlaying = true;
-            NotifyObserversPlayingStatus(IsCurrentlyPlaying);
 
             var nextTrackDuration = await PlayNextTrack();
             CreateTimer();
