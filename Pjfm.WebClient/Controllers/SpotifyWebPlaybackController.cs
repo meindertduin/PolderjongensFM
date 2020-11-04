@@ -90,5 +90,12 @@ namespace pjfm.Controllers
 
             return Ok(tracks);
         }
+
+        [HttpPut("mod/skip")]
+        public IActionResult SkipCurrentTrack()
+        {
+            _playbackController.TurnOn(PlaybackControllerCommands.TrackSkip);
+            return Accepted();
+        }
     }
 }

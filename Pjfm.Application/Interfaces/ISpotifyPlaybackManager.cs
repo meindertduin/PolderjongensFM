@@ -12,7 +12,7 @@ namespace Pjfm.Domain.Interfaces
         bool IsCurrentlyPlaying { get; }
         DateTime CurrentTrackStartTime { get; }
         TrackDto CurrentPlayingTrack { get; }
-        Task ResetPlayer(int afterDelay);
+        Task SkipTrack();
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();
         Task StopPlayingTracks(int afterDelay);

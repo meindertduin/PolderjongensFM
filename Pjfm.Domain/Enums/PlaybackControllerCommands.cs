@@ -10,5 +10,6 @@
         ResetPlaybackCommand = 5,
         AllTermFilterMode = 6,
         MediumLongTermFilterMode = 7,
+        TrackSkip = 8,
     }
 }

@@ -19,7 +19,7 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackQueue _playbackQueue;
 
         private Timer _trackTimer;
-        private AutoResetEvent _trackTimerautoEvent;
+        private AutoResetEvent _trackTimerAutoEvent;
         public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, IPlaybackQueue playbackQueue)
         {
             _spotifyPlayerService = spotifyPlayerService;
@@ -39,21 +39,21 @@ namespace Pjfm.WebClient.Services
             CreateTimer();
             
             _trackTimer.Change(nextTrackDuration, nextTrackDuration);
-            _trackTimerautoEvent.WaitOne();
+            _trackTimerAutoEvent.WaitOne();
         }
 
         private void CreateTimer()
         {
-            _trackTimerautoEvent = new AutoResetEvent(false);
+            _trackTimerAutoEvent = new AutoResetEvent(false);
             _trackTimer = new Timer(TimerDone, new AutoResetEvent(false), 0, 0);
         }
         
         private async void TimerDone(object stateInfo)
         {
-            _trackTimerautoEvent.Set();
+            _trackTimerAutoEvent.Set();
             var nextTrackDuration = await PlayNextTrack();
             _trackTimer.Change(nextTrackDuration, nextTrackDuration);
-            _trackTimerautoEvent.WaitOne();
+            _trackTimerAutoEvent.WaitOne();
         }
         
         public async Task StopPlayingTracks(int afterDelay)
@@ -64,11 +64,16 @@ namespace Pjfm.WebClient.Services
             
             await _trackTimer.DisposeAsync();
         }
-        
-        public async Task ResetPlayer(int afterDelay)
+
+        public async Task SkipTrack()
         {
-            await StopPlayingTracks(afterDelay);
-            await StartPlayingTracks();
+            await _trackTimer.DisposeAsync();
+            var nextTrackDuration = await PlayNextTrack();
+            
+            CreateTimer();
+            
+            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+            _trackTimerAutoEvent.WaitOne();
         }
         
         public async Task<int> PlayNextTrack()

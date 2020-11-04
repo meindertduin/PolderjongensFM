@@ -45,6 +45,9 @@ namespace Pjfm.WebClient.Services
             
             _onCommands[7] = new PlaybackModeMediumLongTermCommand(_playbackQueue);
             _offCommands[7] = new NoCommand();
+            
+            _onCommands[8] = new PlaybackSkipCommand(_spotifyPlaybackManager);
+            _offCommands[8] = new NoCommand();
         }
 
         public void TurnOn(PlaybackControllerCommands command)
