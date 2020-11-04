@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Spotify.Queries;
 using Pjfm.Domain.Entities;
+using Pjfm.Domain.Enums;
 
 namespace Pjfm.WebClient.Services
 {
@@ -93,7 +94,7 @@ namespace Pjfm.WebClient.Services
             {
                 NotIncludeTracks = _recentlyPlayed,
                 RequestedAmount = amount,
-                TopTrackTermFilter = CurrentTermFilter,
+                TopTrackTermFilter = CurrentTermFilter.ConvertToTopTrackTerms(),
             });
 
             foreach (var fillerTrack in result.Data)
@@ -101,5 +102,6 @@ namespace Pjfm.WebClient.Services
                 _fillerQueue.Enqueue(fillerTrack);
             }
         }
+        
     }
 }

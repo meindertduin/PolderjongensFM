@@ -61,7 +61,6 @@ namespace Pjfm.WebClient.Services
         {
             await Task.Delay(afterDelay);
             IsCurrentlyPlaying = false;
-            NotifyObserversPlayingStatus(IsCurrentlyPlaying);
             _playbackQueue.Reset();
             
             await _trackTimer.DisposeAsync();
