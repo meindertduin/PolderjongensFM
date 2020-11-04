@@ -9,7 +9,7 @@
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
-    import {HubConnectionBuilder, TransferFormat, LogLevel} from "@microsoft/signalr";
+    import {HubConnectionBuilder, TransferFormat, LogLevel, HubConnection} from "@microsoft/signalr";
 
     @Component({
         name: 'Radio',
@@ -19,17 +19,22 @@
             return this.$store.getters['oidcStore/oidcIsAuthenticated'];
         }
         
-        connect(){
-            const connection = new HubConnectionBuilder()
+        private radioConnection: HubConnection | null = null; 
+        
+        async connect() {
+            if (this.radioConnection != null) {
+                await this.radioConnection.stop();
+            }
+
+            this.radioConnection = new HubConnectionBuilder()
                 .withUrl("/radio")
                 .build();
 
-            connection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
+            this.radioConnection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
                 console.log(trackInfo);
             })
-            connection.start()
+            this.radioConnection.start()
                 .then(() => console.log("connection started"));
-            
         }
     }
 </script>
