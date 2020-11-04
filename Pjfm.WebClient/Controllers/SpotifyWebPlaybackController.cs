@@ -1,37 +1,48 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Policy;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Services;
 using Pjfm.Domain.Entities;
+using Pjfm.Infrastructure.Service;
 using Pjfm.WebClient.Services;
 
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/spotiy/playback")]
+    [Route("api/playback")]
     public class SpotifyWebPlaybackController : ControllerBase
     {
         private readonly IPlaybackController _playbackController;
+        private readonly ISpotifyBrowserService _spotifyBrowserService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public SpotifyWebPlaybackController(IPlaybackController playbackController)
+        public SpotifyWebPlaybackController(IPlaybackController playbackController,
+            ISpotifyBrowserService spotifyBrowserService, UserManager<ApplicationUser> userManager)
         {
             _playbackController = playbackController;
+            _spotifyBrowserService = spotifyBrowserService;
+            _userManager = userManager;
         }
         
-        [HttpPut("on")]
+        [HttpPut("mod/on")]
         public IActionResult TurnOnPlaybackController()
         {
             _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
             return Accepted();
         }
 
-        [HttpPut("off")]
+        [HttpPut("mod/off")]
         public IActionResult TurnOffPlaybackController()
         {
             _playbackController.TurnOff(PlaybackControllerCommands.TrackPlayerOnOff);
             return Accepted();
         }
 
-        [HttpPut("term")]
+        [HttpPut("mod/term")]
         public IActionResult AllTermFilter([FromQuery] TopTrackTermFilter term)
         {
             switch (term)
@@ -61,11 +72,23 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
-        [HttpPut("reset")]
+        [HttpPut("mod/reset")]
         public IActionResult ResetPlayer()
         {
             _playbackController.TurnOn(PlaybackControllerCommands.ResetPlaybackCommand);
             return Accepted();
+        }
+
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchTrack([FromBody] SearchRequestDto searchRequest)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var result = await _spotifyBrowserService.Search(user.Id, user.SpotifyAccessToken, searchRequest);
+            var trackSerializer = new SpotifyTrackSerializer();
+            var tracks = trackSerializer.ConvertObject(await result.Content.ReadAsStringAsync());
+
+            return Ok(tracks);
         }
     }
 }

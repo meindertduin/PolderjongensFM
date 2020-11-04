@@ -17,6 +17,7 @@ namespace Pjfm.Application
 
             services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>();
             services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
+            services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
             
             return services;
         }
