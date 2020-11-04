@@ -49,9 +49,6 @@ namespace Pjfm.WebClient.Services
             
             _onCommands[8] = new PlaybackSkipCommand(_spotifyPlaybackManager);
             _offCommands[8] = new NoCommand();
-            
-            
-
         }
 
         public void TurnOn(PlaybackControllerCommands command)
@@ -74,6 +71,11 @@ namespace Pjfm.WebClient.Services
         public void AddPriorityTrack(TrackDto track)
         {
             _playbackQueue.AddPriorityTrack(track);
+        }
+
+        public void AddSecondaryTrack(TrackDto track)
+        {
+            _playbackQueue.AddSecondary(track);
         }
 
         public List<TrackDto> GetPriorityQueueTracks()

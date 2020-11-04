@@ -91,6 +91,20 @@ namespace pjfm.Controllers
             return Ok(tracks);
         }
 
+        [HttpPost("request")]
+        public IActionResult UserRequestTrack([FromBody] TrackDto track)
+        {
+            _playbackController.AddSecondaryTrack(track);
+            return Accepted();
+        }
+        
+        [HttpPost("mod/request")]
+        public IActionResult ModRequestTrack([FromBody] TrackDto track)
+        {
+            _playbackController.AddPriorityTrack(track);
+            return Accepted();
+        }
+
         [HttpPut("mod/skip")]
         public IActionResult SkipCurrentTrack()
         {

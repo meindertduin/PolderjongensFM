@@ -11,8 +11,10 @@ namespace Pjfm.WebClient.Services
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
+        
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
+        private Queue<TrackDto> _secondaryQueue = new Queue<TrackDto>(); 
         
         private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
 
@@ -45,6 +47,11 @@ namespace Pjfm.WebClient.Services
             _priorityQueue.Enqueue(track);
         }
 
+        public void AddSecondary(TrackDto track)
+        {
+            _secondaryQueue.Enqueue(track);
+        }
+
         public List<TrackDto> GetFillerQueueTracks()
         {
             return GetTracksOfQueue(_fillerQueue);
@@ -53,6 +60,11 @@ namespace Pjfm.WebClient.Services
         public List<TrackDto> GetPriorityQueueTracks()
         {
             return GetTracksOfQueue(_priorityQueue);
+        }
+
+        public List<TrackDto> GetSecondaryQueueTracks()
+        {
+            return GetTracksOfQueue(_secondaryQueue);
         }
         
         public List<TrackDto> GetTracksOfQueue(Queue<TrackDto> queue)
@@ -74,6 +86,10 @@ namespace Pjfm.WebClient.Services
             if (_priorityQueue.Count > 0)
             {
                 nextTrack = _priorityQueue.Dequeue();
+            }
+            else if (_secondaryQueue.Count > 0)
+            {
+                nextTrack = _secondaryQueue.Dequeue();
             }
             else
             {
