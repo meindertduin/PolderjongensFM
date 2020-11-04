@@ -1,4 +1,5 @@
 using System;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,10 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application;
 using Pjfm.Application.Common;
+using Pjfm.Application.Common.Dto;
+using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Service;
+using pjfm.Models;
 using Pjfm.WebClient.Services;
 using VueCliMiddleware;
 
@@ -41,6 +45,8 @@ namespace pjfm
 
             services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
             
+            services.AddAutoMapper(typeof(MappingProfile), typeof(ViewModelMappingProfile));
+
             services.AddControllersWithViews();
 
             services.AddSignalR();

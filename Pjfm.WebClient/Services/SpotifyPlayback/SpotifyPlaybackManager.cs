@@ -29,7 +29,7 @@ namespace Pjfm.WebClient.Services
         public bool IsCurrentlyPlaying { get; private set; }
         
         public DateTime CurrentTrackStartTime { get; private set; }
-        public TopTrack CurrentPlayingTrack { get; private set; }
+        public TrackDto CurrentPlayingTrack { get; private set; }
         
         public async Task StartPlayingTracks()
         {
@@ -89,7 +89,7 @@ namespace Pjfm.WebClient.Services
             return nextTrack.SongDurationMs;
         }
         
-        private async Task PlayTrackForAll(TopTrack track)
+        private async Task PlayTrackForAll(TrackDto track)
         {
             var responseTasks = new List<Task<HttpResponseMessage>>();
 

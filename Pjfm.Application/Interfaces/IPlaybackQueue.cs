@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Domain.Entities;
 
 namespace Pjfm.WebClient.Services
@@ -10,10 +11,10 @@ namespace Pjfm.WebClient.Services
         void Reset();
         TopTrackTermFilter CurrentTermFilter { get; }
         void SetTermFilter(TopTrackTermFilter termFilter);
-        public void AddPriorityTrack(TopTrack track);
-        public List<TopTrack> GetFillerQueueTracks();
-        public List<TopTrack> GetPriorityQueueTracks();
-        public Task<TopTrack> GetNextQueuedTrack();
+        public void AddPriorityTrack(TrackDto track);
+        public List<TrackDto> GetFillerQueueTracks();
+        public List<TrackDto> GetPriorityQueueTracks();
+        public Task<TrackDto> GetNextQueuedTrack();
         public Task AddToFillerQueue(int amount);
     }
 }

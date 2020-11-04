@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Entities;
 using Pjfm.WebClient.Services;
@@ -10,7 +11,7 @@ namespace Pjfm.Domain.Interfaces
     {
         bool IsCurrentlyPlaying { get; }
         DateTime CurrentTrackStartTime { get; }
-        TopTrack CurrentPlayingTrack { get; }
+        TrackDto CurrentPlayingTrack { get; }
         Task ResetPlayer(int afterDelay);
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();

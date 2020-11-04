@@ -1,11 +1,12 @@
 ﻿using System;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Domain.Entities;
 
 namespace pjfm.Models
 {
     public class PlayerUpdateInfoModel
     {
-        public TopTrack CurrentPlayingTrack { get; set; }
+        public TrackDto CurrentPlayingTrack { get; set; }
         public DateTime StartingTime { get; set; }
     }
 }

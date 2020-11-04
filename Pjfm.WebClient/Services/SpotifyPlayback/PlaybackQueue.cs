@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Spotify.Queries;
-using Pjfm.Domain.Entities;
-using Pjfm.Domain.Enums;
 
 namespace Pjfm.WebClient.Services
 {
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
-        private Queue<TopTrack> _fillerQueue = new Queue<TopTrack>();
-        private Queue<TopTrack> _priorityQueue = new Queue<TopTrack>();
+        private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
+        private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
         
-        private List<TopTrack> _recentlyPlayed = new List<TopTrack>();
+        private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
 
         public TopTrackTermFilter CurrentTermFilter { get; private set; } = TopTrackTermFilter.AllTerms;
         
@@ -26,9 +25,9 @@ namespace Pjfm.WebClient.Services
 
         public void Reset()
         {
-            _recentlyPlayed = new List<TopTrack>();
-            _priorityQueue = new Queue<TopTrack>();
-            _fillerQueue = new Queue<TopTrack>();
+            _recentlyPlayed = new List<TrackDto>();
+            _priorityQueue = new Queue<TrackDto>();
+            _fillerQueue = new Queue<TrackDto>();
         }
         
         public int RecentlyPlayedCount()
@@ -41,24 +40,24 @@ namespace Pjfm.WebClient.Services
             CurrentTermFilter = termFilter;
         }
         
-        public void AddPriorityTrack(TopTrack track)
+        public void AddPriorityTrack(TrackDto track)
         {
             _priorityQueue.Enqueue(track);
         }
 
-        public List<TopTrack> GetFillerQueueTracks()
+        public List<TrackDto> GetFillerQueueTracks()
         {
             return GetTracksOfQueue(_fillerQueue);
         }
 
-        public List<TopTrack> GetPriorityQueueTracks()
+        public List<TrackDto> GetPriorityQueueTracks()
         {
             return GetTracksOfQueue(_priorityQueue);
         }
         
-        public List<TopTrack> GetTracksOfQueue(Queue<TopTrack> queue)
+        public List<TrackDto> GetTracksOfQueue(Queue<TrackDto> queue)
         {
-            var result = new List<TopTrack>();
+            var result = new List<TrackDto>();
 
             foreach (var track in queue)
             {
@@ -68,9 +67,9 @@ namespace Pjfm.WebClient.Services
             return result;
         }
         
-        public async Task<TopTrack> GetNextQueuedTrack()
+        public async Task<TrackDto> GetNextQueuedTrack()
         {
-            TopTrack nextTrack;
+            TrackDto nextTrack;
             
             if (_priorityQueue.Count > 0)
             {

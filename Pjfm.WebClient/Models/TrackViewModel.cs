@@ -1,7 +1,4 @@
-﻿using System;
-using Pjfm.Application.Identity;
-using Pjfm.Domain.Enums;
-
+﻿
 namespace pjfm.Models
 {
     public class TrackViewModel
