@@ -35,6 +35,7 @@ namespace Pjfm.WebClient.Services
         {
             IsCurrentlyPlaying = true;
 
+
             var nextTrackDuration = await PlayNextTrack();
             CreateTimer();
             
@@ -67,7 +68,10 @@ namespace Pjfm.WebClient.Services
 
         public async Task SkipTrack()
         {
-            await _trackTimer.DisposeAsync();
+            if(_trackTimer != null){
+                await _trackTimer.DisposeAsync();
+            }
+            
             var nextTrackDuration = await PlayNextTrack();
             
             CreateTimer();
@@ -136,6 +140,7 @@ namespace Pjfm.WebClient.Services
             {
                 _observers.Add(observer);
             }
+            
             return new UnSubscriber(_observers, observer);
         }
 

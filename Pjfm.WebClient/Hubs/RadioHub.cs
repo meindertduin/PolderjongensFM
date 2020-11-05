@@ -20,19 +20,32 @@ namespace pjfm.Hubs
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly IPlaybackEventTransmitter _playbackEventTransmitter;
+        private readonly IPlaybackController _playbackController;
 
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackEventTransmitter playbackEventTransmitter)
+            IPlaybackEventTransmitter playbackEventTransmitter, IPlaybackController playbackController)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
             _playbackEventTransmitter = playbackEventTransmitter;
+            _playbackController = playbackController;
         }
         
         public override async Task OnConnectedAsync()
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
+
+            var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
+
+            var trackInfo = new PlayerUpdateInfoModel
+            {
+                CurrentPlayingTrack = playingTrackInfo.Item1,
+                StartingTime = playingTrackInfo.Item2,
+            };
+
+            Clients.Caller.SendAsync("ReceivePlayingTrackInfo", trackInfo);
+
             await _playbackListenerManager.AddListener(user);
             await base.OnConnectedAsync();
         }
