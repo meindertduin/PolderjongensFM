@@ -4,6 +4,15 @@
       <v-col cols="11" md="10">
         <v-row justify="center">
           <v-col cols="10" md="8">
+            <SongInformation />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="11" md="10">
+        <v-row justify="center">
+          <v-col cols="10" md="8">
             <Radio />
           </v-col>
           <v-col md="4">
@@ -20,12 +29,15 @@
   import Component from 'vue-class-component'
   import Radio from "@/components/HomeComponents/Radio";
   import LiveChat from "@/components/HomeComponents/Livechat";
+  import SongInformation from "@/components/HomeComponents/SongInformation";
+
   
   @Component({
     name: 'Home',
     components: {
       Radio,
       LiveChat,
+      SongInformation
     }
   })
   export default class Home extends Vue {

@@ -13,7 +13,7 @@
       height="150px"
     >
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title class="display-3 font-weight-bold">PolderjongensFM</v-toolbar-title>
+      <v-toolbar-title class="display-3 font-weight-bold">PJFM</v-toolbar-title>
       <v-spacer></v-spacer>
       
       <v-btn v-if="!oidcAuthenticated" @click="signInOidcClient">
