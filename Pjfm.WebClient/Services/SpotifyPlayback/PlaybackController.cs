@@ -76,6 +76,11 @@ namespace Pjfm.WebClient.Services
             _undoCommand.Execute();
         }
 
+        public void SetUsersInclusionList(List<ApplicationUserDto> users)
+        {
+            _playbackQueue.SetIncludedUsers(users);
+        }
+
         public void AddPriorityTrack(TrackDto track)
         {
             _playbackQueue.AddPriorityTrack(track);

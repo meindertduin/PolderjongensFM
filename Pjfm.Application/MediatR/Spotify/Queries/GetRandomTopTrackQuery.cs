@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Entities;
@@ -24,6 +25,7 @@ namespace Pjfm.Application.Spotify.Queries
         public List<TrackDto> NotIncludeTracks { get; set; }
         public int RequestedAmount { get; set; }
         public List<TopTrackTerm> TopTrackTermFilter { get; set; }
+        public string[] IncludedUsersId { get; set; }
     }
 
     public class GetRandomTopTrackQueryHandler : IHandlerWrapper<GetRandomTopTrackQuery, List<TrackDto>>
@@ -41,6 +43,7 @@ namespace Pjfm.Application.Spotify.Queries
                 .AsNoTracking()
                 .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.Id) == false)
                 .Where(x => request.TopTrackTermFilter.Select(t => t).Contains(x.Term))
+                .Where(x => request.IncludedUsersId.Length <= 0 || request.IncludedUsersId.Select(t => t).Contains(x.ApplicationUserId))
                 .OrderBy(x => Guid.NewGuid())
                 .Take(request.RequestedAmount)
                 .ProjectTo<TrackDto>(new MapperConfiguration(cfg =>

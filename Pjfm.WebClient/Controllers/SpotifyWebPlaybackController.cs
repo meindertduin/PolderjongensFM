@@ -1,4 +1,5 @@
-﻿using System.Security.Policy;
+﻿using System.Collections.Generic;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -110,6 +111,12 @@ namespace pjfm.Controllers
         {
             _playbackController.TurnOn(PlaybackControllerCommands.TrackSkip);
             return Accepted();
+        }
+
+        [HttpPost("mod/include")]
+        public IActionResult IncludeUsers([FromBody] List<ApplicationUserDto> users)
+        {
+            _playbackController.SetUsersInclusionList(users);
         }
     }
 }

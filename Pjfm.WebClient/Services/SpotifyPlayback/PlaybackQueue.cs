@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,8 @@ namespace Pjfm.WebClient.Services
 
         public TopTrackTermFilter CurrentTermFilter { get; private set; } = TopTrackTermFilter.AllTerms;
         
+        public List<ApplicationUserDto> IncludedUsers { get; private set; } = new List<ApplicationUserDto>();
+
         public PlaybackQueue(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -30,6 +33,12 @@ namespace Pjfm.WebClient.Services
             _recentlyPlayed = new List<TrackDto>();
             _priorityQueue = new Queue<TrackDto>();
             _fillerQueue = new Queue<TrackDto>();
+            IncludedUsers = new List<ApplicationUserDto>();
+        }
+
+        public void SetIncludedUsers(List<ApplicationUserDto> users)
+        {
+            IncludedUsers = users;
         }
         
         public int RecentlyPlayedCount()
@@ -110,6 +119,7 @@ namespace Pjfm.WebClient.Services
                 NotIncludeTracks = _recentlyPlayed,
                 RequestedAmount = amount,
                 TopTrackTermFilter = CurrentTermFilter.ConvertToTopTrackTerms(),
+                IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
             });
 
             foreach (var fillerTrack in result.Data)
