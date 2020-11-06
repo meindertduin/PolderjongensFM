@@ -46,7 +46,7 @@
 
     @Component({
         name: 'Queue',
-        props: ['djConnection'],
+        props: ['radioConnection'],
     })
     export default class Queue extends Vue { 
       private queue = {
@@ -58,12 +58,12 @@
         this.updateRadio();
       }
 
-      @Watch('djConnection')
+      @Watch('radioConnection')
       updateRadio(){
-        this.djConnection?.on("ReceiveDjPlaybackInfo", (djInfo) => {
-          console.log(djInfo);
-          this.queue.filler = djInfo.fillerQueuedTracks;
-          this.queue.priority = djInfo.priorityQueuedTracks;
+        this.radioConnection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
+          console.log(trackInfo);
+          this.queue.filler = trackInfo.fillerQueuedTracks;
+          this.queue.priority = trackInfo.priorityQueuedTracks;
         })
       }
     }

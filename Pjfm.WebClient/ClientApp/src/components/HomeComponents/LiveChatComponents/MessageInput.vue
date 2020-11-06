@@ -1,7 +1,7 @@
 ﻿<template>
     <div class="chat-input">
         <v-textarea v-model="messageInput" filled auto-grow label="Doe een verzoekje!" rows="2" row-height="20"></v-textarea>
-        <v-btn @click="sendMessage" class="send-button" color="green">Send</v-btn>
+        <v-btn @click="sendMessage" class="send-button" color="orange">Bericht versturen</v-btn>
     </div>
 </template>
 

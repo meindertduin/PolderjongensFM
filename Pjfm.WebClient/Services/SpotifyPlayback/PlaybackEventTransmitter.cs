@@ -54,6 +54,8 @@ namespace Pjfm.WebClient.Services
                     {
                         CurrentPlayingTrack = playingTrackInfo.Item1,
                         StartingTime = playingTrackInfo.Item2,
+                        FillerQueuedTracks = fillerQueuedTracks,
+                        PriorityQueuedTracks = queuedPriorityTracks
                     };
 
                     radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", trackInfo);

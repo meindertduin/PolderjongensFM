@@ -9,7 +9,7 @@
           >
               <span class="overline grey--text">HUIDIGE POKOE</span><br>
               <span class="subtitle-1">{{ currentSongInfo.artist }} - {{ currentSongInfo.title }}</span><br>
-              <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(songDuration) }} </span>
+              <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentSongDuration) }} </span>
           </v-card>
       </v-col>
       <v-col>
@@ -17,10 +17,11 @@
           class="pa-2"
           outlined
           round
+          v-if="nextSongInfo"
           >
           <span class="overline grey--text">VOLGENDE POKOE</span><br>
-          <span class="subtitle-1">Slipknot - Spit It Out</span><br>
-          <span class="subtitle-2 orange--text">00:00 - 04:20</span>
+          <span class="subtitle-1">{{ nextSongInfo.artist }} - {{ nextSongInfo.title }}</span><br>
+          <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextSongDuration) }}</span>
         </v-card>
       </v-col>
     </v-row>
@@ -38,10 +39,11 @@
     })
     export default class SongInformation extends Vue { 
       private currentSongInfo = null;
+      private nextSongInfo = null;
       private elapsedTime = null;
       private timer = null;
 
-      get songDuration(){
+      get currentSongDuration(){
           if(this.currentSongInfo != null){
               let duration = new Date(this.currentSongInfo.duration).getTime();
               return duration;
@@ -49,6 +51,17 @@
 
           return 0;
       }
+
+      get nextSongDuration(){
+        if(this.nextSongInfo != null){
+          let duration = new Date(this.nextSongInfo.duration).getTime();
+          return duration;
+        }
+
+        return 0;
+      }
+
+
 
       @Watch('radioConnection')
       updateRadio(){
@@ -59,7 +72,23 @@
               startingTime: trackInfo.startingTime,
               duration: trackInfo.currentPlayingTrack.songDurationMs
           }
-
+          
+          if((Array.isArray(trackInfo.priorityQueuedTracks) && trackInfo.priorityQueuedTracks.length)){
+              this.nextSongInfo = {
+                artist: trackInfo.priorityQueuedTracks[0].artists[0],
+                title: trackInfo.priorityQueuedTracks[0].title,
+                startingTime: trackInfo.priorityQueuedTracks[0].startingTime,
+                duration: trackInfo.priorityQueuedTracks.songDurationMs
+              }  
+          }else{
+              this.nextSongInfo = {
+                artist: trackInfo.fillerQueuedTracks[0].artists[0],
+                title: trackInfo.fillerQueuedTracks[0].title,
+                startingTime: trackInfo.fillerQueuedTracks[0].startingTime,
+                duration: trackInfo.fillerQueuedTracks[0].songDurationMs
+              }
+          }
+          
           this.updateElapsedTime();
         })
       }
