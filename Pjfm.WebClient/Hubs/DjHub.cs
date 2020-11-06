@@ -33,17 +33,8 @@ namespace pjfm.Hubs
             var user = await _userManager.GetUserAsync(context.User);
             TryConnectAsDj(user);
 
-            var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
-            var fillerQueuedTracks = _playbackController.GetFillerQueueTracks();
-            var queuedPriorityTracks = _playbackController.GetPriorityQueueTracks();
-                
-            var djInfo = new DjPlaybackInfoModel
-            {
-                CurrentPlayingTrack = playingTrackInfo.Item1,
-                StartingTime = playingTrackInfo.Item2,
-                FillerQueuedTracks = fillerQueuedTracks,
-                PriorityQueuedTracks = queuedPriorityTracks
-            };
+            var infoModelFactory = new PlaybackInfoFactory(_playbackController);
+            var djInfo = infoModelFactory.CreateDjInfoModel();
 
             Clients.Caller.SendAsync("ReceiveDjPlaybackInfo", djInfo);
         }

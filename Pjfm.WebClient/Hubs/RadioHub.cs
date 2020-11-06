@@ -36,19 +36,10 @@ namespace pjfm.Hubs
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
 
-            var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
-            var fillerQueuedTracks = _playbackController.GetFillerQueueTracks();
-            var queuedPriorityTracks = _playbackController.GetPriorityQueueTracks();
+            var infoModelFactory = new PlaybackInfoFactory(_playbackController);
+            var userInfo = infoModelFactory.CreateUserInfoModel();
 
-            var trackInfo = new PlayerUpdateInfoModel
-            {
-                CurrentPlayingTrack = playingTrackInfo.Item1,
-                StartingTime = playingTrackInfo.Item2,
-                FillerQueuedTracks = fillerQueuedTracks,
-                PriorityQueuedTracks = queuedPriorityTracks
-            };
-
-            Clients.Caller.SendAsync("ReceivePlayingTrackInfo", trackInfo);
+            Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userInfo);
 
             await _playbackListenerManager.AddListener(user);
             await base.OnConnectedAsync();

@@ -5,7 +5,7 @@ using Pjfm.Domain.Entities;
 
 namespace pjfm.Models
 {
-    public class PlayerUpdateInfoModel
+    public abstract class PlayerUpdateInfoModel
     {
         public TrackDto CurrentPlayingTrack { get; set; }
         public DateTime StartingTime { get; set; }

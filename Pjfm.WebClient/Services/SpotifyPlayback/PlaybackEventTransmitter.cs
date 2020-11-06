@@ -38,27 +38,12 @@ namespace Pjfm.WebClient.Services
                     var radioHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<RadioHub>>();
                     var djHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<DjHub>>();
                     
-                    var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
-                    var fillerQueuedTracks = _playbackController.GetFillerQueueTracks();
-                    var queuedPriorityTracks = _playbackController.GetPriorityQueueTracks();
-                
-                    var djInfo = new DjPlaybackInfoModel
-                    {
-                        CurrentPlayingTrack = playingTrackInfo.Item1,
-                        StartingTime = playingTrackInfo.Item2,
-                        FillerQueuedTracks = fillerQueuedTracks,
-                        PriorityQueuedTracks = queuedPriorityTracks
-                    };
+                    var infoModelFactory = new PlaybackInfoFactory(_playbackController);
+                    var userInfo = infoModelFactory.CreateUserInfoModel();
+                    var djInfo = infoModelFactory.CreateUserInfoModel();
                     
-                    var trackInfo = new PlayerUpdateInfoModel
-                    {
-                        CurrentPlayingTrack = playingTrackInfo.Item1,
-                        StartingTime = playingTrackInfo.Item2,
-                        FillerQueuedTracks = fillerQueuedTracks,
-                        PriorityQueuedTracks = queuedPriorityTracks
-                    };
 
-                    radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", trackInfo);
+                    radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", userInfo);
                 
                     djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
                 }
