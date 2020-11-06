@@ -9,6 +9,7 @@ import OidcCallbackError from "@/views/OidcCallbackError.vue";
 
 import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types";
+import Search from "@/views/Search.vue";
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,11 @@ const routes: Array<RouteConfig> = [
     meta: {
       isPublic: true,
     }
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search,
   },
   {
     path: '/Test',

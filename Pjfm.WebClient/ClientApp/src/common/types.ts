@@ -12,3 +12,14 @@ export interface liveChatMessageModel{
     message: string,
     timeSend: string,
 }
+
+export interface trackDto{
+    id: string,
+    title: string,
+    artists: string[],
+    term: number,
+    trackType: number,
+    songDurationMs: number,
+    applicationUserId: string,
+}
+    

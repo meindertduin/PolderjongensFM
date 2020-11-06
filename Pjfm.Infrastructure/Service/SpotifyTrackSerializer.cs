@@ -36,6 +36,7 @@ namespace Pjfm.Infrastructure.Service
 
                 topTracks.Add(new TrackDto
                 {
+                    Id = track.id,
                     Title = track.name,
                     Artists = artistNames.ToArray(),
                     SongDurationMs = track.duration_ms,
