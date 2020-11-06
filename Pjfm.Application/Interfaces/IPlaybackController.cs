@@ -16,7 +16,7 @@ namespace Pjfm.WebClient.Services
         List<TrackDto> GetPriorityQueueTracks();
         List<TrackDto> GetFillerQueueTracks();
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
-        void SetUsersInclusionList(List<ApplicationUserDto> users)
+        void SetUsersInclusionList(List<ApplicationUserDto> users);
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
     }
 }

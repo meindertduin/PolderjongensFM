@@ -117,6 +117,7 @@ namespace pjfm.Controllers
         public IActionResult IncludeUsers([FromBody] List<ApplicationUserDto> users)
         {
             _playbackController.SetUsersInclusionList(users);
+            return Accepted();
         }
     }
 }
