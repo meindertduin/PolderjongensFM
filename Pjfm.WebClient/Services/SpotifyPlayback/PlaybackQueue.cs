@@ -33,7 +33,6 @@ namespace Pjfm.WebClient.Services
             _recentlyPlayed = new List<TrackDto>();
             _priorityQueue = new Queue<TrackDto>();
             _fillerQueue = new Queue<TrackDto>();
-            IncludedUsers = new List<ApplicationUserDto>();
         }
 
         public void SetIncludedUsers(List<ApplicationUserDto> users)
