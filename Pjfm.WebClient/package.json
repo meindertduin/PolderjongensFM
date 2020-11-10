@@ -1,0 +1,9 @@
+{
+  "name": "Pjfm.WebClient",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^4.5.2",
+    "jquery": "^3.5.1"
+  }
+}
