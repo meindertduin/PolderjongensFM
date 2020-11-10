@@ -75,7 +75,7 @@ export default class SearchBox extends Vue {
     })
   }
   requestSong(track : trackDto) {
-    Axios.post(`https://localhost:5001/api/playback/mod/request`, track).then((response) => {
+    Axios.put(`https://localhost:5001/api/playback/mod/request/${track.id}`).then((response) => {
       this.$router.push('/');
     }).catch((error) => {
       console.log(error);

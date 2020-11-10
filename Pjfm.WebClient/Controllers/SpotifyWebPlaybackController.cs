@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -94,21 +95,49 @@ namespace pjfm.Controllers
             return Ok(tracks);
         }
 
-        [HttpPost("request/{id}")]
-        public async Task<IActionResult> UserRequestTrack([FromBody] string trackId)
+        [HttpPut("request/{trackId}")]
+        public async Task<IActionResult> UserRequestTrack(string trackId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            
-            var response = _playbackController.AddSecondaryTrack(await GetTrackOfId(trackId, user), user.Id);
-            return Accepted(response);
+
+            try
+            {
+                var requestedTrack = await GetTrackOfId(trackId, user);
+                var response = _playbackController.AddSecondaryTrack(requestedTrack, user.Id);
+                
+                if (response.Error)
+                {
+                    return Conflict(response);
+                }
+
+                return Accepted(response);
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
         }
         
-        [HttpPost("mod/request/{id}")]
+        [HttpPut("mod/request/{trackId}")]
         public async Task<IActionResult> ModRequestTrack(string trackId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            var response = _playbackController.AddPriorityTrack(await GetTrackOfId(trackId, user));
-            return Accepted(response);
+            try
+            {
+                var requestedTrack = await GetTrackOfId(trackId, user);
+                var response = _playbackController.AddPriorityTrack(requestedTrack);
+
+                if (response.Error)
+                {
+                    return Conflict(response);
+                }
+
+                return Accepted(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPut("mod/skip")]

@@ -13,8 +13,8 @@ namespace Pjfm.WebClient.Services
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private readonly IPlaybackEventTransmitter _playbackEventTransmitter;
 
-        private readonly ICommand[] _onCommands = new ICommand[10];
-        private readonly ICommand[] _offCommands = new ICommand[10];
+        private readonly ICommand[] _onCommands = new ICommand[20];
+        private readonly ICommand[] _offCommands = new ICommand[20];
         private ICommand _undoCommand;
         
 
