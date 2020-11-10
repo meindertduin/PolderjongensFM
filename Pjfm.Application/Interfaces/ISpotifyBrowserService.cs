@@ -7,5 +7,6 @@ namespace Pjfm.Application.Services
     public interface ISpotifyBrowserService
     {
         Task<HttpResponseMessage> Search(string userId, string accessToken, SearchRequestDto searchRequestInfo);
+        Task<HttpResponseMessage> GetTrackInfo(string userId, string accessToken, string trackId);
     }
 }

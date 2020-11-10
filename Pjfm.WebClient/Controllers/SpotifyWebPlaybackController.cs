@@ -87,22 +87,22 @@ namespace pjfm.Controllers
 
             var result = await _spotifyBrowserService.Search(user.Id, user.SpotifyAccessToken, searchRequest);
             var trackSerializer = new SpotifyTrackSerializer();
-            var tracks = trackSerializer.ConvertObject(await result.Content.ReadAsStringAsync());
+            var tracks = trackSerializer.ConvertMultiple(await result.Content.ReadAsStringAsync());
 
             return Ok(tracks);
         }
 
-        [HttpPost("request")]
-        public IActionResult UserRequestTrack([FromBody] TrackDto track)
+        [HttpPost("request/{id}")]
+        public async Task<IActionResult> UserRequestTrack([FromBody] string trackId)
         {
-            _playbackController.AddSecondaryTrack(track);
+            _playbackController.AddSecondaryTrack(await GetTrackOfId(trackId));
             return Accepted();
         }
         
-        [HttpPost("mod/request")]
-        public IActionResult ModRequestTrack([FromBody] TrackDto track)
+        [HttpPost("mod/request/{id}")]
+        public async Task<IActionResult> ModRequestTrack(string trackId)
         {
-            _playbackController.AddPriorityTrack(track);
+            _playbackController.AddPriorityTrack(await GetTrackOfId(trackId));
             return Accepted();
         }
 
@@ -118,6 +118,17 @@ namespace pjfm.Controllers
         {
             _playbackController.SetUsersInclusionList(users);
             return Accepted();
+        }
+
+        private async Task<TrackDto> GetTrackOfId(string trackId)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
+            var trackSerializer = new SpotifyTrackSerializer();
+            var trackDto = trackSerializer.ConvertSingle(await trackResponse.Content.ReadAsStringAsync());
+
+            return trackDto;
         }
     }
 }

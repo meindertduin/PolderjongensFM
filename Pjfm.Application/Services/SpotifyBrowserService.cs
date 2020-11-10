@@ -37,5 +37,14 @@ namespace Pjfm.Application.Services
             
             return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
         }
+
+        public Task<HttpResponseMessage> GetTrackInfo(string userId, string accessToken, string trackId)
+        {
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/tracks/{trackId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+        }
     }
 }

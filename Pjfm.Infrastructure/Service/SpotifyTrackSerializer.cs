@@ -11,38 +11,51 @@ namespace Pjfm.Infrastructure.Service
 {
     public class SpotifyTrackSerializer
     {
-        public List<TrackDto> ConvertObject(string jsonString)
+        public List<TrackDto> ConvertMultiple(string jsonString)
+        {
+            dynamic objectResult = SerializeJson(jsonString);
+
+            List<TrackDto> topTracks = new List<TrackDto>();
+            
+            foreach (var track in objectResult.tracks.items)
+            {
+                topTracks.Add(SerializeToTrack(track));
+            }
+
+            return topTracks;
+        }
+
+        public TrackDto ConvertSingle(string jsonString)
+        {
+            var objectResult = SerializeJson(jsonString);
+
+            return SerializeToTrack(objectResult);
+        }
+        
+        private JObject SerializeJson(string jsonString)
         {
             JObject objectResult = JsonConvert.DeserializeObject<dynamic>(jsonString, new JsonSerializerSettings()
             {
                 ContractResolver = new UnderScorePropertyNamesContractResolver()
             });
-
-            return MapTopTrackItems(objectResult);
+            return objectResult;
         }
         
-        private List<TrackDto> MapTopTrackItems(dynamic trackResult)
+        private TrackDto SerializeToTrack(dynamic track)
         {
-            List<TrackDto> topTracks = new List<TrackDto>();
-            
-            foreach (var track in trackResult.tracks.items)
+            List<string> artistNames = new List<string>();
+
+            foreach (var artist in track.artists)
             {
-                List<string> artistNames = new List<string>();
-
-                foreach (var artist in track.artists)
-                {
-                    artistNames.Add((string) artist.name);
-                }
-
-                topTracks.Add(new TrackDto
-                {
-                    Title = track.name,
-                    Artists = artistNames.ToArray(),
-                    SongDurationMs = track.duration_ms,
-                });
+                artistNames.Add((string) artist.name);
             }
 
-            return topTracks;
+            return new TrackDto
+            {
+                Title = track.name,
+                Artists = artistNames.ToArray(),
+                SongDurationMs = track.duration_ms,
+            };
         }
     }
 }
