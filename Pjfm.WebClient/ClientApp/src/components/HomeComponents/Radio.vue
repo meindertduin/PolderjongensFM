@@ -7,6 +7,11 @@
                 <span class="" v-else>Klik hier om te verbinden</span>
             </v-btn>
         </v-col>
+        <v-col>
+          <v-btn block class="orange" v-if="oidcAuthenticated" @click="navigate('/search')">
+            <span class="" v-if="radioConnection">Verzoekje doen!</span>
+          </v-btn>
+        </v-col>  
         </v-row>
         <SongInformation v-if="radioConnection" v-bind:radioConnection="radioConnection"/>
         <Queue v-if="radioConnection" v-bind:radioConnection="radioConnection"/>
@@ -36,6 +41,10 @@
 
         created(){
             this.connect();
+        }
+        
+        navigate(uri : string) : void{
+            this.$router.push(uri);
         }
         
         async connect() {

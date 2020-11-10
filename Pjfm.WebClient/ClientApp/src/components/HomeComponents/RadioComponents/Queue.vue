@@ -12,22 +12,12 @@
                     class=""
                   >
                     <v-list-item
-                      v-for="(track, i) in queue.priority.slice(0, 10)"
+                      v-for="(item, i) in queue.slice(0, 10)"
                       :key="i"
                     >
                       <v-list-item-content>
                         <v-list-item-title>
-                          {{i + 1}}. {{track.artists[0]}} - {{track.title}}
-                        </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item
-                      v-for="(track, i) in queue.filler.slice(0, 10)"
-                      :key="i"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          {{i + 1}}. {{track.artists[0]}} - {{track.title}}
+                          {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.type}}</span>
                         </v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
@@ -49,10 +39,7 @@
         props: ['radioConnection'],
     })
     export default class Queue extends Vue { 
-      private queue = {
-        filler: null,
-        priority: null,
-      };
+      private queue = [];
 
       created(){
         this.updateRadio();
@@ -61,9 +48,23 @@
       @Watch('radioConnection')
       updateRadio(){
         this.radioConnection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
-          console.log(trackInfo);
-          this.queue.filler = trackInfo.fillerQueuedTracks;
-          this.queue.priority = trackInfo.priorityQueuedTracks;
+          this.queue.clear = [];
+          
+          trackInfo.priorityQueuedTracks.forEach((track) => {
+            this.queue.push({
+              track: track,
+              type: 'Requested'
+            })
+          })
+
+          trackInfo.fillerQueuedTracks.forEach((track) => {
+            this.queue.push({
+              track: track,
+              type: 'AutoDJ'
+            })
+          })
+          
+          console.log(this.queue);
         })
       }
     }
