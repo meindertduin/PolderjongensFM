@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.MediatR;
 
 namespace Pjfm.WebClient.Services
 {
@@ -11,8 +12,8 @@ namespace Pjfm.WebClient.Services
         void TurnOn(PlaybackControllerCommands command);
         void TurnOff(PlaybackControllerCommands command);
         void Undo();
-        void AddPriorityTrack(TrackDto track);
-        void AddSecondaryTrack(TrackDto track);
+        Response<bool> AddPriorityTrack(TrackDto track);
+        Response<bool> AddSecondaryTrack(TrackDto track);
         List<TrackDto> GetPriorityQueueTracks();
         List<TrackDto> GetFillerQueueTracks();
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();

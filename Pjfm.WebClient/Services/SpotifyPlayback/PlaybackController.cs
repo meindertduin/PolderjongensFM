@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Entities;
+using Pjfm.Application.MediatR;
 using Pjfm.Domain.Interfaces;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
 
@@ -88,14 +88,14 @@ namespace Pjfm.WebClient.Services
             _playbackQueue.SetIncludedUsers(users);
         }
 
-        public void AddPriorityTrack(TrackDto track)
+        public Response<bool> AddPriorityTrack(TrackDto track)
         {
-            _playbackQueue.AddPriorityTrack(track);
+            return IPlaybackController.CurrentPlaybackState.AddPriorityTrack(track);
         }
 
-        public void AddSecondaryTrack(TrackDto track)
+        public Response<bool> AddSecondaryTrack(TrackDto track)
         {
-            _playbackQueue.AddSecondaryTrack(track);
+            return IPlaybackController.CurrentPlaybackState.AddSecondaryTrack(track);
         }
 
         public List<TrackDto> GetPriorityQueueTracks()

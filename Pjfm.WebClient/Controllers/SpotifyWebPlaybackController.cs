@@ -97,15 +97,15 @@ namespace pjfm.Controllers
         [HttpPost("request/{id}")]
         public async Task<IActionResult> UserRequestTrack([FromBody] string trackId)
         {
-            _playbackController.AddSecondaryTrack(await GetTrackOfId(trackId));
-            return Accepted();
+            var response = _playbackController.AddSecondaryTrack(await GetTrackOfId(trackId));
+            return Accepted(response);
         }
         
         [HttpPost("mod/request/{id}")]
         public async Task<IActionResult> ModRequestTrack(string trackId)
         {
-            _playbackController.AddPriorityTrack(await GetTrackOfId(trackId));
-            return Accepted();
+            var response = _playbackController.AddPriorityTrack(await GetTrackOfId(trackId));
+            return Accepted(response);
         }
 
         [HttpPut("mod/skip")]

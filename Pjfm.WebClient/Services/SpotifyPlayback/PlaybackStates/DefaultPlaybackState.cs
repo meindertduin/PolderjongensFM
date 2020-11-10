@@ -1,4 +1,7 @@
-﻿using Pjfm.Application.Common.Dto;
+﻿using System;
+using Pjfm.Application.Common.Dto;
+using Pjfm.Application.MediatR;
+using Pjfm.Domain.Enums;
 
 namespace Pjfm.WebClient.Services
 {
@@ -11,14 +14,17 @@ namespace Pjfm.WebClient.Services
             _playbackQueue = playbackQueue;
         }
 
-        public void AddPriorityTrack(TrackDto track)
+        public Response<bool> AddPriorityTrack(TrackDto track)
         {
+            track.TrackType = TrackType.DjTrack;
             _playbackQueue.AddPriorityTrack(track);
+            
+            return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public void AddSecondaryTrack(TrackDto track)
+        public Response<bool> AddSecondaryTrack(TrackDto track)
         {
-            // dat er niks hier staat hoort zo 
+            throw new InvalidOperationException("Cant add secondary while in Default playback state");
         }
     }
 }

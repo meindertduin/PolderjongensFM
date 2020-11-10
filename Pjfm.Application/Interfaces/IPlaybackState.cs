@@ -1,10 +1,11 @@
 ﻿using Pjfm.Application.Common.Dto;
+using Pjfm.Application.MediatR;
 
 namespace Pjfm.WebClient.Services
 {
     public interface IPlaybackState
     {
-        void AddPriorityTrack(TrackDto track);
-        void AddSecondaryTrack(TrackDto track);
+        Response<bool> AddPriorityTrack(TrackDto track);
+        Response<bool> AddSecondaryTrack(TrackDto track);
     }
 }

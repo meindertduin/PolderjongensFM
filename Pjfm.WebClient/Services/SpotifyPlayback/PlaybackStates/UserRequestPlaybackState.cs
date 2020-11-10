@@ -1,4 +1,6 @@
 ﻿using Pjfm.Application.Common.Dto;
+using Pjfm.Application.MediatR;
+using Pjfm.Domain.Enums;
 
 namespace Pjfm.WebClient.Services
 {
@@ -11,14 +13,20 @@ namespace Pjfm.WebClient.Services
             _playbackQueue = playbackQueue;
         }
         
-        public void AddPriorityTrack(TrackDto track)
+        public Response<bool> AddPriorityTrack(TrackDto track)
         {
+            track.TrackType = TrackType.DjTrack;
             _playbackQueue.AddPriorityTrack(track);
+            
+            return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public void AddSecondaryTrack(TrackDto track)
+        public Response<bool> AddSecondaryTrack(TrackDto track)
         {
+            track.TrackType = TrackType.RequestedTrack;
             _playbackQueue.AddSecondaryTrack(track);
+            
+            return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
     }
 }
