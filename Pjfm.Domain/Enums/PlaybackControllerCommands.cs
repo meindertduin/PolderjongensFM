@@ -11,5 +11,7 @@
         AllTermFilterMode = 6,
         MediumLongTermFilterMode = 7,
         TrackSkip = 8,
+        SetDefaultPlaybackState = 9,
+        SetUserRequestPlaybackState = 10,
     }
 }

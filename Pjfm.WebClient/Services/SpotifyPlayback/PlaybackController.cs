@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
+using Pjfm.WebClient.Services.PlaybackStateCommands;
 
 namespace Pjfm.WebClient.Services
 {
@@ -52,8 +53,14 @@ namespace Pjfm.WebClient.Services
             
             _onCommands[8] = new PlaybackSkipCommand(_spotifyPlaybackManager);
             _offCommands[8] = new NoCommand();
+            
+            _onCommands[9] = new DefaultPlaybackStateOnCommand(this, _playbackQueue);
+            _offCommands[9] = new NoCommand();
+            
+            _onCommands[10] = new UserRequestPlaybackStateOnCommand(this, playbackQueue);
+            _offCommands[10] = new NoCommand();
         }
-
+        
         public void SetPlaybackState(IPlaybackState state)
         {
             IPlaybackController.CurrentPlaybackState = state;

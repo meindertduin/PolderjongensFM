@@ -1,0 +1,8 @@
+﻿namespace Pjfm.Domain.Enums
+{
+    public enum PlaybackState
+    {
+        DefaultPlaybackState = 0,
+        RequestPlaybackState = 1,
+    }
+}
