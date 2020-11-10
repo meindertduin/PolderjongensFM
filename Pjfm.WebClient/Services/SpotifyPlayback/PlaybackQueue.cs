@@ -130,6 +130,8 @@ namespace Pjfm.WebClient.Services
                 nextTrack = _fillerQueue.Dequeue();
             }
             
+            _recentlyPlayed.Add(nextTrack);
+            
             return nextTrack;
         }
         public async Task AddToFillerQueue(int amount)

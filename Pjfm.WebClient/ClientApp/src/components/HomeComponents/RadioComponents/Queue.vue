@@ -48,8 +48,8 @@
       @Watch('radioConnection')
       updateRadio(){
         this.radioConnection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
-          this.queue.clear = [];
-          
+          this.queue = [];
+          console.log(trackInfo);
           trackInfo.priorityQueuedTracks.forEach((track) => {
             this.queue.push({
               track: track,
