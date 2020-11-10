@@ -93,9 +93,9 @@ namespace Pjfm.WebClient.Services
             return IPlaybackController.CurrentPlaybackState.AddPriorityTrack(track);
         }
 
-        public Response<bool> AddSecondaryTrack(TrackDto track)
+        public Response<bool> AddSecondaryTrack(TrackDto track, string userId)
         {
-            return IPlaybackController.CurrentPlaybackState.AddSecondaryTrack(track);
+            return IPlaybackController.CurrentPlaybackState.AddSecondaryTrack(track, userId);
         }
 
         public List<TrackDto> GetPriorityQueueTracks()

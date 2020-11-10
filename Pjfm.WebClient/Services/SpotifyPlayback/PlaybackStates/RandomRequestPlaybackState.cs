@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
+using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
@@ -10,7 +12,9 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackQueue _playbackQueue;
         private readonly IPlaybackController _playbackController;
         private IDisposable _unsubscriber;
-        private List<TrackDto> tracksBuffer = new List<TrackDto>();
+        private List<TrackRequestDto> tracksBuffer = new List<TrackRequestDto>();
+
+        private const int MaxRequestsPerUserAmount = 3;
 
         private Random _random = new Random();
 
@@ -28,11 +32,22 @@ namespace Pjfm.WebClient.Services
             return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public Response<bool> AddSecondaryTrack(TrackDto track)
+        public Response<bool> AddSecondaryTrack(TrackDto track, string userId)
         {
-            tracksBuffer.Add(track);
+            if (tracksBuffer
+                .Select(t => t.UserId)
+                .Count(t => t == userId) <= MaxRequestsPerUserAmount)
+            {
+                tracksBuffer.Add(new TrackRequestDto()
+                {
+                    Track = track,
+                    UserId = userId,
+                });
+                
+                return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
+            }
             
-            return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
+            return Response.Fail($"U heeft al het maximum van {MaxRequestsPerUserAmount} verzoekjes opgegeven, probeer het later opnieuw", false);
         }
 
         public void OnCompleted()

@@ -97,14 +97,17 @@ namespace pjfm.Controllers
         [HttpPost("request/{id}")]
         public async Task<IActionResult> UserRequestTrack([FromBody] string trackId)
         {
-            var response = _playbackController.AddSecondaryTrack(await GetTrackOfId(trackId));
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            
+            var response = _playbackController.AddSecondaryTrack(await GetTrackOfId(trackId, user), user.Id);
             return Accepted(response);
         }
         
         [HttpPost("mod/request/{id}")]
         public async Task<IActionResult> ModRequestTrack(string trackId)
         {
-            var response = _playbackController.AddPriorityTrack(await GetTrackOfId(trackId));
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var response = _playbackController.AddPriorityTrack(await GetTrackOfId(trackId, user));
             return Accepted(response);
         }
 
@@ -139,9 +142,8 @@ namespace pjfm.Controllers
             return Accepted();
         }
         
-        private async Task<TrackDto> GetTrackOfId(string trackId)
+        private async Task<TrackDto> GetTrackOfId(string trackId, ApplicationUser user)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
 
             var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
             var trackSerializer = new SpotifyTrackSerializer();

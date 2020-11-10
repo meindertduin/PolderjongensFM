@@ -22,7 +22,7 @@ namespace Pjfm.WebClient.Services
             return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public Response<bool> AddSecondaryTrack(TrackDto track)
+        public Response<bool> AddSecondaryTrack(TrackDto track, string userId)
         {
             throw new InvalidOperationException("Cant add secondary while in Default playback state");
         }

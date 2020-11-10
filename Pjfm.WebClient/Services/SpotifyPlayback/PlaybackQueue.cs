@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Spotify.Queries;
+using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
@@ -15,7 +16,7 @@ namespace Pjfm.WebClient.Services
         
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
-        private Queue<TrackDto> _secondaryQueue = new Queue<TrackDto>(); 
+        private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>(); 
         
         private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
 
@@ -55,9 +56,9 @@ namespace Pjfm.WebClient.Services
             _priorityQueue.Enqueue(track);
         }
 
-        public void AddSecondaryTrack(TrackDto track)
+        public void AddSecondaryTrack(TrackRequestDto trackRequest)
         {
-            _secondaryQueue.Enqueue(track);
+            _secondaryQueue.Enqueue(trackRequest);
         }
 
         public List<TrackDto> GetFillerQueueTracks()
@@ -74,14 +75,38 @@ namespace Pjfm.WebClient.Services
         {
             return GetTracksOfQueue(_secondaryQueue);
         }
+
+        public List<TrackRequestDto> GetSecondaryQueueRequests()
+        {
+            var result = new List<TrackRequestDto>();
+
+            foreach (var request in _secondaryQueue)
+            {
+                result.Add(request);
+            }
+            
+            return result;
+        }
         
-        public List<TrackDto> GetTracksOfQueue(Queue<TrackDto> queue)
+        private List<TrackDto> GetTracksOfQueue(Queue<TrackDto> queue)
         {
             var result = new List<TrackDto>();
 
             foreach (var track in queue)
             {
                 result.Add(track);
+            }
+            
+            return result;
+        }
+        
+        private List<TrackDto> GetTracksOfQueue(Queue<TrackRequestDto> queue)
+        {
+            var result = new List<TrackDto>();
+
+            foreach (var request in queue)
+            {
+                result.Add(request.Track);
             }
             
             return result;
@@ -97,7 +122,7 @@ namespace Pjfm.WebClient.Services
             }
             else if (_secondaryQueue.Count > 0)
             {
-                nextTrack = _secondaryQueue.Dequeue();
+                nextTrack = _secondaryQueue.Dequeue().Track;
             }
             else
             {
