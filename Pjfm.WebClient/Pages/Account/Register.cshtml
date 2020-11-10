@@ -1,0 +1,48 @@
+﻿@page
+@model Pjfm.WebClient.Pages.Account.Register
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "Shared/_Layout";
+}
+
+<div class="container">
+    <div class="row justify-content-center align-content-center login-form">
+        <div class="col-md-6">
+            <h3>Login</h3>
+            <form method="post">
+                <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
+                <div class="form-group">
+                    <a asp-page="/Account/Login" asp-route-returnUrl="@Model.Form.ReturnUrl" class="btnForgetPwd">Login</a>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="userNameForm">Gebruikersnaam</label>
+                    <span class="valSpan" asp-validation-for="Form.Username"></span>
+                    <input type="text" class="form-control" id="userNameForm" placeholder="Uw gebruikersnaam *" asp-for="Form.Username"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="emailForm">Email addres</label>
+                    <span class="valSpan" asp-validation-for="Form.Email"></span>
+                    <input type="text" class="form-control" id="emailForm" placeholder="Uw email-address *" asp-for="Form.Email"/>
+                </div>
+               
+                <div class="form-group">
+                    <label class="form-label" for="passwordForm">Wachtwoord</label>
+                    <span class="valSpan" asp-validation-for="Form.Password"></span>
+                    <input type="password" class="form-control" id="passwordForm" placeholder="Uw wachtwoord *" asp-for="Form.Password"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirmPasswordForm">Bevestig Password</label>
+                    <span class="valSpan" asp-validation-for="Form.Password"></span>
+                    <input type="password" class="form-control" id="confirmPasswordForm" placeholder="uw bebestigde watchtwoord *" asp-for="Form.ConfirmPassword"/>
+                </div>
+                <div class="form-group">
+                    <div class="row justify-content-center">
+                        <input type="submit" class="btnSubmit" value="Registreer" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
