@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
+using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
+using pjfm.Models;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
 
 namespace Pjfm.WebClient.Services
@@ -108,6 +110,26 @@ namespace Pjfm.WebClient.Services
             return _playbackQueue.GetFillerQueueTracks();
         }
 
+        public PlaybackSettingsDto GetPlaybackSettings()
+        {
+            PlaybackState currentPlaybackState = PlaybackState.DefaultPlaybackState;
+
+            if (IPlaybackController.CurrentPlaybackState is DefaultPlaybackState)
+                currentPlaybackState = PlaybackState.DefaultPlaybackState;
+            if (IPlaybackController.CurrentPlaybackState is UserRequestPlaybackState)
+                currentPlaybackState = PlaybackState.DefaultPlaybackState;
+            
+
+            var playbackSettings = new PlaybackSettingsDto()
+            {
+                IsPlaying = _spotifyPlaybackManager.IsCurrentlyPlaying,
+                PlaybackTermFilter = _playbackQueue.CurrentTermFilter,
+                PlaybackState = currentPlaybackState,
+            };
+
+            return playbackSettings;
+        }
+        
         public Tuple<TrackDto, DateTime> GetPlayingTrackInfo()
         {
             var result = new Tuple<TrackDto, DateTime>(

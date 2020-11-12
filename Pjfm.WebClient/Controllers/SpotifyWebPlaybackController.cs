@@ -165,6 +165,9 @@ namespace pjfm.Controllers
                 case PlaybackState.RequestPlaybackState:
                     _playbackController.TurnOn(PlaybackControllerCommands.SetUserRequestPlaybackState);
                     break;
+                case PlaybackState.RandomRequestPlaybackState:
+                    _playbackController.TurnOn(PlaybackControllerCommands.SetRandomRequestPlaybackState);
+                    break;
                 default:
                     return BadRequest();
             }
@@ -180,5 +183,13 @@ namespace pjfm.Controllers
 
             return trackDto;
         }
+
+        [HttpGet("mod/getPlaybackSettings")]
+        public IActionResult GetPlaybackSettings()
+        {
+            var settings = _playbackController.GetPlaybackSettings();
+            return Ok(settings);
+        }
+        
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
+using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
@@ -17,6 +18,7 @@ namespace Pjfm.WebClient.Services
         List<TrackDto> GetPriorityQueueTracks();
         List<TrackDto> GetFillerQueueTracks();
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
+        PlaybackSettingsDto GetPlaybackSettings();
         void SetUsersInclusionList(List<ApplicationUserDto> users);
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
     }
