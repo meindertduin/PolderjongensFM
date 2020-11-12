@@ -10,6 +10,7 @@ import OidcCallbackError from "@/views/OidcCallbackError.vue";
 import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types";
 import Search from "@/views/Search.vue";
+import DjView from "@/views/DjView.vue";
 
 Vue.use(VueRouter)
 

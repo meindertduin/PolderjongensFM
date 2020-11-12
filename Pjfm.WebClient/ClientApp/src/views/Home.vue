@@ -7,7 +7,8 @@
             <Radio />
           </v-col>
           <v-col md="4">
-            <LiveChat />
+<!--            <LiveChat />-->
+              <PlaybackSettingsDashboard />
           </v-col>
         </v-row>
       </v-col>
@@ -20,13 +21,15 @@
   import Component from 'vue-class-component'
   import Radio from "@/components/HomeComponents/Radio";
   import LiveChat from "@/components/HomeComponents/Livechat";
+  import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
 
   
   @Component({
     name: 'Home',
     components: {
-      Radio,
-      LiveChat
+        Radio,
+        LiveChat,
+        PlaybackSettingsDashboard  
     }
   })
   export default class Home extends Vue {
