@@ -106,7 +106,12 @@ namespace Pjfm.WebClient.Services
 
             foreach (var request in queue)
             {
-                result.Add(request.Track);
+                var trackDto = new TrackDto();
+
+                trackDto = request.Track;
+                trackDto.ApplicationUserId = request.UserId;
+
+                result.Add(trackDto);
             }
             
             return result;

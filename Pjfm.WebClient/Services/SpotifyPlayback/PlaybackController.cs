@@ -23,7 +23,7 @@ namespace Pjfm.WebClient.Services
             _playbackQueue = playbackQueue;
             _spotifyPlaybackManager = spotifyPlaybackManager;
             
-            IPlaybackController.CurrentPlaybackState = new DefaultPlaybackState(_playbackQueue);
+            IPlaybackController.CurrentPlaybackState = new UserRequestPlaybackState(_playbackQueue);
             
             _undoCommand = new NoCommand();
 
@@ -57,8 +57,11 @@ namespace Pjfm.WebClient.Services
             _onCommands[9] = new DefaultPlaybackStateOnCommand(this, _playbackQueue);
             _offCommands[9] = new NoCommand();
             
-            _onCommands[10] = new UserRequestPlaybackStateOnCommand(this, playbackQueue);
+            _onCommands[10] = new UserRequestPlaybackStateOnCommand(this, _playbackQueue);
             _offCommands[10] = new NoCommand();
+            
+            _onCommands[11] = new RandomRequestPlaybackStateOnCommand(this, _playbackQueue);
+            _offCommands[11] = new NoCommand();
         }
         
         public void SetPlaybackState(IPlaybackState state)
@@ -102,7 +105,12 @@ namespace Pjfm.WebClient.Services
         {
             return _playbackQueue.GetPriorityQueueTracks();
         }
-
+        
+        public List<TrackDto> GetSecondaryQueueTracks()
+        {
+            return _playbackQueue.GetSecondaryQueueTracks();
+        }
+        
         public List<TrackDto> GetFillerQueueTracks()
         {
             return _playbackQueue.GetFillerQueueTracks();

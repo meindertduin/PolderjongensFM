@@ -9,10 +9,12 @@ namespace Pjfm.Application.Identity
     {
         public ApplicationUser(string userName) : base(userName)
         {
-            
+            this.DisplayName = userName;
         }
         
         public ICollection<TopTrack> TopTracks { get; set; }
+
+        public string DisplayName { get; set; }
         public bool SpotifyAuthenticated { get; set; }
         public string SpotifyRefreshToken { get; set; }
         public string SpotifyAccessToken { get; set; }

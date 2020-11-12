@@ -18,7 +18,7 @@ namespace Pjfm.WebClient.Services
 
         private Random _random = new Random();
 
-        public RandomRequestPlaybackState(IPlaybackQueue playbackQueue, IPlaybackController playbackController)
+        public RandomRequestPlaybackState(IPlaybackController playbackController, IPlaybackQueue playbackQueue)
         {
             _playbackQueue = playbackQueue;
             _playbackController = playbackController;

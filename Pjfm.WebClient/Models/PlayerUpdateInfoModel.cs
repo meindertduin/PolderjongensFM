@@ -10,6 +10,7 @@ namespace pjfm.Models
         public TrackDto CurrentPlayingTrack { get; set; }
         public DateTime StartingTime { get; set; }
         public List<TrackDto> FillerQueuedTracks { get; set; }
+        public List<TrackDto> SecondaryQueuedTracks { get; set; }
         public List<TrackDto> PriorityQueuedTracks { get; set; }
     }
 }
