@@ -104,7 +104,7 @@ namespace pjfm.Controllers
             {
                 var requestedTrack = await GetTrackOfId(trackId, user);
                 var response = _playbackController.AddSecondaryTrack(requestedTrack, user.Id);
-                
+
                 if (response.Error)
                 {
                     return Conflict(response);
@@ -114,7 +114,7 @@ namespace pjfm.Controllers
             }
             catch (Exception e)
             {
-                return NotFound();
+                return BadRequest(e.Message);
             }
         }
         

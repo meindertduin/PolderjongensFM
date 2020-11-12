@@ -53,7 +53,14 @@
           trackInfo.priorityQueuedTracks.forEach((track) => {
             this.queue.push({
               track: track,
-              type: 'Requested'
+              type: 'DJ'
+            })
+          })
+
+          trackInfo.secondaryQueuedTracks.forEach((track) => {
+            this.queue.push({
+              track: track,
+              type: 'User Request'
             })
           })
 

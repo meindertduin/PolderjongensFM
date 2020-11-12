@@ -80,6 +80,13 @@
                 startingTime: trackInfo.priorityQueuedTracks[0].startingTime,
                 duration: trackInfo.priorityQueuedTracks.songDurationMs
               }  
+          }else if((Array.isArray(trackInfo.secondaryQueuedTracks) && trackInfo.secondaryQueuedTracks.length)){
+              this.nextSongInfo = {
+                artist: trackInfo.secondaryQueuedTracks[0].artists[0],
+                title: trackInfo.secondaryQueuedTracks[0].title,
+                startingTime: trackInfo.secondaryQueuedTracks[0].startingTime,
+                duration: trackInfo.secondaryQueuedTracks[0].songDurationMs
+              }
           }else{
               this.nextSongInfo = {
                 artist: trackInfo.fillerQueuedTracks[0].artists[0],

@@ -13,5 +13,6 @@
         TrackSkip = 8,
         SetDefaultPlaybackState = 9,
         SetUserRequestPlaybackState = 10,
+        SetRandomRequestPlaybackState = 11,
     }
 }

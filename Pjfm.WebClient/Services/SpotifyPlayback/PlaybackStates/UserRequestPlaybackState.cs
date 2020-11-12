@@ -29,7 +29,8 @@ namespace Pjfm.WebClient.Services
             track.TrackType = TrackType.RequestedTrack;
 
             var queuedTracks = _playbackQueue.GetSecondaryQueueRequests();
-            if (queuedTracks.Select(q => q.UserId).Count(q => q == userId) > MaxRequestPerUserAmount)
+            
+            if (queuedTracks.Select(q => q.UserId).Count(q => q == userId) < MaxRequestPerUserAmount)
             {
                 _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
                 {
@@ -39,7 +40,7 @@ namespace Pjfm.WebClient.Services
             
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
             }
-            return Response.Fail($"U heeft al het maximum van {MaxRequestPerUserAmount} voerzoekjes opgegeven, probeer het later opnieuw", false);
-        }
+            
+            return Response.Fail($"U heeft al het maximum van {MaxRequestPerUserAmount} voerzoekjes opgegeven, probeer het later opnieuw", false); }
     }
 }

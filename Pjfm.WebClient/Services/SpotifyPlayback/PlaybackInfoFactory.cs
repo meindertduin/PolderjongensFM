@@ -18,10 +18,12 @@ namespace Pjfm.WebClient.Services
             FillInBaseValues(infoModel);
             
             var fillerQueuedTracks = _playbackController.GetFillerQueueTracks();
+            var secondaryQueueTracks = _playbackController.GetSecondaryQueueTracks();
             var queuedPriorityTracks = _playbackController.GetPriorityQueueTracks();
 
-            infoModel.FillerQueuedTracks = fillerQueuedTracks;
             infoModel.PriorityQueuedTracks = queuedPriorityTracks;
+            infoModel.SecondaryQueuedTracks = secondaryQueueTracks;
+            infoModel.FillerQueuedTracks = fillerQueuedTracks;
 
             return infoModel;
         }
@@ -32,11 +34,13 @@ namespace Pjfm.WebClient.Services
             FillInBaseValues(infoModel);
             
             var fillerQueuedTracks = _playbackController.GetFillerQueueTracks();
+            var secondaryQueueTracks = _playbackController.GetSecondaryQueueTracks();
             var queuedPriorityTracks = _playbackController.GetPriorityQueueTracks();
 
-            infoModel.FillerQueuedTracks = fillerQueuedTracks;
             infoModel.PriorityQueuedTracks = queuedPriorityTracks;
-
+            infoModel.SecondaryQueuedTracks = secondaryQueueTracks;
+            infoModel.FillerQueuedTracks = fillerQueuedTracks;
+            
             return infoModel;
         }
 
@@ -46,7 +50,6 @@ namespace Pjfm.WebClient.Services
 
             infoModel.CurrentPlayingTrack = playingTrackInfo.Item1;
             infoModel.StartingTime = playingTrackInfo.Item2;
-            
         }
     }
 }

@@ -16,10 +16,12 @@ namespace Pjfm.WebClient.Services
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, string userId);
         List<TrackDto> GetPriorityQueueTracks();
+        List<TrackDto> GetSecondaryQueueTracks();
         List<TrackDto> GetFillerQueueTracks();
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
         PlaybackSettingsDto GetPlaybackSettings();
         void SetUsersInclusionList(List<ApplicationUserDto> users);
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
+        
     }
 }
