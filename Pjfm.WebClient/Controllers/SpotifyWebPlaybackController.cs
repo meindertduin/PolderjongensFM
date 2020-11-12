@@ -184,7 +184,7 @@ namespace pjfm.Controllers
             return trackDto;
         }
 
-        [HttpGet("mod/getPlaybackSettings")]
+        [HttpGet("mod/playbackSettings")]
         public IActionResult GetPlaybackSettings()
         {
             var settings = _playbackController.GetPlaybackSettings();

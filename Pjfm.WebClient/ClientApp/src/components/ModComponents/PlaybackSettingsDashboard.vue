@@ -69,6 +69,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from "vue-class-component";
+    import axios from 'axios'
     
     @Component({
         name: "PlaybackSettingsDashboard",
@@ -79,6 +80,12 @@
         private terms :string[] = ['short', 'short-med', 'med', 'med-long', 'long', 'all'];
         private stateItems :string[] = ['Dj-mode', 'wachtrij-mode','random-mode']
         private selectedState :string | null = null;
+        
+        created(){
+            axios.get('api/playback/mod/playbackSettings'){
+                
+            }
+        }
     }
         
 </script>

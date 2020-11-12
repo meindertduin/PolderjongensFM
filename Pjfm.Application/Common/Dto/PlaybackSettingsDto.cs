@@ -3,7 +3,7 @@ using Pjfm.WebClient.Services;
 
 namespace Pjfm.Application.Common.Dto
 {
-    public class PlaybackSettingDto
+    public class PlaybackSettingsDto
     {
         public bool IsPlaying { get; set; }
         public TopTrackTermFilter PlaybackTermFilter { get; set; }
