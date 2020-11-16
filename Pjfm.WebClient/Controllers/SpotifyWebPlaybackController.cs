@@ -137,10 +137,24 @@ namespace pjfm.Controllers
         }
 
         [HttpPost("mod/include")]
-        public IActionResult IncludeUsers([FromBody] List<ApplicationUserDto> users)
+        public IActionResult IncludeUsers(ApplicationUserDto user)
         {
-            _playbackController.SetUsersInclusionList(users);
+            _playbackController.AddIncludedUser(user);
             return Accepted();
+        }
+
+        [HttpPost("mod/exclude")]
+        public IActionResult RemoveIncludedUser(ApplicationUserDto user)
+        {
+            _playbackController.RemoveIncludedUser(user);
+            return Accepted();
+        }
+
+        [HttpGet("mod/include")]
+        public IActionResult GetIncludedUsers()
+        {
+            var result = _playbackController.GetIncludedUsers();
+            return Ok(result);
         }
         
         [HttpPut("mod/setPlaybackState")]

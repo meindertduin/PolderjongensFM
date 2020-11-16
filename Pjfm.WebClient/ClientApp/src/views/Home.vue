@@ -11,6 +11,11 @@
               <PlaybackSettingsDashboard />
           </v-col>
         </v-row>
+          <v-row>
+              <v-col class="col-12">
+                  <UserIncludeSettingsDashboard />
+              </v-col>
+          </v-row>
       </v-col>
     </v-row>
   </div>
@@ -22,11 +27,13 @@
   import Radio from "@/components/HomeComponents/Radio";
   import LiveChat from "@/components/HomeComponents/Livechat";
   import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
+  import UserIncludeSettingsDashboard from "@/components/ModComponents/UserIncludeSettingsDashboard.vue";
 
   
   @Component({
     name: 'Home',
     components: {
+        UserIncludeSettingsDashboard,
         Radio,
         LiveChat,
         PlaybackSettingsDashboard  

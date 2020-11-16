@@ -1,0 +1,34 @@
+﻿<template>
+    <v-card>
+        <v-card-text>
+            <v-row>
+                <v-col class="col-12 col-md-8">
+                    <SearchUserComponent />
+                </v-col>
+                <v-col class="col-12 col-md-4">
+                    <IncludedUsersDisplay />
+                </v-col>
+            </v-row>
+        </v-card-text>
+    </v-card>
+</template>
+
+<script lang="ts">
+    import Vue from 'vue';
+    import Component from "vue-class-component";
+    import axios from 'axios'
+    import IncludedUsersDisplay from "@/components/ModComponents/IncludedUsersDisplay.vue";
+    import SearchUserComponent from "@/components/ModComponents/SearchUserComponent.vue";
+
+    @Component({
+        name: "UserIncludeSettingsDashboard",
+        components: {SearchUserComponent, IncludedUsersDisplay},
+    })
+    export default class UserIncludeSettingsDashboard extends Vue {
+    
+    }
+</script>
+
+<style scoped>
+
+</style>

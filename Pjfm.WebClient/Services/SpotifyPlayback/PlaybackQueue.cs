@@ -44,9 +44,21 @@ namespace Pjfm.WebClient.Services
             set => _currentTermFilter = value;
         }
 
-        public void SetIncludedUsers(List<ApplicationUserDto> users)
+        public void AddUsersToIncludedUsers(ApplicationUserDto user)
         {
-            IncludedUsers = users;
+            if (IncludedUsers.Select(x => x.Id).Contains(user.Id) == false)
+            {
+                IncludedUsers.Add(user);
+            }
+        }
+
+        public void RemoveUserFromIncludedUsers(ApplicationUserDto user)
+        {
+            var item = IncludedUsers.SingleOrDefault(x => x.Id == user.Id);
+            if (item != null)
+            {
+                IncludedUsers.Remove(item);
+            }
         }
         
         public int RecentlyPlayedCount()

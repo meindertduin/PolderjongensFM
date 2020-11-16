@@ -13,6 +13,9 @@ namespace Pjfm.WebClient.Services
         void TurnOn(PlaybackControllerCommands command);
         void TurnOff(PlaybackControllerCommands command);
         void Undo();
+        List<ApplicationUserDto> GetIncludedUsers();
+        void AddIncludedUser(ApplicationUserDto user);
+        void RemoveIncludedUser(ApplicationUserDto user);
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, string userId);
         List<TrackDto> GetPriorityQueueTracks();
@@ -20,7 +23,6 @@ namespace Pjfm.WebClient.Services
         List<TrackDto> GetFillerQueueTracks();
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
         PlaybackSettingsDto GetPlaybackSettings();
-        void SetUsersInclusionList(List<ApplicationUserDto> users);
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
         
     }

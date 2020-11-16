@@ -17,9 +17,11 @@ namespace pjfm
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 var testUser = new ApplicationUser("test"){ Email = "test@mail.com"};
+                testUser.Member = true;
                 userManager.CreateAsync(testUser, "password").GetAwaiter().GetResult();
                 
                 var mod = new ApplicationUser("mod"){Email = "mod@mail.com"};
+                mod.Member = true;
                 userManager.CreateAsync(mod, "password").GetAwaiter().GetResult();
                 userManager.AddClaimAsync(mod,
                     new Claim(ApplicationIdentityConstants.Claims.Role, 
