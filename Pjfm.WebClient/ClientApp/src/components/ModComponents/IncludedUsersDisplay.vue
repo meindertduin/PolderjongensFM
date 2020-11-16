@@ -35,20 +35,20 @@
         name: "IncludedUsersDisplay",
     })
     export default class IncludedUsersDisplay extends Vue {
-        private includedUsers : Array<applicationUser> = [];
+        get includedUsers():Array<applicationUser>{
+            return this.$store.getters['modModule/getIncludedUsers'];
+        }
         
         created(){
-            axios.get('api/playback/mod/include')
-                .then((response) => {
-                    this.includedUsers = response.data;
-                    console.log(response)
-                })
-            .catch((err) => console.log(err));
+            this.$store.dispatch('modModule/loadIncludedUsers');
         }
         
         excludeUser(user: applicationUser){
             axios.post("api/playback/mod/exclude",user)
-                .then((response) => console.log(response))
+                .then((response) => {
+                    this.$store.commit('modModule/REMOVE_INCLUDED_USER', user);
+                    console.log(response)
+                })
                 .catch((err) => console.log(err));
         }
     }

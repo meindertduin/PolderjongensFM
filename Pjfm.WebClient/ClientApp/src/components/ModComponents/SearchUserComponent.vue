@@ -93,6 +93,7 @@
         addUser(user: applicationUser){
             axios.post('api/playback/mod/include', user)
                 .then((response) => {
+                    this.$store.commit('modModule/ADD_INCLUDED_USER', user);
                     console.log(response)
                 })
             .catch((err) => console.log(err));
