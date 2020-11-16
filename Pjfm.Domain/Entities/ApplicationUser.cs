@@ -14,6 +14,7 @@ namespace Pjfm.Application.Identity
         
         public ICollection<TopTrack> TopTracks { get; set; }
 
+        public bool Member { get; set; }
         public string DisplayName { get; set; }
         public bool SpotifyAuthenticated { get; set; }
         public string SpotifyRefreshToken { get; set; }

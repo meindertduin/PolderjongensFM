@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
@@ -87,10 +88,20 @@ namespace Pjfm.WebClient.Services
         {
             _undoCommand.Execute();
         }
-
-        public void SetUsersInclusionList(List<ApplicationUserDto> users)
+        
+        public List<ApplicationUserDto> GetIncludedUsers()
         {
-            _playbackQueue.SetIncludedUsers(users);
+            return _playbackQueue.IncludedUsers;
+        }
+
+        public void AddIncludedUser(ApplicationUserDto user)
+        {
+            _playbackQueue.AddUsersToIncludedUsers(user);
+        }
+
+        public void RemoveIncludedUser(ApplicationUserDto user)
+        {
+            _playbackQueue.RemoveUserFromIncludedUsers(user);
         }
 
         public Response<bool> AddPriorityTrack(TrackDto track)

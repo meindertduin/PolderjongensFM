@@ -15,6 +15,24 @@ namespace pjfm.Controllers
         {
             _mediator = mediator;
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUser([FromQuery] string query)
+        {
+            var result = await _mediator.Send(new SearchUsersQuery()
+            {
+                QueryString = query,
+            });
+
+            return Ok(result.Data);    
+        }
+
+        [HttpGet("members")]
+        public async Task<IActionResult> GetAllMembers()
+        {
+            var result = await _mediator.Send(new GetAllPjMembersQuery());
+            return Ok(result.Data);
+        }
         
         [HttpGet("list")]
         public async Task<IActionResult> GetAllUserProfiles()
@@ -22,6 +40,6 @@ namespace pjfm.Controllers
             var result = await _mediator.Send(new GetAllUserProfileQuery());
 
             return Ok(result.Data);
-        }   
+        }
     }
 }

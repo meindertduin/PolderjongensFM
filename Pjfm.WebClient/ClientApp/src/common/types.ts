@@ -1,6 +1,8 @@
-﻿export interface profileModel{
-    userName: string,
+﻿export interface applicationUser {
+    id: string,
+    displayName: string,
     email: string,
+    member: boolean,
 }
 
 export interface userSettings{
