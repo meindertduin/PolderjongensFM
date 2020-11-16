@@ -132,6 +132,8 @@
         async handlePlaybackUpdate(){
             await axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`);
             await axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
+            
+            this.handleReset();
         }
         
         
