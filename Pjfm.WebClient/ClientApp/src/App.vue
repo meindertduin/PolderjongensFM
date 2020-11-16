@@ -49,6 +49,7 @@ import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySetti
 import vuetify from "@/plugins/vuetify";
 import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types";
+import {Watch} from "vue-property-decorator";
 
 @Component({
   name: 'App',
@@ -68,6 +69,11 @@ export default class App extends Vue{
   
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+  }
+  
+  @Watch("oidcAuthenticated")
+  setModStatus(newValue:any, oldValue:any){
+    this.$store.dispatch('profileModule/loadModState');
   }
   
   private signInOidcClient(){

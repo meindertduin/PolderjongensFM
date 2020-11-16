@@ -41,7 +41,6 @@ namespace Pjfm.Application.Identity
                     ClientId = "pjfm_web_client",
                     AllowedGrantTypes = GrantTypes.Code,
                     
-
                     RedirectUris = new[]
                     {
                         "https://localhost:5001/oidc-callback",
@@ -60,6 +59,8 @@ namespace Pjfm.Application.Identity
                         ApplicationIdentityConstants.Claims.Role,
                     },
 
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    
                     RequirePkce = true,
                     AllowAccessTokensViaBrowser = false,
                     RequireClientSecret = false,

@@ -18,6 +18,15 @@ namespace pjfm.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("mod")]
+        public IActionResult GetModStatus()
+        {
+            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
+                ApplicationIdentityConstants.Roles.Mod);
+
+            return Ok(isMod);
+        }
+        
         [HttpGet("profile")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> GetUserProfile()

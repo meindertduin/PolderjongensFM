@@ -7,11 +7,11 @@
             <Radio />
           </v-col>
           <v-col md="4">
-<!--            <LiveChat />-->
-              <PlaybackSettingsDashboard />
+              <PlaybackSettingsDashboard v-if="isMod" />
+              <LiveChat v-else />
           </v-col>
         </v-row>
-          <v-row>
+          <v-row v-if="isMod">
               <v-col class="col-12">
                   <UserIncludeSettingsDashboard />
               </v-col>
@@ -28,7 +28,6 @@
   import LiveChat from "@/components/HomeComponents/Livechat";
   import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
   import UserIncludeSettingsDashboard from "@/components/ModComponents/UserIncludeSettingsDashboard.vue";
-
   
   @Component({
     name: 'Home',
@@ -40,7 +39,9 @@
     }
   })
   export default class Home extends Vue {
-    
+    get isMod(){
+        return this.$store.getters['profileModule/isMod'];
+    }
   }
 </script>
 
