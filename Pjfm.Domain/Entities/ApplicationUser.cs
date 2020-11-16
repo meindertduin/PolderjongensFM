@@ -9,7 +9,7 @@ namespace Pjfm.Application.Identity
     {
         public ApplicationUser(string userName) : base(userName)
         {
-            this.DisplayName = userName;
+            DisplayName = userName;
         }
         
         public ICollection<TopTrack> TopTracks { get; set; }

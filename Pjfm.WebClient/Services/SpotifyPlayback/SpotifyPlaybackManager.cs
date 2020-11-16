@@ -67,8 +67,12 @@ namespace Pjfm.WebClient.Services
             await Task.Delay(afterDelay);
             _isCurrentlyPlaying = false;
             _playbackQueue.Reset();
-            
-            await _trackTimer.DisposeAsync();
+
+            if (_trackTimer != null)
+            {
+                await _trackTimer.DisposeAsync();
+            }
+            await PausePlayerForAll();
         }
 
         public async Task SkipTrack()
@@ -117,6 +121,23 @@ namespace Pjfm.WebClient.Services
                 responseTasks.Add(playTask);
             }
             
+            await Task.WhenAll(responseTasks);
+        }
+
+        private async Task PausePlayerForAll()
+        {
+            var responseTasks = new List<Task<HttpResponseMessage>>();
+
+            // Iterate through all connected users and collect Tasks for pausing spotify on their devices
+            foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
+            {
+                var pauseTask =
+                    _spotifyPlayerService.PausePlayer(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty);
+                
+                responseTasks.Add(pauseTask);
+            }
+
+            //await all the collected tasks
             await Task.WhenAll(responseTasks);
         }
         

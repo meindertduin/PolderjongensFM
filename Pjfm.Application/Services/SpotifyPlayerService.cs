@@ -86,5 +86,23 @@ namespace Pjfm.Application.Services
 
             return _httpClientService.SendAuthenticatedRequest(requestMessage, userId);
         }
+
+        public Task<HttpResponseMessage> PausePlayer(string userId, string accessToken, string deviceId = null)
+        {
+            var requestMessage = new HttpRequestMessage();
+            requestMessage.Method = HttpMethod.Put;
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var requestUri = $"https://api.spotify.com/v1/me/player/pause";
+
+            if (string.IsNullOrEmpty(deviceId) == false)
+            {
+                requestUri.Concat($"?device_id={deviceId}");
+            }
+            
+            requestMessage.RequestUri = new Uri(requestUri);
+
+            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId);
+        }
     }
 }

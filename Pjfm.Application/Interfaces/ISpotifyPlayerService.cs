@@ -13,5 +13,7 @@ namespace Pjfm.Domain.Interfaces
             string deviceId = null);
 
         Task<HttpResponseMessage> SkipSong(string userId, string accessToken, string deviceId = null);
+
+        Task<HttpResponseMessage> PausePlayer(string userId, string accessToken, string deviceId = null);
     }
 }
