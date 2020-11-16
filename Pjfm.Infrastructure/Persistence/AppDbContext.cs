@@ -26,8 +26,8 @@ namespace Pjfm.Infrastructure.Persistence
             builder.Entity<TopTrack>()
                 .HasOne(t => t.ApplicationUser)
                 .WithMany(a => a.TopTracks)
-                .HasForeignKey(t => t.Id);
-            
+                .HasForeignKey(t => t.ApplicationUserId);
+
             builder.Entity<TopTrack>()
                 .Property(t => t.Artists)
                 .HasConversion(

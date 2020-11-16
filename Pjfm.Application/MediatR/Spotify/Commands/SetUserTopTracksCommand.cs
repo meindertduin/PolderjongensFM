@@ -46,6 +46,7 @@ namespace Pjfm.Application.Spotify.Commands
             }
 
             await _ctx.TopTracks.AddRangeAsync(topTracks, cancellationToken);
+            await _ctx.SaveChangesAsync(cancellationToken);
 
             return Response.Ok("succeeded", "toptracks have been saved to the database");
         }

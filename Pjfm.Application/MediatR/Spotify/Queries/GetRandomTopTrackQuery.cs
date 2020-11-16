@@ -40,18 +40,28 @@ namespace Pjfm.Application.Spotify.Queries
         public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request, CancellationToken cancellationToken)
         {
             var randomTopTracks = _ctx.TopTracks
-                .AsNoTracking()
                 .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.Id) == false)
                 .Where(x => request.TopTrackTermFilter.Select(t => t).Contains(x.Term))
                 .Where(x => request.IncludedUsersId.Length <= 0 || request.IncludedUsersId.Select(t => t).Contains(x.ApplicationUserId))
+                .Select(x => new TrackDto()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Artists = x.Artists,
+                    Term = x.Term,
+                    SongDurationMs = x.SongDurationMs,
+                    User = new ApplicationUserDto()
+                    {
+                        Id = x.ApplicationUser.Id,
+                        DisplayName = x.ApplicationUser.DisplayName,
+                        Email = x.ApplicationUser.Email,
+                        Member = x.ApplicationUser.Member,
+                    },
+                })
                 .OrderBy(x => Guid.NewGuid())
                 .Take(request.RequestedAmount)
-                .ProjectTo<TrackDto>(new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<TopTrack, TrackDto>().BeforeMap((s, d) => d.TrackType = TrackType.UserTopTrack);
-                }))
                 .ToList();
-
+            
             return Response.Ok("successfully queried result", randomTopTracks);
         }
     }
