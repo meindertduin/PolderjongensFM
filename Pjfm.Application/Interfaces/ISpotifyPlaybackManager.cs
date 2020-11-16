@@ -9,8 +9,8 @@ namespace Pjfm.Domain.Interfaces
 {
     public interface ISpotifyPlaybackManager : IObservable<bool>
     {
-        bool IsCurrentlyPlaying { get; }
-        DateTime CurrentTrackStartTime { get; }
+        bool IsCurrentlyPlaying { get; protected set; }
+        DateTime CurrentTrackStartTime { get;}
         TrackDto CurrentPlayingTrack { get; }
         Task SkipTrack();
         Task<int> PlayNextTrack();

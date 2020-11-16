@@ -19,14 +19,16 @@ namespace Pjfm.WebClient.Services
         private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>(); 
         
         private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
+        private TopTrackTermFilter _currentTermFilter;
 
-        public TopTrackTermFilter CurrentTermFilter { get; private set; } = TopTrackTermFilter.AllTerms;
-        
+
         public List<ApplicationUserDto> IncludedUsers { get; private set; } = new List<ApplicationUserDto>();
 
         public PlaybackQueue(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
+            _currentTermFilter = TopTrackTermFilter.AllTerms;
+            
         }
 
         public void Reset()
@@ -34,6 +36,12 @@ namespace Pjfm.WebClient.Services
             _recentlyPlayed = new List<TrackDto>();
             _priorityQueue = new Queue<TrackDto>();
             _fillerQueue = new Queue<TrackDto>();
+        }
+
+        TopTrackTermFilter IPlaybackQueue.CurrentTermFilter
+        {
+            get => _currentTermFilter;
+            set => _currentTermFilter = value;
         }
 
         public void SetIncludedUsers(List<ApplicationUserDto> users)
@@ -48,7 +56,7 @@ namespace Pjfm.WebClient.Services
         
         public void SetTermFilter(TopTrackTermFilter termFilter)
         {
-            CurrentTermFilter = termFilter;
+            _currentTermFilter = termFilter;
         }
         
         public void AddPriorityTrack(TrackDto track)
@@ -149,7 +157,7 @@ namespace Pjfm.WebClient.Services
             {
                 NotIncludeTracks = _recentlyPlayed,
                 RequestedAmount = amount,
-                TopTrackTermFilter = CurrentTermFilter.ConvertToTopTrackTerms(),
+                TopTrackTermFilter = _currentTermFilter.ConvertToTopTrackTerms(),
                 IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
             });
 

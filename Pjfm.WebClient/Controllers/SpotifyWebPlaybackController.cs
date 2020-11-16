@@ -46,7 +46,7 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
-        [HttpPut("mod/term")]
+        [HttpPut("mod/setTerm")]
         public IActionResult AllTermFilter([FromQuery] TopTrackTermFilter term)
         {
             switch (term)
@@ -54,17 +54,17 @@ namespace pjfm.Controllers
                 case TopTrackTermFilter.ShortTerm:
                     _playbackController.TurnOn(PlaybackControllerCommands.ShortTermFilterMode);
                     break;
-                case TopTrackTermFilter.MediumTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.MediumTermFilterMode);
-                    break;
-                case TopTrackTermFilter.LongTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.LongTermFilterMode);
-                    break;
                 case TopTrackTermFilter.ShortMediumTerm:
                     _playbackController.TurnOn(PlaybackControllerCommands.ShortMediumTermFilterMode);
                     break;
+                case TopTrackTermFilter.MediumTerm:
+                    _playbackController.TurnOn(PlaybackControllerCommands.MediumTermFilterMode);
+                    break;
                 case TopTrackTermFilter.MediumLongTerm:
                     _playbackController.TurnOn(PlaybackControllerCommands.MediumLongTermFilterMode);
+                    break;
+                case TopTrackTermFilter.LongTerm:
+                    _playbackController.TurnOn(PlaybackControllerCommands.LongTermFilterMode);
                     break;
                 case TopTrackTermFilter.AllTerms:
                     _playbackController.TurnOn(PlaybackControllerCommands.AllTermFilterMode);

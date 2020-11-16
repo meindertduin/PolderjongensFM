@@ -20,22 +20,27 @@ namespace Pjfm.WebClient.Services
 
         private Timer _trackTimer;
         private AutoResetEvent _trackTimerAutoEvent;
+        private bool _isCurrentlyPlaying;
+
         public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, IPlaybackQueue playbackQueue)
         {
             _spotifyPlayerService = spotifyPlayerService;
             _playbackQueue = playbackQueue;
         }
 
-        public bool IsCurrentlyPlaying { get; private set; }
-        
+        bool ISpotifyPlaybackManager.IsCurrentlyPlaying
+        {
+            get => _isCurrentlyPlaying;
+            set => _isCurrentlyPlaying = value;
+        }
+
         public DateTime CurrentTrackStartTime { get; private set; }
         public TrackDto CurrentPlayingTrack { get; private set; }
         
         public async Task StartPlayingTracks()
         {
-            IsCurrentlyPlaying = true;
-
-
+            _isCurrentlyPlaying = true;
+             
             var nextTrackDuration = await PlayNextTrack();
             CreateTimer();
             
@@ -60,7 +65,7 @@ namespace Pjfm.WebClient.Services
         public async Task StopPlayingTracks(int afterDelay)
         {
             await Task.Delay(afterDelay);
-            IsCurrentlyPlaying = false;
+            _isCurrentlyPlaying = false;
             _playbackQueue.Reset();
             
             await _trackTimer.DisposeAsync();
@@ -93,7 +98,7 @@ namespace Pjfm.WebClient.Services
             CurrentTrackStartTime = DateTime.Now;
 
             await PlayTrackForAll(nextTrack);
-            NotifyObserversPlayingStatus(IsCurrentlyPlaying);
+            NotifyObserversPlayingStatus(_isCurrentlyPlaying);
             
             return nextTrack.SongDurationMs;
         }

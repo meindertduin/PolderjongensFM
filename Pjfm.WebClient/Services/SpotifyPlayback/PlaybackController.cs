@@ -125,9 +125,9 @@ namespace Pjfm.WebClient.Services
             if (IPlaybackController.CurrentPlaybackState is DefaultPlaybackState)
                 currentPlaybackState = PlaybackState.DefaultPlaybackState;
             if (IPlaybackController.CurrentPlaybackState is UserRequestPlaybackState)
-                currentPlaybackState = PlaybackState.DefaultPlaybackState;
-            if (IPlaybackController.CurrentPlaybackState is Random)
-                currentPlaybackState = PlaybackState.DefaultPlaybackState;
+                currentPlaybackState = PlaybackState.RequestPlaybackState;
+            if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
+                currentPlaybackState = PlaybackState.RandomRequestPlaybackState;
             
 
             var playbackSettings = new PlaybackSettingsDto()

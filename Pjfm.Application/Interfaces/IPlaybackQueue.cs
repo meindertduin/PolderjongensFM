@@ -10,7 +10,7 @@ namespace Pjfm.WebClient.Services
     {
         public int RecentlyPlayedCount();
         void Reset();
-        TopTrackTermFilter CurrentTermFilter { get; }
+        TopTrackTermFilter CurrentTermFilter { get; protected set; }
         List<ApplicationUserDto> IncludedUsers { get; }
         void SetTermFilter(TopTrackTermFilter termFilter);
         void SetIncludedUsers(List<ApplicationUserDto> users);

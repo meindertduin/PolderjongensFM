@@ -9,10 +9,10 @@ namespace Pjfm.WebClient.Services
     public enum TopTrackTermFilter
     {
         ShortTerm = 0,
-        MediumTerm = 1,
-        LongTerm = 2,
-        ShortMediumTerm = 3,
-        MediumLongTerm = 4,
+        ShortMediumTerm = 1,
+        MediumTerm = 2,
+        MediumLongTerm = 3,
+        LongTerm = 4,
         AllTerms = 5,
     }
     

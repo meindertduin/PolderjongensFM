@@ -62,9 +62,12 @@ namespace Pjfm.WebClient.Services
 
         public void OnNext(bool value)
         {
-            var randomIndex = _random.Next(tracksBuffer.Count);
-            _playbackQueue.AddSecondaryTrack(tracksBuffer[randomIndex]);
-            tracksBuffer.RemoveAt(randomIndex);
+            if (tracksBuffer.Count > 0)
+            {
+                var randomIndex = _random.Next(tracksBuffer.Count);
+                _playbackQueue.AddSecondaryTrack(tracksBuffer[randomIndex]);
+                tracksBuffer.RemoveAt(randomIndex);
+            }
         }
     }
 }

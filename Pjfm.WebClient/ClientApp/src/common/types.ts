@@ -22,4 +22,15 @@ export interface trackDto{
     songDurationMs: number,
     applicationUserId: string,
 }
-    
+
+export interface playbackSettings {
+    isPlaying: boolean,
+    playbackTermFilter: number,
+    playbackState: playbackState,
+}
+
+export enum playbackState{
+    'Dj-mode',
+    'wachtrij-mode',
+    'random-mode',
+}
