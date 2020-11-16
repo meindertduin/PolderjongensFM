@@ -17,7 +17,7 @@
                     >
                       <v-list-item-content>
                         <v-list-item-title>
-                          {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.type}}</span>
+                          {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.user}}</span>
                         </v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
@@ -53,21 +53,21 @@
           trackInfo.priorityQueuedTracks.forEach((track) => {
             this.queue.push({
               track: track,
-              type: 'DJ'
+              user: 'DJ'
             })
           })
 
           trackInfo.secondaryQueuedTracks.forEach((track) => {
             this.queue.push({
               track: track,
-              type: 'User Request'
+              user: track.user.displayName
             })
           })
 
           trackInfo.fillerQueuedTracks.forEach((track) => {
             this.queue.push({
               track: track,
-              type: 'AutoDJ'
+              user: 'AutoDJ'
             })
           })
           

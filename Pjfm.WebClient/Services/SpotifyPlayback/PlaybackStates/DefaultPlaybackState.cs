@@ -1,4 +1,5 @@
 ﻿using System;
+using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
@@ -22,7 +23,7 @@ namespace Pjfm.WebClient.Services
             return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public Response<bool> AddSecondaryTrack(TrackDto track, string userId)
+        public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
             throw new InvalidOperationException("Cant add secondary while in Default playback state");
         }

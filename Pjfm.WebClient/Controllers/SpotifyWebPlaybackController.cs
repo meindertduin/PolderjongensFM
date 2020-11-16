@@ -117,7 +117,7 @@ namespace pjfm.Controllers
             }
             else
             {
-                response = _playbackController.AddSecondaryTrack(requestedTrack, user.Id);
+                response = _playbackController.AddSecondaryTrack(requestedTrack, ApplicationUserSerializer.SerializeToDto(user));
             }
 
             if (response.Error)

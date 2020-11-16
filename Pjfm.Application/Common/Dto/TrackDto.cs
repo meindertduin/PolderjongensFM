@@ -10,7 +10,6 @@ namespace Pjfm.Application.Common.Dto
         public TopTrackTerm Term { get; set; }
         public TrackType TrackType { get; set; }
         public int SongDurationMs { get; set; }
-        public string UserDisplayName { get; set; }
-        public string ApplicationUserId { get; set; }
+        public ApplicationUserDto User { get; set; }
     }
 }

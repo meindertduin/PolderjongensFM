@@ -5,6 +5,6 @@ namespace pjfm.Models
     public class TrackRequestDto
     {
         public TrackDto Track { get; set; }
-        public string UserId { get; set; }
+        public ApplicationUserDto User { get; set; }
     }
 }

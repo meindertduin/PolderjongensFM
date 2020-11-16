@@ -14,7 +14,7 @@ namespace Pjfm.WebClient.Services
         void TurnOff(PlaybackControllerCommands command);
         void Undo();
         Response<bool> AddPriorityTrack(TrackDto track);
-        Response<bool> AddSecondaryTrack(TrackDto track, string userId);
+        Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
         List<TrackDto> GetPriorityQueueTracks();
         List<TrackDto> GetSecondaryQueueTracks();
         List<TrackDto> GetFillerQueueTracks();

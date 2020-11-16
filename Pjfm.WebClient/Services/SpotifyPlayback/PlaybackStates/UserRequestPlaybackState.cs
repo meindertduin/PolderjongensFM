@@ -24,18 +24,18 @@ namespace Pjfm.WebClient.Services
             return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public Response<bool> AddSecondaryTrack(TrackDto track, string userId)
+        public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
             track.TrackType = TrackType.RequestedTrack;
 
             var queuedTracks = _playbackQueue.GetSecondaryQueueRequests();
             
-            if (queuedTracks.Select(q => q.UserId).Count(q => q == userId) < MaxRequestPerUserAmount)
+            if (queuedTracks.Select(q => q.User.Id).Count(q => q == user.Id) < MaxRequestPerUserAmount)
             {
                 _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
                 {
                     Track = track,
-                    UserId = userId,
+                    User = user,
                 });
             
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);

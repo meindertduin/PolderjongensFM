@@ -6,6 +6,6 @@ namespace Pjfm.WebClient.Services
     public interface IPlaybackState
     {
         Response<bool> AddPriorityTrack(TrackDto track);
-        Response<bool> AddSecondaryTrack(TrackDto track, string userId);
+        Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
     }
 }

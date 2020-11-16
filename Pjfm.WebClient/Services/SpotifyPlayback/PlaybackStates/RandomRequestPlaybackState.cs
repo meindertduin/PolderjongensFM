@@ -32,16 +32,16 @@ namespace Pjfm.WebClient.Services
             return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
         }
 
-        public Response<bool> AddSecondaryTrack(TrackDto track, string userId)
+        public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
             if (tracksBuffer
-                .Select(t => t.UserId)
-                .Count(t => t == userId) <= MaxRequestsPerUserAmount)
+                .Select(t => t.User.Id)
+                .Count(t => t == user.Id) <= MaxRequestsPerUserAmount)
             {
                 tracksBuffer.Add(new TrackRequestDto()
                 {
                     Track = track,
-                    UserId = userId,
+                    User = user,
                 });
                 
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);

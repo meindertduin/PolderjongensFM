@@ -117,7 +117,7 @@ namespace Pjfm.WebClient.Services
                 var trackDto = new TrackDto();
 
                 trackDto = request.Track;
-                trackDto.ApplicationUserId = request.UserId;
+                trackDto.User = request.User;
 
                 result.Add(trackDto);
             }
