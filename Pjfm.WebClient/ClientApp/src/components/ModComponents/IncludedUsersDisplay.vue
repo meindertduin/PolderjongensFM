@@ -1,5 +1,5 @@
 ﻿<template>
-    <v-card>
+    <v-card class="users-settings-card">
         <v-card-title>
             <v-row justify="center">
                 <div class="text-h4">Included users</div>
@@ -56,7 +56,7 @@
 
 <style scoped>
     .included-users-container{
-        max-height: 400px;
+        max-height: 600px;
         flex-wrap: wrap;
         overflow-y: auto;
         overflow-x: hidden;
@@ -66,5 +66,9 @@
         display: flex;
         flex-direction: row;
         margin: 4px;
+    }
+    
+    .users-settings-card{
+        max-height: 700px;
     }
 </style>

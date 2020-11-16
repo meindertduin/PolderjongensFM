@@ -1,6 +1,6 @@
 ﻿<template>
     <v-card
-            class="pa-2"
+            class="pa-2 users-settings-card"
             outlined
             round
     >
@@ -12,7 +12,7 @@
             <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
         </div>
         <v-list dense v-if="results.length > 0 && !loading">
-            <v-list-item-group class="">
+            <v-list-item-group class="results-container">
                 <v-list-item v-for="(user, i) in results" :key="i" @click="addUser(user)">
                     <v-list-item-content>
                         <v-row>
@@ -21,7 +21,7 @@
                                     <div class="text-h6 mx-2">
                                         {{i + 1}}. {{user.displayName}}
                                     </div>
-                                    <div class="text-h6 blue--text mx-2">
+                                    <div v-if="user.member" class="text-h6 blue--text mx-2">
                                         pjfm
                                     </div>
                                 </div>
@@ -106,5 +106,14 @@
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
+    }
+
+    .users-settings-card{
+        max-height: 700px;
+    }
+    .results-container{
+        max-height: 500px;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 </style>
