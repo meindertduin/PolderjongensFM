@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
+using Pjfm.Application.MediatR;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
@@ -99,46 +100,34 @@ namespace pjfm.Controllers
         public async Task<IActionResult> UserRequestTrack(string trackId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role, ApplicationIdentityConstants.Roles.Mod);
 
-            try
-            {
-                var requestedTrack = await GetTrackOfId(trackId, user);
-                var response = _playbackController.AddSecondaryTrack(requestedTrack, user.Id);
+            var requestedTrack = await GetTrackOfId(trackId, user);
 
-                if (response.Error)
-                {
-                    return Conflict(response);
-                }
-
-                return Accepted(response);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-        
-        [HttpPut("mod/request/{trackId}")]
-        public async Task<IActionResult> ModRequestTrack(string trackId)
-        {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            try
-            {
-                var requestedTrack = await GetTrackOfId(trackId, user);
-                var response = _playbackController.AddPriorityTrack(requestedTrack);
-
-                if (response.Error)
-                {
-                    return Conflict(response);
-                }
-
-                return Accepted(response);
-            }
-            catch (Exception e)
+            if (requestedTrack == null)
             {
                 return BadRequest();
             }
+            
+            Response<bool> response;
+            
+            if (isMod)
+            {
+                response = _playbackController.AddPriorityTrack(requestedTrack);
+            }
+            else
+            {
+                response = _playbackController.AddSecondaryTrack(requestedTrack, user.Id);
+            }
+
+            if (response.Error)
+            {
+                return Conflict(response);
+            }
+
+            return Accepted(response);
         }
+        
 
         [HttpPut("mod/skip")]
         public IActionResult SkipCurrentTrack()
