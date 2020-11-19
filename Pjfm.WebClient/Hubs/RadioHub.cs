@@ -44,6 +44,7 @@ namespace pjfm.Hubs
             await base.OnDisconnectedAsync(exception);
         }
         
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task ConnectWithPlayer()
         {
             var context = Context.GetHttpContext();
@@ -52,6 +53,7 @@ namespace pjfm.Hubs
             await _playbackListenerManager.AddListener(user);
         }
 
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task DisconnectWithPlayer()
         {
             var context = Context.GetHttpContext();

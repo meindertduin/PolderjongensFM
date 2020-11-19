@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Policy;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +6,6 @@ using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.Services;
-using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
 using Pjfm.Infrastructure.Service;
 using Pjfm.WebClient.Services;
@@ -34,6 +30,7 @@ namespace pjfm.Controllers
         }
         
         [HttpPut("mod/on")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult TurnOnPlaybackController()
         {
             _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
@@ -41,6 +38,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPut("mod/off")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult TurnOffPlaybackController()
         {
             _playbackController.TurnOff(PlaybackControllerCommands.TrackPlayerOnOff);
@@ -48,6 +46,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPut("mod/setTerm")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult AllTermFilter([FromQuery] TopTrackTermFilter term)
         {
             switch (term)
@@ -78,6 +77,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPut("mod/reset")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult ResetPlayer()
         {
             _playbackController.TurnOn(PlaybackControllerCommands.ResetPlaybackCommand);
@@ -85,6 +85,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPost("search")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> SearchTrack([FromBody] SearchRequestDto searchRequest)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -97,6 +98,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPut("request/{trackId}")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> UserRequestTrack(string trackId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -130,6 +132,7 @@ namespace pjfm.Controllers
         
 
         [HttpPut("mod/skip")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult SkipCurrentTrack()
         {
             _playbackController.TurnOn(PlaybackControllerCommands.TrackSkip);
@@ -137,6 +140,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPost("mod/include")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult IncludeUsers(ApplicationUserDto user)
         {
             _playbackController.AddIncludedUser(user);
@@ -144,6 +148,7 @@ namespace pjfm.Controllers
         }
 
         [HttpPost("mod/exclude")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult RemoveIncludedUser(ApplicationUserDto user)
         {
             _playbackController.RemoveIncludedUser(user);
@@ -151,6 +156,7 @@ namespace pjfm.Controllers
         }
 
         [HttpGet("mod/include")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult GetIncludedUsers()
         {
             var result = _playbackController.GetIncludedUsers();
@@ -158,6 +164,7 @@ namespace pjfm.Controllers
         }
         
         [HttpPut("mod/setPlaybackState")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult SetPlaybackState([FromQuery] PlaybackState playbackState)
         {
             switch (playbackState)
@@ -188,6 +195,7 @@ namespace pjfm.Controllers
         }
 
         [HttpGet("mod/playbackSettings")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult GetPlaybackSettings()
         {
             var settings = _playbackController.GetPlaybackSettings();

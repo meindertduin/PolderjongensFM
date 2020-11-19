@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR.Users.Queries;
 
 namespace pjfm.Controllers
@@ -28,6 +30,7 @@ namespace pjfm.Controllers
         }
 
         [HttpGet("members")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> GetAllMembers()
         {
             var result = await _mediator.Send(new GetAllPjMembersQuery());
@@ -35,6 +38,7 @@ namespace pjfm.Controllers
         }
         
         [HttpGet("list")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> GetAllUserProfiles()
         {
             var result = await _mediator.Send(new GetAllUserProfileQuery());
