@@ -32,73 +32,79 @@
     import Component from 'vue-class-component'
     import {Watch} from "vue-property-decorator";
     import {HubConnectionBuilder, TransferFormat, LogLevel, HubConnection} from "@microsoft/signalr";
+    import {playerUpdateInfo} from "@/common/types";
 
     @Component({
         name: 'SongInformation',
         props: ['radioConnection'],
     })
-    export default class SongInformation extends Vue { 
-      private currentSongInfo = null;
-      private nextSongInfo = null;
-      private elapsedTime = null;
-      private timer = null;
+    export default class SongInformation extends Vue {
+        private currentSongInfo = null;
+        private nextSongInfo = null;
+        private elapsedTime = null;
+        private timer = null;
 
-      get currentSongDuration(){
-          if(this.currentSongInfo != null){
-              let duration = new Date(this.currentSongInfo.duration).getTime();
-              return duration;
-          }
+        get currentSongDuration(){
+            if(this.currentSongInfo != null){
+                let duration = new Date(this.currentSongInfo.duration).getTime();
+                return duration;
+            }
 
-          return 0;
-      }
-
-      get nextSongDuration(){
-        if(this.nextSongInfo != null){
-            console.log(this.nextSongInfo);
-          let duration = new Date(this.nextSongInfo.duration == null ?  new Date(0).getTime() : this.nextSongInfo.duration).getTime();
-          return duration;
+            return 0;
         }
 
-        return 0;
-      }
+        get nextSongDuration(){
+            if(this.nextSongInfo != null){
+                console.log(this.nextSongInfo);
+                let duration = new Date(this.nextSongInfo.duration == null ?  new Date(0).getTime() : this.nextSongInfo.duration).getTime();
+                return duration;
+            }
+
+            return 0;
+        }
+        
+        get playbackInfo():playerUpdateInfo{
+            return this.$store.getters['playbackModule/getPlaybackInfo'];
+        }
+
+      
 
 
-
-      @Watch('radioConnection')
+      @Watch('playbackInfo')
       updateRadio(){
-        this.radioConnection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
-          this.currentSongInfo = {
-              artist: trackInfo.currentPlayingTrack.artists[0],
-              title: trackInfo.currentPlayingTrack.title,
-              startingTime: trackInfo.startingTime,
-              duration: trackInfo.currentPlayingTrack.songDurationMs
-          }
-          
-          if((Array.isArray(trackInfo.priorityQueuedTracks) && trackInfo.priorityQueuedTracks.length)){
-              this.nextSongInfo = {
-                artist: trackInfo.priorityQueuedTracks[0].artists[0],
-                title: trackInfo.priorityQueuedTracks[0].title,
-                startingTime: trackInfo.priorityQueuedTracks[0].startingTime,
-                duration: trackInfo.priorityQueuedTracks.songDurationMs
-              }  
-          }else if((Array.isArray(trackInfo.secondaryQueuedTracks) && trackInfo.secondaryQueuedTracks.length)){
-              this.nextSongInfo = {
-                artist: trackInfo.secondaryQueuedTracks[0].artists[0],
-                title: trackInfo.secondaryQueuedTracks[0].title,
-                startingTime: trackInfo.secondaryQueuedTracks[0].startingTime,
-                duration: trackInfo.secondaryQueuedTracks[0].songDurationMs
+          if (this.playbackInfo){
+              this.currentSongInfo = {
+                  artist: this.playbackInfo.currentPlayingTrack.artists[0],
+                  title: this.playbackInfo.currentPlayingTrack.title,
+                  startingTime: this.playbackInfo.startingTime,
+                  duration: this.playbackInfo.currentPlayingTrack.songDurationMs
               }
-          }else{
-              this.nextSongInfo = {
-                artist: trackInfo.fillerQueuedTracks[0].artists[0],
-                title: trackInfo.fillerQueuedTracks[0].title,
-                startingTime: trackInfo.fillerQueuedTracks[0].startingTime,
-                duration: trackInfo.fillerQueuedTracks[0].songDurationMs
+
+              if((Array.isArray(this.playbackInfo.priorityQueuedTracks) && this.playbackInfo.priorityQueuedTracks.length)){
+                  this.nextSongInfo = {
+                      artist: this.playbackInfo.priorityQueuedTracks[0].artists[0],
+                      title: this.playbackInfo.priorityQueuedTracks[0].title,
+                      startingTime: this.playbackInfo.priorityQueuedTracks[0].startingTime,
+                      duration: this.playbackInfo.priorityQueuedTracks.songDurationMs
+                  }
+              }else if((Array.isArray(this.playbackInfo.secondaryQueuedTracks) && this.playbackInfo.secondaryQueuedTracks.length)){
+                  this.nextSongInfo = {
+                      artist: this.playbackInfo.secondaryQueuedTracks[0].artists[0],
+                      title: this.playbackInfo.secondaryQueuedTracks[0].title,
+                      startingTime: this.playbackInfo.secondaryQueuedTracks[0].startingTime,
+                      duration: this.playbackInfo.secondaryQueuedTracks[0].songDurationMs
+                  }
+              }else{
+                  this.nextSongInfo = {
+                      artist: this.playbackInfo.fillerQueuedTracks[0].artists[0],
+                      title: this.playbackInfo.fillerQueuedTracks[0].title,
+                      startingTime: this.playbackInfo.fillerQueuedTracks[0].startingTime,
+                      duration: this.playbackInfo.fillerQueuedTracks[0].songDurationMs
+                  }
               }
+
+              this.updateElapsedTime();
           }
-          
-          this.updateElapsedTime();
-        })
       }
         
       created() : void {

@@ -9,6 +9,16 @@ export interface userSettings{
     darkMode: boolean,
 }
 
+export interface playerUpdateInfo{
+    currentPlayingTrack: trackDto,
+    startingTime: string,
+    playbackSettings: playbackSettings,
+    fillerQueuedTracks: Array<trackDto>,
+    secondaryQueuedTracks: Array<trackDto>,
+    priorityQueuedTracks: Array<trackDto>,
+    
+}
+
 export interface liveChatMessageModel{
     userName: string,
     message: string,

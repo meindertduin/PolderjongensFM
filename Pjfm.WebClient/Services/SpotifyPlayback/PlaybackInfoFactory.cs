@@ -48,6 +48,7 @@ namespace Pjfm.WebClient.Services
         {
             var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
 
+            infoModel.PlaybackSettings = _playbackController.GetPlaybackSettings();
             infoModel.CurrentPlayingTrack = playingTrackInfo.Item1;
             infoModel.StartingTime = playingTrackInfo.Item2;
         }

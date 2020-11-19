@@ -33,6 +33,7 @@
     import Component from 'vue-class-component'
     import {Watch} from "vue-property-decorator";
     import {HubConnectionBuilder, TransferFormat, LogLevel, HubConnection} from "@microsoft/signalr";
+    import {playerUpdateInfo} from "@/common/types";
 
     @Component({
         name: 'Queue',
@@ -45,34 +46,37 @@
         this.updateRadio();
       }
 
-      @Watch('radioConnection')
+      get playbackInfo():playerUpdateInfo{
+          return this.$store.getters['playbackModule/getPlaybackInfo'];
+      }
+      
+      @Watch('playbackInfo')
       updateRadio(){
-        this.radioConnection?.on("ReceivePlayingTrackInfo", (trackInfo) => {
-          this.queue = [];
-          console.log(trackInfo);
-          trackInfo.priorityQueuedTracks.forEach((track) => {
-            this.queue.push({
-              track: track,
-              user: 'DJ'
-            })
-          })
+          if (this.playbackInfo){
+              this.queue = [];
+              this.playbackInfo.priorityQueuedTracks.forEach((track) => {
+                  this.queue.push({
+                      track: track,
+                      user: 'DJ'
+                  })
+              })
 
-          trackInfo.secondaryQueuedTracks.forEach((track) => {
-            this.queue.push({
-              track: track,
-              user: track.user.displayName
-            })
-          })
+              this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
+                  this.queue.push({
+                      track: track,
+                      user: track.user.displayName
+                  })
+              })
 
-          trackInfo.fillerQueuedTracks.forEach((track) => {
-            this.queue.push({
-              track: track,
-              user: 'AutoDJ'
-            })
-          })
-          
-          console.log(this.queue);
-        })
+              this.playbackInfo.fillerQueuedTracks.forEach((track) => {
+                  this.queue.push({
+                      track: track,
+                      user: 'AutoDJ'
+                  })
+              })
+
+              console.log(this.queue);
+          }
       }
     }
 </script>

@@ -4,8 +4,8 @@ import {vuexOidcCreateStoreModule} from "vuex-oidc";
 import {oidcSettings} from "@/config/oidc";
 import ProfileModule from "@/store/profileModule";
 import UserSettingsModule from "@/store/userSettingsModule";
-import LiveChatModule from "@/store/liveChatModule";
 import ModModule from "@/store/modModule";
+import PlaybackModule from "@/store/playbackModule";
 
 Vue.use(Vuex)
 
@@ -27,5 +27,6 @@ export default new Vuex.Store({
       profileModule: ProfileModule,
       userSettingsModule: UserSettingsModule,
       modModule: ModModule,
+      playbackModule: PlaybackModule,
   }
 })

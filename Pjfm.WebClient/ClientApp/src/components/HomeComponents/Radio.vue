@@ -57,6 +57,9 @@
 
             this.radioConnection.start()
                 .then(() => console.log("connection started"));
+
+            this.radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) => 
+                this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
         }
         
         connectWithPlayer(){
