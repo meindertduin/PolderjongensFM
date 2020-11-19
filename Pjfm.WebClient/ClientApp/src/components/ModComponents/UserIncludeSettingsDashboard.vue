@@ -2,10 +2,10 @@
     <v-card>
         <v-card-text>
             <v-row>
-                <v-col class="col-12 col-md-7 col-lg-8">
+                <v-col class="col-12 col-md-6">
                     <SearchUserComponent />
                 </v-col>
-                <v-col class="col-12 col-md-5 col-lg-4">
+                <v-col class="col-12 col-md-6">
                     <IncludedUsersDisplay />
                 </v-col>
             </v-row>

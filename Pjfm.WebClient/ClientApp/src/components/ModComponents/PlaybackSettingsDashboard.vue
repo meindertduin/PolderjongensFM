@@ -24,9 +24,6 @@
                         </div>
                         <div class="text-h6 ma-2">Staat</div>
                         <v-select :items="stateItems" v-model="selectedState" outlined label="Playback staat"></v-select>
-                        <v-card-actions>
-                            <v-btn @click="handlePlaybackUpdate" class="ma-2" color="green" width="100%">Update Playback</v-btn>
-                        </v-card-actions>
                     </v-card>
                 </v-col>
             </v-row>
@@ -128,13 +125,6 @@
                 })
                 .catch(err => console.log(err));
         }
-
-        async handlePlaybackUpdate(){
-            await axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`);
-            await axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
-            
-            this.handleReset();
-        }
         
         
         async handleConfirmPlaybackSet(){
@@ -159,8 +149,11 @@
         }
         
         
-        handleReset(){
-            axios.put('api/playback/mod/reset');
+        async handleReset(){
+            await axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`);
+            await axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
+            
+            await axios.put('api/playback/mod/reset');
         }
         
         handleSkip(){
