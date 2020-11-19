@@ -18,15 +18,9 @@
           </v-row>
       </v-col>
     </v-row>
-    <v-footer height="auto" color="transparent" fixed>
-      <v-row row wrap>
-        <v-col>
-          <v-btn class="float-right mx-1"  fab dark color="orange" @click="navigate('/search')">
-            <v-icon large>mdi-magnify</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-footer>
+    <v-btn id="sticky-button" class="float-right mx-1"  fab dark color="orange" @click="navigate('/search')">
+      <v-icon large>mdi-magnify</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -58,3 +52,10 @@
   }
 </script>
 
+<style>
+  #sticky-button{
+      position: sticky;
+      bottom: 10px;
+      right: 10px;
+  }
+</style>
