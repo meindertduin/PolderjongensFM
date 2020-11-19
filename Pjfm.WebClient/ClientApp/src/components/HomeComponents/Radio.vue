@@ -1,21 +1,25 @@
 ﻿<template>
     <div>
         <v-row>
-            <v-col>
-                <v-btn block class="orange ma-2" v-if="oidcAuthenticated" @click="connectWithPlayer">
-                    <span class="" v-if="radioConnection">Synchroniseren</span>
-                    <span class="" v-else>Klik hier om te verbinden</span>
-                </v-btn>
-                <v-btn block class="red ma-2" v-if="oidcAuthenticated" @click="disconnectWithPlayer">
-                    <span class="" v-if="radioConnection">Disconnect Player</span>
-                </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn block class="orange ma-2" v-if="oidcAuthenticated" @click="navigate('/search')">
-                <span class="" v-if="radioConnection">Verzoekje doen!</span>
-              </v-btn>
-            </v-col>  
+          <v-col>
+            <v-btn block class="green ma-2" v-if="oidcAuthenticated && !playbackConnected" @click="connectWithPlayer">
+              <span class="" v-if="radioConnection">Luisteren</span>
+              <span class="" v-else>Klik hier om te verbinden</span>
+            </v-btn>
+            <v-btn block class="red ma-2" v-if="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer">
+              <span class="" v-if="radioConnection">Stoppen</span>
+            </v-btn>
+          </v-col>
         </v-row>
+        <v-footer height="auto" color="transparent" fixed>
+          <v-row row wrap>
+            <v-col>
+              <v-btn class="float-right mx-1"  fab dark color="orange" @click="navigate('/search')">
+                <v-icon large>mdi-magnify</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-footer>
         <SongInformation v-if="radioConnection" v-bind:radioConnection="radioConnection"/>
         <Queue v-if="radioConnection" v-bind:radioConnection="radioConnection"/>
     </div>
@@ -37,6 +41,7 @@
     })
     export default class Radio extends Vue {
         private radioConnection: HubConnection | null = null;
+        private playbackConnected: boolean = false;
 
         get oidcAuthenticated(){
             return this.$store.getters['oidcStore/oidcIsAuthenticated'];
@@ -64,12 +69,16 @@
         }
         
         connectWithPlayer(){
+            this.playbackConnected = true;
+          
             this.radioConnection?.invoke("ConnectWithPlayer")
                 .then(() => console.log("connection started with player"))
                 .catch((err) => console.log(err));
         }
         
         disconnectWithPlayer(){
+            this.playbackConnected = false;
+          
             this.radioConnection?.invoke("DisconnectWithPlayer")
                 .then(() => console.log("Disconnected with player"))
                 .catch((err) => console.log(err));
