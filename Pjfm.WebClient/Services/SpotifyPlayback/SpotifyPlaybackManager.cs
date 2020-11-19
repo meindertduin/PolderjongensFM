@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 
@@ -17,15 +20,18 @@ namespace Pjfm.WebClient.Services
         
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly IPlaybackQueue _playbackQueue;
+        private readonly IServiceProvider _serviceProvider;
 
         private Timer _trackTimer;
         private AutoResetEvent _trackTimerAutoEvent;
         private bool _isCurrentlyPlaying;
 
-        public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, IPlaybackQueue playbackQueue)
+        public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, 
+            IPlaybackQueue playbackQueue, IServiceProvider serviceProvider)
         {
             _spotifyPlayerService = spotifyPlayerService;
             _playbackQueue = playbackQueue;
+            _serviceProvider = serviceProvider;
         }
 
         bool ISpotifyPlaybackManager.IsCurrentlyPlaying
@@ -40,7 +46,8 @@ namespace Pjfm.WebClient.Services
         public async Task StartPlayingTracks()
         {
             _isCurrentlyPlaying = true;
-             
+            await _playbackQueue.SetIncludedUsers();
+            
             var nextTrackDuration = await PlayNextTrack();
             CreateTimer();
             

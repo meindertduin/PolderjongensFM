@@ -23,8 +23,7 @@ const actions = <ActionTree<State, any>>{
     loadIncludedUsers({commit}){
         return axios.get('api/playback/mod/include')
             .then((response) => {
-                this.includedUsers = response.data;
-                console.log(response)
+                commit('SET_INCLUDED_USERS', response.data);
             })
             .catch((err) => console.log(err));
     }
