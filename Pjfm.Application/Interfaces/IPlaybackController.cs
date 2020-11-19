@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using pjfm.Models;
@@ -13,6 +14,7 @@ namespace Pjfm.WebClient.Services
         void TurnOn(PlaybackControllerCommands command);
         void TurnOff(PlaybackControllerCommands command);
         void Undo();
+        Task SynchWithPlayback(string userId, string spotifyAccessToken);
         List<ApplicationUserDto> GetIncludedUsers();
         void AddIncludedUser(ApplicationUserDto user);
         void RemoveIncludedUser(ApplicationUserDto user);
@@ -24,6 +26,5 @@ namespace Pjfm.WebClient.Services
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
         PlaybackSettingsDto GetPlaybackSettings();
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
-        
     }
 }

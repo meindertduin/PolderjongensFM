@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
-using pjfm.Models;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
 
 namespace Pjfm.WebClient.Services
@@ -26,11 +25,9 @@ namespace Pjfm.WebClient.Services
             _playbackQueue = playbackQueue;
             _spotifyPlaybackManager = spotifyPlaybackManager;
             
-            IPlaybackController.CurrentPlaybackState = new UserRequestPlaybackState(_playbackQueue);
-            
             _undoCommand = new NoCommand();
 
-            _onCommands[0] = new PlaybackOnCommand(_spotifyPlaybackManager);
+            _onCommands[0] = new PlaybackOnCommand(this ,_spotifyPlaybackManager, _playbackQueue);
             _offCommands[0] = new PlaybackOffCommand(_spotifyPlaybackManager);
 
             _onCommands[1] = new PlaybackModeShortTermCommand(_playbackQueue);
@@ -88,7 +85,12 @@ namespace Pjfm.WebClient.Services
         {
             _undoCommand.Execute();
         }
-        
+
+        public Task SynchWithPlayback(string userId, string spotifyAccessToken)
+        {
+            return _spotifyPlaybackManager.SynchWithCurrentPlayer(userId, spotifyAccessToken);
+        }
+
         public List<ApplicationUserDto> GetIncludedUsers()
         {
             return _playbackQueue.IncludedUsers;

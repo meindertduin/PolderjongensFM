@@ -9,13 +9,15 @@ namespace Pjfm.WebClient.Services
     public class PlaybackListenerManager : IPlaybackListenerManager
     {
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
-        
+        private readonly IPlaybackController _playbackController;
+
         public static readonly ConcurrentDictionary<string, ApplicationUser> ConnectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
-        public PlaybackListenerManager(ISpotifyPlaybackManager spotifyPlaybackManager)
+        public PlaybackListenerManager(ISpotifyPlaybackManager spotifyPlaybackManager, IPlaybackController playbackController)
         {
             _spotifyPlaybackManager = spotifyPlaybackManager;
+            _playbackController = playbackController;
         }
         
         public async Task AddListener(ApplicationUser user)
@@ -24,11 +26,11 @@ namespace Pjfm.WebClient.Services
             
             if (_spotifyPlaybackManager.IsCurrentlyPlaying == false)
             {
-                await _spotifyPlaybackManager.StartPlayingTracks();
+                _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
             }
             else
             {
-                await _spotifyPlaybackManager.SynchWithCurrentPlayer(user.Id, user.SpotifyAccessToken);
+                await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
             }
         }
 
