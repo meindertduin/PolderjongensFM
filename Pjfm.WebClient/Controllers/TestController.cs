@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Spotify.Commands;
 using Pjfm.Application.Test.Queries;
 
 namespace pjfm.Controllers
@@ -52,6 +53,20 @@ namespace pjfm.Controllers
             }
             
             return Ok(queryResult.Data);
+        }
+
+        [HttpGet("refreshToken")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var user = HttpContext.User;
+            var userProfile = await _userManager.GetUserAsync(user);
+            
+            var refreshResult = await _mediator.Send(new AccessTokenRefreshCommand()
+            {
+                UserId = userProfile.Id,
+            });
+
+            return Ok(refreshResult.Data);
         }
     }
 }

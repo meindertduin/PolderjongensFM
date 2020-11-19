@@ -3,6 +3,7 @@
         <v-btn @click="getUserMessage">User</v-btn>
         <v-btn @click="getModMessage">Mod</v-btn>
         <v-btn @click="getUserTopTracks">Top Tracks</v-btn>
+        <v-btn @click="refreshToken">Refresh token</v-btn>
     </div>
 </template>
 
@@ -34,6 +35,11 @@
                 .then((response) => {
                     console.log(response.data);
                 })
+        }
+        
+        private refreshToken(){
+            Axios.get('/api/test/refreshToken')
+                .then((response) => console.log(response.data));
         }
     }
 </script>
