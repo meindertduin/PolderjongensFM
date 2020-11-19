@@ -55,15 +55,15 @@ namespace Pjfm.Application.Spotify.Commands
                 {
                     ShortTermTracksExpired = u.TopTracks
                         .Any(x => x.Term == TopTrackTerm.ShortTerm
-                                  && x.TimeAdded < DateTime.Now.AddDays(-28)),
+                                  && x.TimeAdded < DateTime.Now.AddDays(-5)),
 
                     MediumTermTracksExpired = u.TopTracks
-                        .Any(x => x.Term == TopTrackTerm.ShortTerm
-                                  && x.TimeAdded < DateTime.Now.AddDays(-28)),
+                        .Any(x => x.Term == TopTrackTerm.MediumTerm
+                                  && x.TimeAdded < DateTime.Now.AddDays(-100)),
 
                     LongTermTracksExpired = u.TopTracks
-                        .Any(x => x.Term == TopTrackTerm.ShortTerm
-                                  && x.TimeAdded < DateTime.Now.AddDays(-28)),
+                        .Any(x => x.Term == TopTrackTerm.LongTerm
+                                  && x.TimeAdded < DateTime.Now.AddDays(-365)),
                 }).FirstOrDefault();
 
             Queue<int> terms = new Queue<int>();
