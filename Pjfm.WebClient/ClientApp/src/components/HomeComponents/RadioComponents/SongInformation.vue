@@ -54,6 +54,7 @@
 
       get nextSongDuration(){
         if(this.nextSongInfo != null){
+            console.log(this.nextSongInfo);
           let duration = new Date(this.nextSongInfo.duration == null ?  new Date(0).getTime() : this.nextSongInfo.duration).getTime();
           return duration;
         }

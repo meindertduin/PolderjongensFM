@@ -11,9 +11,9 @@
         <div class="text-center">
             <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
         </div>
-        <v-list dense v-if="results.length > 0 && !loading">
+        <v-list dense v-if="searchUsersResult.length > 0 && !loading">
             <v-list-item-group class="results-container">
-                <v-list-item v-for="(user, i) in results" :key="i" @click="addUser(user)">
+                <v-list-item v-for="(user, i) in searchUsersResult" :key="i" @click="addUser(user)">
                     <v-list-item-content>
                         <v-row>
                             <v-col>
@@ -45,8 +45,12 @@
     })
     export default class searchUserComponent extends Vue {
         private query = '';
-        private results : Array<applicationUser> = [];
+        private searchUsersResult : Array<applicationUser> = [];
         private loading = false;
+        
+        get includedUsers():Array<applicationUser>{
+            return this.$store.getters['modModule/getIncludedUsers'];
+        }
 
         created(){
             this.loadMembers();
@@ -55,8 +59,16 @@
         loadMembers():Promise<void>{
             this.loading = true;
             return axios.get('api/user/members')
-                .then((response) => {
-                    this.results = response.data;
+                .then(({data}:{data:Array<applicationUser>}) => {
+                    this.searchUsersResult = data.filter(x => {
+                        const user = this.includedUsers.find(l => l.id === x.id);
+                        if (user){
+                            return false;
+                        }
+                        else{
+                            return true;
+                        }
+                    });
                 })
                 .catch((err) => console.log(err))
                 .finally(() => {
@@ -83,7 +95,7 @@
 
             axios.get(`https://localhost:5001/api/user/search?query=${this.query}`)
                 .then((response) => {
-                    this.results = response.data;
+                    this.searchUsersResult = response.data;
                     console.log(response.data);
                 })
                 .catch((err) => console.log(err))
@@ -94,7 +106,7 @@
             axios.post('api/playback/mod/include', user)
                 .then((response) => {
                     this.$store.commit('modModule/ADD_INCLUDED_USER', user);
-                    console.log(response)
+                    this.searchUsersResult = this.searchUsersResult.filter(x => x.id !== user.id);
                 })
             .catch((err) => console.log(err));
         }
