@@ -66,11 +66,8 @@
         get playbackInfo():playerUpdateInfo{
             return this.$store.getters['playbackModule/getPlaybackInfo'];
         }
-
-      
-
-
-      @Watch('playbackInfo')
+        
+         @Watch('playbackInfo')
       updateRadio(){
           if (this.playbackInfo){
               this.currentSongInfo = {
@@ -111,26 +108,26 @@
         this.updateRadio();
       }
 
-      updateElapsedTime() : void {
+        updateElapsedTime() : void {
             let now = new Date();
 
             if(this.currentSongInfo != null){
                 let elapsed = now.getTime() - new Date(this.currentSongInfo.startingTime).getTime();
                 this.elapsedTime = elapsed;
-                
+
                 if(this.timer == null){
                     this.timer = setInterval(() => {
                         this.elapsedTime += 1000;
                     }, 1000)
                 }
             }
-      }
+        }
 
-      convertMsToMMSS(ms) : string {
-          let date = new Date(null);
-          date.setMilliseconds(ms);
-          
-          return date.toISOString().substr(14, 5);
-      }
+        convertMsToMMSS(ms) : string {
+            let date = new Date(null);
+            date.setMilliseconds(ms);
+
+            return date.toISOString().substr(14, 5);
+        }
     }
 </script>

@@ -18,21 +18,22 @@
           </v-row>
       </v-col>
     </v-row>
-    <v-btn id="sticky-button" class="float-right mx-1"  fab dark color="orange" @click="navigate('/search')">
+    <v-btn v-if="playbackState !== 0 || isMod" id="sticky-button" class="float-right mx-1" fab dark color="orange" @click="navigate('/search')">
       <v-icon large>mdi-magnify</v-icon>
     </v-btn>
   </div>
 </template>
 
 <script lang="ts">
-  import Vue from 'vue'
-  import Component from 'vue-class-component'
-  import Radio from "@/components/HomeComponents/Radio";
-  import LiveChat from "@/components/HomeComponents/Livechat";
-  import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
-  import UserIncludeSettingsDashboard from "@/components/ModComponents/UserIncludeSettingsDashboard.vue";
-  
-  @Component({
+    import Vue from 'vue'
+    import Component from 'vue-class-component'
+    import Radio from "@/components/HomeComponents/Radio";
+    import LiveChat from "@/components/HomeComponents/Livechat";
+    import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
+    import UserIncludeSettingsDashboard from "@/components/ModComponents/UserIncludeSettingsDashboard.vue";
+    import {playbackState, playerUpdateInfo} from "@/common/types";
+
+    @Component({
     name: 'Home',
     components: {
         UserIncludeSettingsDashboard,
@@ -45,6 +46,14 @@
     get isMod(){
         return this.$store.getters['profileModule/isMod'];
     }
+
+      get playbackState():playbackState{
+          const playbackSettings:playerUpdateInfo = this.$store.getters['playbackModule/getPlaybackInfo'];
+          if (playbackSettings){
+              return playbackSettings.playbackSettings.playbackState;
+          }
+          return playbackState['Dj-mode'];
+      }
 
     navigate(uri : string) : void{
       this.$router.push(uri);
