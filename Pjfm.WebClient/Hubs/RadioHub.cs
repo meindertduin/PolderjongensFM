@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
-using pjfm.Models;
 using Pjfm.WebClient.Services;
 
 namespace pjfm.Hubs
@@ -21,37 +16,49 @@ namespace pjfm.Hubs
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly IPlaybackEventTransmitter _playbackEventTransmitter;
         private readonly IPlaybackController _playbackController;
+        private readonly ISpotifyPlayerService _spotifyPlayerService;
 
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackEventTransmitter playbackEventTransmitter, IPlaybackController playbackController)
+            IPlaybackEventTransmitter playbackEventTransmitter, IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
             _playbackEventTransmitter = playbackEventTransmitter;
             _playbackController = playbackController;
+            _spotifyPlayerService = spotifyPlayerService;
         }
-        
+
         public override async Task OnConnectedAsync()
         {
-            var context = Context.GetHttpContext();
-            var user = await _userManager.GetUserAsync(context.User);
-
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
             var userInfo = infoModelFactory.CreateUserInfoModel();
 
             Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userInfo);
 
-            await _playbackListenerManager.AddListener(user);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var context = Context.GetHttpContext();
-            var user = await _userManager.GetUserAsync(context.User);
-            _playbackListenerManager.RemoveListener(user.Id);
+            await DisconnectWithPlayer();
             await base.OnDisconnectedAsync(exception);
         }
         
+        public async Task ConnectWithPlayer()
+        {
+            var context = Context.GetHttpContext();
+            var user = await _userManager.GetUserAsync(context.User);
+            
+            await _playbackListenerManager.AddListener(user);
+        }
+
+        public async Task DisconnectWithPlayer()
+        {
+            var context = Context.GetHttpContext();
+            var user = await _userManager.GetUserAsync(context.User);
+            
+            await _playbackListenerManager.RemoveListener(user.Id);
+            await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
+        }
     }
 }

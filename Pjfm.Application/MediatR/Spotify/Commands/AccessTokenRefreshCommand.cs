@@ -41,33 +41,36 @@ namespace Pjfm.Application.Spotify.Commands
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authString));
 
                 var user = _appDbContext.ApplicationUsers.FirstOrDefault(u => u.Id == request.UserId);
-                
-                FormUrlEncodedContent formContent = new FormUrlEncodedContent(new []
+
+                if (user != null)
                 {
-                    new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                    new KeyValuePair<string, string>("refresh_token", user.SpotifyRefreshToken), 
-                });
-
-                var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent);
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var resultString = await result.Content.ReadAsStringAsync();
-                
-                    var resultContent =
-                        JsonConvert.DeserializeObject<RefreshAccessTokenRequestResult>(resultString, new JsonSerializerSettings()
-                        {
-                            ContractResolver = new UnderScorePropertyNamesContractResolver(),
-                        });
-
-                    if (resultContent != null)
+                    FormUrlEncodedContent formContent = new FormUrlEncodedContent(new []
                     {
-                        user.SpotifyAccessToken = resultContent.AccessToken;
-                        return Response.Ok<string>("Accesstoken successfully retireved", resultContent.AccessToken);
+                        new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                        new KeyValuePair<string, string>("refresh_token", user.SpotifyRefreshToken), 
+                    });
+
+                    var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent);
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var resultString = await result.Content.ReadAsStringAsync();
+                
+                        var resultContent =
+                            JsonConvert.DeserializeObject<RefreshAccessTokenRequestResult>(resultString, new JsonSerializerSettings()
+                            {
+                                ContractResolver = new UnderScorePropertyNamesContractResolver(),
+                            });
+
+                        if (resultContent != null)
+                        {
+                            user.SpotifyAccessToken = resultContent.AccessToken;
+                            return Response.Ok<string>("Accesstoken successfully retireved", resultContent.AccessToken);
+                        }
                     }
                 }
-                
-                return Response.Fail<string>("Accesstoken could not be retrieved");
+
+                return Response.Fail<string>("Accesstoken could not be refreshed");
             }
             
         }
