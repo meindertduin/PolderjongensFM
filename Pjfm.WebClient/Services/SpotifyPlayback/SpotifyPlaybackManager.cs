@@ -55,6 +55,17 @@ namespace Pjfm.WebClient.Services
             _trackTimerAutoEvent.WaitOne();
         }
 
+        public async Task ResetPlayingTracks(int afterDelay)
+        {
+            await StopPlayingTracks(afterDelay);
+            
+            _isCurrentlyPlaying = true;
+            var nextTrackDuration = await PlayNextTrack();
+            CreateTimer();
+            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+            _trackTimerAutoEvent.WaitOne();
+        }
+
         private void CreateTimer()
         {
             _trackTimerAutoEvent = new AutoResetEvent(false);

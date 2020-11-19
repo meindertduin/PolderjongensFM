@@ -12,8 +12,7 @@ namespace Pjfm.WebClient.Services
         }
         public async void Execute()
         {
-            await _spotifyPlaybackManager.StopPlayingTracks(0);
-            await _spotifyPlaybackManager.StartPlayingTracks();
+            await _spotifyPlaybackManager.ResetPlayingTracks(0);
         }
 
         public void Undo()
