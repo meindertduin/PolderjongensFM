@@ -18,6 +18,15 @@
           </v-row>
       </v-col>
     </v-row>
+    <v-footer height="auto" color="transparent" fixed>
+      <v-row row wrap>
+        <v-col>
+          <v-btn class="float-right mx-1"  fab dark color="orange" @click="navigate('/search')">
+            <v-icon large>mdi-magnify</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-footer>
   </div>
 </template>
 
@@ -41,6 +50,10 @@
   export default class Home extends Vue {
     get isMod(){
         return this.$store.getters['profileModule/isMod'];
+    }
+
+    navigate(uri : string) : void{
+      this.$router.push(uri);
     }
   }
 </script>
