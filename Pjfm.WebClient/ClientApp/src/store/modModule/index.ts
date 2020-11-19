@@ -7,16 +7,20 @@ import App from "@/App.vue";
 
 class State {
     public includedUsers : Array<applicationUser> = [];
+    public loadedUsers : Array<applicationUser> = [];
 }
 
 const mutations = <MutationTree<State>>{
     SET_INCLUDED_USERS: (state, users: Array<applicationUser>) => state.includedUsers = users,
     ADD_INCLUDED_USER: (state, user: applicationUser) => state.includedUsers.push(user),
     REMOVE_INCLUDED_USER: (state, user:applicationUser) => state.includedUsers = state.includedUsers.filter(x => x.id !== user.id),
+    
+    SET_LOADED_USERS: (state, users: Array<applicationUser>) => state.loadedUsers = users
 }
 
 const getters = <GetterTree<State, any>>{
     getIncludedUsers: state => state.includedUsers, 
+    getLoadedUsers: state => state.loadedUsers, 
 }
 
 const actions = <ActionTree<State, any>>{
@@ -26,6 +30,13 @@ const actions = <ActionTree<State, any>>{
                 commit('SET_INCLUDED_USERS', response.data);
             })
             .catch((err) => console.log(err));
+    },
+    loadUsers({commit}){
+        return axios.get('api/user/members')
+            .then(({data}:{data:Array<applicationUser>}) => {
+                commit('SET_LOADED_USERS', data);
+            })
+            .catch((err) => console.log(err))
     }
 }
 

@@ -8,9 +8,9 @@
         <div class="text-center">
             <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
         </div>
-        <v-list dense v-if="searchUsersResult.length > 0 && !loading">
+        <v-list dense v-if="selectableUsers.length > 0 && !loading">
             <v-list-item-group>
-                <v-list-item v-for="(user, i) in searchUsersResult" :key="i" @click="addUser(user)">
+                <v-list-item v-for="(user, i) in selectableUsers" :key="i" @click="addUser(user)">
                     <v-list-item-content>
                       <v-list-item-title>
                         {{i + 1}}. {{user.displayName}} <span class="grey--text float-right">PJ</span>
@@ -32,62 +32,27 @@
         name: "searchUserComponent",
     })
     export default class searchUserComponent extends Vue {
-        private query = '';
         private searchUsersResult : Array<applicationUser> = [];
         private loading = false;
         
-        get includedUsers():Array<applicationUser>{
-            return this.$store.getters['modModule/getIncludedUsers'];
+        get selectableUsers():Array<applicationUser>{
+            const includedUsers :Array<applicationUser> = this.$store.getters['modModule/getIncludedUsers'];
+            const loadedUsers :Array<applicationUser> = this.$store.getters['modModule/getLoadedUsers'];
+            
+            return loadedUsers.filter(u => {
+                const user = includedUsers.find(l => l.id === u.id);
+                if (user){
+                    return false;
+                }
+                else{
+                    return true;
+                }
+            })
         }
 
         created(){
-            this.loadMembers();
-        }
-        
-        loadMembers():Promise<void>{
-            this.loading = true;
-            return axios.get('api/user/members')
-                .then(({data}:{data:Array<applicationUser>}) => {
-                    this.searchUsersResult = data.filter(x => {
-                        const user = this.includedUsers.find(l => l.id === x.id);
-                        if (user){
-                            return false;
-                        }
-                        else{
-                            return true;
-                        }
-                    });
-                })
-                .catch((err) => console.log(err))
-                .finally(() => {
-                    this.loading = false
-                });
-        }
-
-        searchBarKeyUp(e){
-            clearTimeout($.data(this, 'timer'));
-
-            if (e.keyCode == 13)
-                this.search(true);
-            else
-                $(this).data('timer', setTimeout(this.search, 500));
-        }
-        
-        search(force){
-            if (!force && this.query.length < 3){
-                this.loadMembers();
-                return;
-            }
-            this.loading = true;
-            this.items = []
-
-            axios.get(`https://localhost:5001/api/user/search?query=${this.query}`)
-                .then((response) => {
-                    this.searchUsersResult = response.data;
-                    console.log(response.data);
-                })
-                .catch((err) => console.log(err))
-                .finally(() => this.loading = false);
+            this.$store.dispatch('modModule/loadIncludedUsers');
+            this.$store.dispatch('modModule/loadUsers');
         }
         
         addUser(user: applicationUser){

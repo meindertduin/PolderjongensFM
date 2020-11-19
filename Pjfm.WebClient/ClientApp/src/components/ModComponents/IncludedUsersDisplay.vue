@@ -34,7 +34,6 @@
         }
         
         created(){
-            this.$store.dispatch('modModule/loadIncludedUsers');
         }
         
         excludeUser(user: applicationUser){

@@ -25,7 +25,7 @@
         components: {SearchUserComponent, IncludedUsersDisplay},
     })
     export default class UserIncludeSettingsDashboard extends Vue {
-    
+        
     }
 </script>
 
