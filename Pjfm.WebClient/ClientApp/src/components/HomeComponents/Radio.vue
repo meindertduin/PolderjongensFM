@@ -40,7 +40,7 @@
         }
 
         created(){
-            this.connect();
+            //this.connect();
         }
         
         navigate(uri : string) : void{

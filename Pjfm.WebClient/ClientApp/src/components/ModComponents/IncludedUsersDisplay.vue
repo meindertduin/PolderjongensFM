@@ -1,27 +1,21 @@
 ﻿<template>
-    <v-card class="users-settings-card">
-        <v-card-title>
-            <v-row justify="center">
-                <div class="text-h4">Included users</div>
-            </v-row>
-        </v-card-title>
-        <v-card-text>
-            <div class="included-users-container">
-                <div class="included-user-field" v-for="(user, index) in includedUsers">
-                    <v-row justify="end">
-                        <v-col>
-                            <div class="mx-2">{{user.displayName}}</div>
-                        </v-col>
-                        <v-col>
-                            <div v-if="user.member" class="blue--text">Pjfm</div>
-                        </v-col>
-                        <v-col>
-                            <v-btn small text color="orange" @click="excludeUser(user)">remove</v-btn>
-                        </v-col>
-                    </v-row>
-                </div>
-            </div>
-        </v-card-text>
+      <v-card
+          class="pa-2"
+          outlined
+          round
+      >
+        <span class="overline grey--text">Included</span><br>
+        <v-list dense>
+          <v-list-item-group>
+            <v-list-item v-for="(user, index) in includedUsers" @click="excludeUser(user)">
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{user.displayName}} <span class="grey--text float-right" v-if="user.member">PJ</span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
     </v-card>
 </template>
 

@@ -1,32 +1,20 @@
 ﻿<template>
     <v-card
-            class="pa-2 users-settings-card"
+            class="pa-2"
             outlined
             round
     >
-        <span class="overline grey--text">Zoeken</span><br>
-        <v-text-field prepend-icon="mdi-magnify" label="Zoeken" v-on:keyup="searchBarKeyUp($event)" v-model="query"></v-text-field>
-        <v-divider></v-divider>
-        <span class="overline grey--text">Resultaten</span><br>
+        <span class="overline grey--text">Not Included</span><br>
         <div class="text-center">
             <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
         </div>
         <v-list dense v-if="searchUsersResult.length > 0 && !loading">
-            <v-list-item-group class="results-container">
+            <v-list-item-group>
                 <v-list-item v-for="(user, i) in searchUsersResult" :key="i" @click="addUser(user)">
                     <v-list-item-content>
-                        <v-row>
-                            <v-col>
-                                <div class="user-details-container">
-                                    <div class="text-h6 mx-2">
-                                        {{i + 1}}. {{user.displayName}}
-                                    </div>
-                                    <div v-if="user.member" class="text-h6 blue--text mx-2">
-                                        pjfm
-                                    </div>
-                                </div>
-                            </v-col>
-                        </v-row>
+                      <v-list-item-title>
+                        {{i + 1}}. {{user.displayName}} <span class="grey--text float-right">PJ</span>
+                      </v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list-item-group>
