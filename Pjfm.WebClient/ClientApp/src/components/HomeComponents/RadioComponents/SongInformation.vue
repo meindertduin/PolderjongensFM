@@ -1,6 +1,6 @@
 <template>
     <v-row>
-      <v-col>
+      <v-col class="d-block">
           <v-card
           class="pa-2"
           outlined
@@ -12,7 +12,7 @@
               <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentSongDuration) }} </span>
           </v-card>
       </v-col>
-      <v-col>
+      <v-col class="d-none d-md-block">
         <v-card
           class="pa-2"
           outlined
@@ -36,7 +36,6 @@
 
     @Component({
         name: 'SongInformation',
-        props: ['radioConnection'],
     })
     export default class SongInformation extends Vue {
         private currentSongInfo = null;
@@ -67,7 +66,7 @@
             return this.$store.getters['playbackModule/getPlaybackInfo'];
         }
         
-         @Watch('playbackInfo')
+      @Watch('playbackInfo')
       updateRadio(){
           if (this.playbackInfo){
               this.currentSongInfo = {
