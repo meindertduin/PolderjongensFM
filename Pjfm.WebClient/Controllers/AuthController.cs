@@ -21,6 +21,8 @@ namespace pjfm.Controllers
         [HttpGet("mod")]
         public IActionResult GetModStatus()
         {
+            var user = HttpContext.User.Claims;
+            
             var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
                 ApplicationIdentityConstants.Roles.Mod);
 

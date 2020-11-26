@@ -52,7 +52,7 @@
             }
 
             this.radioConnection = new HubConnectionBuilder()
-                .withUrl("/radio")
+                .withUrl(`${process.env.VUE_APP_API_BASE_URL}/radio`)
                 .build();
 
             this.radioConnection.start()

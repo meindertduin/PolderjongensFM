@@ -72,6 +72,7 @@ export default class App extends Vue{
   
   @Watch("oidcAuthenticated")
   setModStatus(newValue:any, oldValue:any){
+    console.log(newValue);
     this.$store.dispatch('profileModule/loadModState');
   }
   

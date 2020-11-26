@@ -73,16 +73,10 @@ namespace pjfm
                     {
                         builder
                             .AllowCredentials()
-                            .WithOrigins("https://localhost:5001")
+                            .WithOrigins("https://localhost:8080")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
-            });
-            
-            
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
             });
         }
 
@@ -102,7 +96,6 @@ namespace pjfm
             app.UseCors("AllowAllOrigins");
             
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
@@ -122,22 +115,8 @@ namespace pjfm
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
 
-                if (env.IsDevelopment())
-                {
-                    endpoints.MapToVueCliProxy(
-                        @"{*path}",
-                        new SpaOptions { SourcePath = "ClientApp" },
-                        npmScript: "serve",
-                        regex: "Compiled successfully");
-                }
-
                 endpoints.MapRazorPages();
                 
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
             });
         }
     }

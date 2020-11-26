@@ -59,7 +59,7 @@
         
         connect(){
             this.socketConnection = new HubConnectionBuilder()
-                .withUrl("/livechat")
+                .withUrl(`${process.env.VUE_APP_API_BASE_URL}/livechat`)
                 .build();
 
             this.socketConnection.start()

@@ -61,7 +61,7 @@ namespace pjfm.Controllers
                 
                 if (updateTopTracksResult.Error == false)
                 {
-                    return Redirect("https://localhost:5001");
+                    return Redirect("https://localhost:8080");
                 }
             }
             
@@ -77,7 +77,7 @@ namespace pjfm.Controllers
                 trackedUserProfile.SpotifyAccessToken = result.Data.AccessToken;
                 trackedUserProfile.SpotifyRefreshToken = result.Data.RefreshToken;
                 await _ctx.SaveChangesAsync(CancellationToken.None);
-                return Redirect("https://localhost:5001");
+                return Redirect("https://localhost:8080");
             }
 
             return BadRequest();
