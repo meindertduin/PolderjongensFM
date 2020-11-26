@@ -1,6 +1,8 @@
 ﻿<template>
     <div class="chat-input">
-        <v-textarea v-model="messageInput" filled auto-grow label="Doe een verzoekje!" rows="2" row-height="20"></v-textarea>
+        <v-textarea v-model="messageInput" counter="200" filled auto-grow label="Doe een verzoekje!" rows="2" row-height="20" :rules="charsMaxFormRule200">
+            
+        </v-textarea>
         <v-btn @click="sendMessage" class="send-button" color="orange">Bericht versturen</v-btn>
     </div>
 </template>
@@ -15,7 +17,12 @@
     export default class MessageInput extends Vue {
         private messageInput:string = "";
         
+        private charsMaxFormRule200 = (value:any) => value.length <= 2000 || 'Maximaal 2000 tekens';
+
+
         sendMessage(){
+            if (this.messageInput.length > 200) return;
+            
             this.$parent.sendMessage(this.messageInput);
             this.messageInput = "";
         }
@@ -28,6 +35,6 @@
     }
     .send-button{
         width: 100%;
-        top: -25px;
+        top: -10px;
     }
 </style>

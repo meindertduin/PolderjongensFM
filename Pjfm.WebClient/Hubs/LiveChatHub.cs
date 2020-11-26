@@ -27,19 +27,22 @@ namespace pjfm.Hubs
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task SendMessage(string message)
         {
-            var context = Context.GetHttpContext();
-            var user = await _userManager.GetUserAsync(context.User);
-
-            var liveChatMessage = new LiveChatMessage
+            if (message.Length <= 200)
             {
-                UserName = user.UserName,
-                Message = message,
-                TimeSend = DateTime.Now,
-            };
+                var context = Context.GetHttpContext();
+                var user = await _userManager.GetUserAsync(context.User);
+
+                var liveChatMessage = new LiveChatMessage
+                {
+                    UserName = user.UserName,
+                    Message = message,
+                    TimeSend = DateTime.Now,
+                };
             
-            await Clients.All.SendAsync("ReceiveMessage", liveChatMessage);
-            await _ctx.LiveChatMessages.AddAsync(liveChatMessage);
-            await _ctx.SaveChangesAsync(CancellationToken.None);
+                await Clients.All.SendAsync("ReceiveMessage", liveChatMessage);
+                await _ctx.LiveChatMessages.AddAsync(liveChatMessage);
+                await _ctx.SaveChangesAsync(CancellationToken.None);
+            }
         }
 
         public override async Task OnConnectedAsync()
