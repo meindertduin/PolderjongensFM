@@ -7,10 +7,10 @@
         <span class="overline grey--text">Included</span><br>
         <v-list dense>
           <v-list-item-group>
-            <v-list-item v-for="(user, index) in includedUsers" @click="excludeUser(user)">
+            <v-list-item v-for="(user, i) in includedUsers" @click="excludeUser(user)">
               <v-list-item-content>
                 <v-list-item-title>
-                  {{user.displayName}} <span class="grey--text float-right" v-if="user.member">PJ</span>
+                  {{i + 1}}. {{user.displayName}} <span class="grey--text float-right" v-if="user.member">PJ</span>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
