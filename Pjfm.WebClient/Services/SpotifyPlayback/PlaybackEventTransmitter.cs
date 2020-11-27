@@ -33,26 +33,31 @@ namespace Pjfm.WebClient.Services
         {
             if (value)
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    var radioHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<RadioHub>>();
-                    var djHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<DjHub>>();
+                PublishUpdatePlaybackInfoEvents();
+            }
+        }
+
+        public void PublishUpdatePlaybackInfoEvents()
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var radioHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<RadioHub>>();
+                var djHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<DjHub>>();
                     
-                    var infoModelFactory = new PlaybackInfoFactory(_playbackController);
-                    var userInfo = infoModelFactory.CreateUserInfoModel();
-                    var djInfo = infoModelFactory.CreateUserInfoModel();
+                var infoModelFactory = new PlaybackInfoFactory(_playbackController);
+                var userInfo = infoModelFactory.CreateUserInfoModel();
+                var djInfo = infoModelFactory.CreateUserInfoModel();
                     
 
-                    radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", userInfo);
+                radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", userInfo);
                 
-                    djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
-                }
+                djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
             }
         }
     }
 
     public interface IPlaybackEventTransmitter
     {
-        
+        void PublishUpdatePlaybackInfoEvents();
     }
 }

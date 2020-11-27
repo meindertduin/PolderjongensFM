@@ -3,6 +3,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,16 +74,10 @@ namespace pjfm
                     {
                         builder
                             .AllowCredentials()
-                            .WithOrigins("https://localhost:5001")
+                            .WithOrigins("https://localhost:8085")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
-            });
-            
-            
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
             });
         }
 
@@ -102,9 +97,14 @@ namespace pjfm
             app.UseCors("AllowAllOrigins");
             
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
 
             app.UseRouting();
+            
+            app.UseCookiePolicy(new CookiePolicyOptions()
+            {
+                MinimumSameSitePolicy = SameSiteMode.None,
+                Secure = CookieSecurePolicy.Always,
+            });
 
             app.UseAuthentication();
             
@@ -122,22 +122,8 @@ namespace pjfm
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
 
-                if (env.IsDevelopment())
-                {
-                    endpoints.MapToVueCliProxy(
-                        @"{*path}",
-                        new SpaOptions { SourcePath = "ClientApp" },
-                        npmScript: "serve",
-                        regex: "Compiled successfully");
-                }
-
                 endpoints.MapRazorPages();
                 
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
             });
         }
     }

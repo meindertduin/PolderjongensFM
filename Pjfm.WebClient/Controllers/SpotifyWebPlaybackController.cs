@@ -18,14 +18,17 @@ namespace pjfm.Controllers
     {
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
+        private readonly IPlaybackEventTransmitter _eventTransmitter;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public SpotifyWebPlaybackController(IPlaybackController playbackController,
             ISpotifyBrowserService spotifyBrowserService, 
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IPlaybackEventTransmitter eventTransmitter)
         {
             _playbackController = playbackController;
             _spotifyBrowserService = spotifyBrowserService;
+            _eventTransmitter = eventTransmitter;
             _userManager = userManager;
         }
         
@@ -121,11 +124,14 @@ namespace pjfm.Controllers
             {
                 response = _playbackController.AddSecondaryTrack(requestedTrack, ApplicationUserSerializer.SerializeToDto(user));
             }
-
+            
             if (response.Error)
             {
                 return Conflict(response);
             }
+            
+            _eventTransmitter.PublishUpdatePlaybackInfoEvents();
+
 
             return Accepted(response);
         }

@@ -43,12 +43,12 @@ namespace Pjfm.Application.Identity
                     
                     RedirectUris = new[]
                     {
-                        "https://localhost:5001/oidc-callback",
-                        "https://localhost:5001/oidc-client-silent-renew.html",
+                        "https://localhost:8085/oidc-callback",
+                        "https://localhost:8085/oidc-client-silent-renew.html",
                     },
                     PostLogoutRedirectUris = new[]
                     {
-                        "https://localhost:5001",
+                        "https://localhost:8085",
                     },
                     
                     AllowedScopes = new[]
@@ -62,7 +62,8 @@ namespace Pjfm.Application.Identity
                     AlwaysIncludeUserClaimsInIdToken = true,
                     
                     RequirePkce = true,
-                    AllowAccessTokensViaBrowser = false,
+                    
+                    AllowAccessTokensViaBrowser = true,
                     RequireClientSecret = false,
                 }
             };
