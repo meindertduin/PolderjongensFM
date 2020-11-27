@@ -26,7 +26,7 @@
         </v-list-item>
         <v-divider></v-divider>
 
-        <v-subheader>Account </v-subheader>
+        <v-subheader>Account</v-subheader>
         <div v-if="!oidcAuthenticated">
           <v-list-item link @click="signInOidcClient()">
             <v-list-item-action>
@@ -56,6 +56,7 @@
           </v-list-item>
         </div>
       </v-list>
+
     </v-navigation-drawer>
     
     <v-app-bar
@@ -67,6 +68,7 @@
       <v-toolbar-title>PJFM</v-toolbar-title>
       <v-spacer></v-spacer>
 
+      <span class="align-bottom overline grey--text" v-if="oidcAuthenticated">INGELOGD ALS <span class="orange--text">{{userProfile.userName}}</span></span>
       <v-img
           class="mx-2 float-right"
           src="/assets/logo.png"
@@ -104,8 +106,6 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySettingsItemGroup.vue";
-import vuetify from "@/plugins/vuetify";
-import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
@@ -125,6 +125,9 @@ export default class App extends Vue{
   created(){
     this.setUserPreferences();
     this.setRadioConnection();
+    setInterval(() => {
+      console.log(this.userProfile)
+    }, 2500)
   }
   
   private async setRadioConnection():void{
@@ -160,6 +163,10 @@ export default class App extends Vue{
     return this.$store.state.oidcStore.access_token;
   }
   
+  get userProfile(){
+    return this.$store.getters['profileModule/userProfile'];
+  }
+  
   @Watch('accessToken')
   setAxiosInterceptor(newValue:any, oldValue:any){
       this.$axios.interceptors.request.use(
@@ -172,6 +179,7 @@ export default class App extends Vue{
       this.$store.dispatch('profileModule/loadModState');
 
     this.$store.dispatch('profileModule/loadModState');
+    this.$store.dispatch('profileModule/getUserProfile');
   }
 
   private navigate(uri){
