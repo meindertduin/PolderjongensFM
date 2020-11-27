@@ -51,6 +51,12 @@ namespace pjfm.Hubs
             var user = await _userManager.GetUserAsync(context.User);
             
             await _playbackListenerManager.AddListener(user);
+            
+            int minutes = 1;
+            if (minutes != 0)
+            {
+                _playbackListenerManager.TrySetTimedListener(user.Id, minutes);
+            }
         }
 
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
@@ -58,9 +64,21 @@ namespace pjfm.Hubs
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-            
-            await _playbackListenerManager.RemoveListener(user.Id);
-            await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
+
+            if (_playbackListenerManager.IsUserTimedListener(user.Id))
+            {
+                await _playbackListenerManager.RemoveListener(user.Id);
+                await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
+            }
+        }
+
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        public async Task CancelTimedListenSession()
+        {
+            var context = Context.GetHttpContext();
+            var user = await _userManager.GetUserAsync(context.User);
+
+            _playbackListenerManager.TryRemoveTimedListener(user.Id);
         }
     }
 }

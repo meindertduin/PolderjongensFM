@@ -95,12 +95,14 @@ namespace Pjfm.WebClient.Services
                 await _trackTimer.DisposeAsync();
                 _trackTimer = null;
             }
+            
             await PausePlayerForAll();
         }
 
         public async Task SkipTrack()
         {
-            if(_trackTimer != null){
+            if (_trackTimer != null)
+            {
                 await _trackTimer.DisposeAsync();
                 _trackTimer = null;
             }
