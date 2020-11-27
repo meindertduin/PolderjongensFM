@@ -1,18 +1,7 @@
 ﻿<template>
     <div>
-        <v-row>
-          <v-col>
-            <v-btn block class="green ma-2" v-if="oidcAuthenticated && !playbackConnected" @click="connectWithPlayer">
-              <span class="" v-if="radioConnection">Luisteren</span>
-              <span class="" v-else>Klik hier om te verbinden</span>
-            </v-btn>
-            <v-btn block class="red ma-2" v-if="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer">
-              <span class="" v-if="radioConnection">Stoppen</span>
-            </v-btn>
-          </v-col>
-        </v-row>
-        <SongInformation v-if="radioConnection" v-bind:radioConnection="radioConnection"/>
-        <Queue v-if="radioConnection" v-bind:radioConnection="radioConnection"/>
+        <SongInformation/>
+        <Queue/>
     </div>
 </template>
 
@@ -28,55 +17,20 @@
         components: {
             SongInformation,
             Queue
-        }
+        },
     })
     export default class Radio extends Vue {
-        private radioConnection: HubConnection | null = null;
-        private playbackConnected: boolean = false;
-
         get oidcAuthenticated(){
             return this.$store.getters['oidcStore/oidcIsAuthenticated'];
         }
 
-        created(){
-            this.connectToRadioSocket();
-        }
+      get radioConnection(){
+        return this.$store.getters['playbackModule/radioConnection'];
+      }
         
-        navigate(uri : string) : void{
-            this.$router.push(uri);
-        }
-        
-        async connectToRadioSocket() {
-            if (this.radioConnection != null) {
-                await this.radioConnection.stop();
-            }
-
-            this.radioConnection = new HubConnectionBuilder()
-                .withUrl(`${process.env.VUE_APP_API_BASE_URL}/radio`)
-                .build();
-
-            this.radioConnection.start()
-                .then(() => console.log("connection started"));
-
-            this.radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) => 
-                this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
-        }
-        
-        connectWithPlayer(){
-            this.playbackConnected = true;
-          
-            this.radioConnection?.invoke("ConnectWithPlayer")
-                .then(() => console.log("connection started with player"))
-                .catch((err) => console.log(err));
-        }
-        
-        disconnectWithPlayer(){
-            this.playbackConnected = false;
-          
-            this.radioConnection?.invoke("DisconnectWithPlayer")
-                .then(() => console.log("Disconnected with player"))
-                .catch((err) => console.log(err));
-        } 
+      navigate(uri : string) : void{
+          this.$router.push(uri);
+      }
     }
 </script>
 

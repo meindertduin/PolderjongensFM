@@ -1,6 +1,6 @@
 ﻿<template>
     <div class="chat-input">
-        <v-textarea v-model="messageInput" counter="200" filled auto-grow label="Doe een verzoekje!" rows="2" row-height="20" :rules="[charsMaxFormRule200">
+        <v-textarea v-model="messageInput" counter="200" filled auto-grow label="Doe een verzoekje!" rows="2" row-height="20" :rules="[charsMaxFormRule200]">
             
         </v-textarea>
         <v-btn @click="sendMessage" :disabled="messageInput.length > 200" class="send-button" color="orange">Bericht versturen</v-btn>

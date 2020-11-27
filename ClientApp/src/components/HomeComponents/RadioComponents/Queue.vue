@@ -37,7 +37,6 @@
 
     @Component({
         name: 'Queue',
-        props: ['radioConnection'],
     })
     export default class Queue extends Vue { 
       private queue = [];
