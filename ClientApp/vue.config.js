@@ -13,6 +13,7 @@ module.exports = {
     hotOnly: false,
     port: 8085,
     host: '0.0.0.0',
+    public: "https://localhost:8085",
   }
   
 }
