@@ -59,6 +59,7 @@
 
     </v-navigation-drawer>
     
+    
     <v-app-bar
         app
         clipped-left
@@ -80,25 +81,79 @@
 
     <!-- Sizes your content based upon application components -->
     <v-main>
-
+      
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
-
+        
         <!-- If using vue-router -->
         <router-view></router-view>
       </v-container>
     </v-main>
-      <v-bottom-navigation fixed>
-        <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="connectWithPlayer" block>
+
+
+    <template>
+      <v-row justify="center">
+        <v-dialog
+            v-model="dialog"
+            persistent
+            max-width="600"
+        >
+          <v-card>
+            <v-card-title>
+              PJFM - Instellingen
+            </v-card-title>
+            <v-card-text>
+              Bij het luisteren naar PJFM wordt je Spotify tijdelijk bestuurd door de PJFM app.<br><br>
+              Hieronder kan je aangeven hoelang de PJFM app je Spotify mag besturen.<br><br>
+              Als je tijdens het luisteren wilt dat PJFM stopt met het besturen van jouw account kan je op STOP onder in het scherm klikken.<br><br>
+              <v-spacer></v-spacer>
+              <v-radio-group
+                  v-model="row"
+                  row
+                  class="align-content-center"
+              >
+                <v-radio
+                    label="30 minuten"
+                    value="30"
+                ></v-radio>
+                <v-radio
+                    label="2 uur"
+                    value="120"
+                ></v-radio>
+                <v-radio
+                    label="4 uur"
+                    value="240"
+                ></v-radio>
+              </v-radio-group>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  color="orange darken-1"
+                  text
+                  @click="connectWithPlayer()"
+              >
+                Prima!
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
+    </template>
+    
+    
+    <v-bottom-navigation fixed>
+
+
+        <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="openDialog" block>
           <span>Start</span>
           <v-icon>mdi-play</v-icon>
         </v-btn>
-        
-        <v-btn v-if="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer" block>
+        <v-btn v-else="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer" block>
           <span>Stop</span>
           <v-icon>mdi-pause</v-icon>
         </v-btn>
-      </v-bottom-navigation>
+    </v-bottom-navigation>
   </v-app>
 </template>
 
@@ -118,6 +173,7 @@ import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 })
 
 export default class App extends Vue{
+  private dialog: boolean = false;
   private drawer: boolean = null;
   private playbackConnected: boolean = false;
   private radioConnection: HubConnection | null = null;
@@ -145,6 +201,10 @@ export default class App extends Vue{
         this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
 
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
+  }
+  
+  private openDialog(){
+    this.dialog = true;
   }
   
   private setUserPreferences():void{
@@ -193,6 +253,7 @@ export default class App extends Vue{
 
   private connectWithPlayer(){
     this.playbackConnected = true;
+    this.dialog = false
 
     this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer")
         .then(() => console.log("connection started with player"))
