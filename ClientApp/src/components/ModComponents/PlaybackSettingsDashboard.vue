@@ -86,7 +86,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from "vue-class-component";
-    import axios from 'axios'
     import {playbackSettings, playbackState} from "@/common/types";
     import {Watch} from "vue-property-decorator";
 
@@ -106,7 +105,7 @@
         private loadedPlaybackSettings: playbackSettings | null = null;
         
         created(){
-            axios.get('api/playback/mod/playbackSettings')
+            this.$axios.get('api/playback/mod/playbackSettings')
                 .then(({ data }: { data: playbackSettings}) => {
                     this.playbackOn = data.isPlaying? data.isPlaying : null;
                     this.selectedTerm = data.playbackTermFilter;
@@ -123,7 +122,7 @@
                             break;
                     }
                 })
-                .catch(err => console.log(err));
+                .catch((err:any) => console.log(err));
         }
         
         
@@ -131,10 +130,10 @@
             this.showConfirmNotification = false;
             try {
                 if (this.playbackOn){
-                    await axios.put('api/playback/mod/on');
+                    await this.$axios.put('api/playback/mod/on');
                 }
                 else{
-                    await axios.put('api/playback/mod/off');
+                    await this.$axios.put('api/playback/mod/off');
                 }
             }
             catch (e) {
@@ -150,14 +149,14 @@
         
         
         async handleReset(){
-            await axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`);
-            await axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
+            await this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`);
+            await this.$axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
             
-            await axios.put('api/playback/mod/reset');
+            await this.$axios.put('api/playback/mod/reset');
         }
         
         handleSkip(){
-            axios.put('api/playback/mod/skip');
+            this.$axios.put('api/playback/mod/skip');
         }
         
     }

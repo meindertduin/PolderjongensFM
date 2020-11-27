@@ -22,8 +22,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from "vue-class-component";
-    import axios from 'axios'
     import {applicationUser} from "@/common/types";
+    import {AxiosResponse} from "axios";
 
     @Component({
         name: "IncludedUsersDisplay",
@@ -37,12 +37,12 @@
         }
         
         excludeUser(user: applicationUser){
-            axios.post("api/playback/mod/exclude",user)
-                .then((response) => {
+            this.$axios.post("api/playback/mod/exclude",user)
+                .then((response:AxiosResponse) => {
                     this.$store.commit('modModule/REMOVE_INCLUDED_USER', user);
                     console.log(response)
                 })
-                .catch((err) => console.log(err));
+                .catch((err:any) => console.log(err));
         }
     }
 </script>

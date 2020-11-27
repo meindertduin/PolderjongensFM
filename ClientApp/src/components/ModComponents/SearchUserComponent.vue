@@ -25,7 +25,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from "vue-class-component";
-    import axios from 'axios'
+    import axios, {AxiosResponse} from 'axios'
     import {applicationUser, trackDto} from "@/common/types";
 
     @Component({
@@ -56,12 +56,12 @@
         }
         
         addUser(user: applicationUser){
-            axios.post('api/playback/mod/include', user)
-                .then((response) => {
+            this.$axios.post('api/playback/mod/include', user)
+                .then((response:AxiosResponse) => {
                     this.$store.commit('modModule/ADD_INCLUDED_USER', user);
                     this.searchUsersResult = this.searchUsersResult.filter(x => x.id !== user.id);
                 })
-            .catch((err) => console.log(err));
+            .catch((err:any) => console.log(err));
         }
     }
 </script>

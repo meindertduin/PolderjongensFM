@@ -16,7 +16,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from "vue-class-component";
-    import axios from 'axios'
     import IncludedUsersDisplay from "@/components/ModComponents/IncludedUsersDisplay.vue";
     import SearchUserComponent from "@/components/ModComponents/SearchUserComponent.vue";
 

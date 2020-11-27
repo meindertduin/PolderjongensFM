@@ -22,10 +22,11 @@ namespace pjfm.Controllers
             _userManager = userManager;
         }
         
-        [HttpGet("user")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        [HttpGet("user")] 
         public string GetUserMessage()
         {
+            var claims = HttpContext.User;
+
             return "user";
         }
 

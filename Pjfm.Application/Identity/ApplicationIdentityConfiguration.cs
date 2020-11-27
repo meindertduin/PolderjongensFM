@@ -43,12 +43,12 @@ namespace Pjfm.Application.Identity
                     
                     RedirectUris = new[]
                     {
-                        "https://localhost:8080/oidc-callback",
-                        "https://localhost:8080/oidc-client-silent-renew.html",
+                        "https://localhost:8085/oidc-callback",
+                        "https://localhost:8085/oidc-client-silent-renew.html",
                     },
                     PostLogoutRedirectUris = new[]
                     {
-                        "https://localhost:8080",
+                        "https://localhost:8085",
                     },
                     
                     AllowedScopes = new[]

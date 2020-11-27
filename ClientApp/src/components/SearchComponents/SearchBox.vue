@@ -36,8 +36,8 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import JQuery from 'jquery'
 import {trackDto} from "@/common/types";
+import {AxiosResponse} from "axios";
 
-import Axios from 'axios';
 window.$ = JQuery
 
 @Component({
@@ -63,10 +63,10 @@ export default class SearchBox extends Vue {
     this.loading = true;
     this.items = []
     
-    Axios.post(`https://localhost:5001/api/playback/search`, {
+    this.$axios.post(`https://localhost:5001/api/playback/search`, {
       query: this.query,
       type: 'track'
-    }).then((response) => {
+    }).then((response:AxiosResponse) => {
       this.results = response.data;
       console.log(response.data);
     }).catch(() => {})
@@ -75,9 +75,9 @@ export default class SearchBox extends Vue {
     })
   }
   requestSong(track : trackDto) {
-    Axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response) => {
+    this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response:AxiosResponse) => {
       this.$router.push('/');
-    }).catch((error) => {
+    }).catch((error:any) => {
       console.log(error);
     })
   }

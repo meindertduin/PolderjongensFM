@@ -3,6 +3,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,7 +74,7 @@ namespace pjfm
                     {
                         builder
                             .AllowCredentials()
-                            .WithOrigins("https://localhost:8080")
+                            .WithOrigins("https://localhost:8085")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
@@ -98,6 +99,12 @@ namespace pjfm
             app.UseStaticFiles();
 
             app.UseRouting();
+            
+            app.UseCookiePolicy(new CookiePolicyOptions()
+            {
+                MinimumSameSitePolicy = SameSiteMode.None,
+                Secure = CookieSecurePolicy.Always,
+            });
 
             app.UseAuthentication();
             

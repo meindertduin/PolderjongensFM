@@ -10,36 +10,34 @@
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
-    import Axios from "axios";
+    import {AxiosResponse} from "axios";
 
     @Component({
         name: 'Test',
     })
     export default class Test extends Vue{
         private getUserMessage(){
-            Axios.get('/api/test/user')
-                .then((response) => {
-                    console.log(response.data);
-                })
+            this.$axios.get('/api/test/user')
+                .then((response:AxiosResponse<any>) => console.log(response.data))
+                .catch((err:any) => console.log(err));
         }
 
         private getModMessage(){
-            Axios.get('/api/test/mod')
-                .then((response) => {
-                    console.log(response.data);
-                })
+            this.$axios.get('/api/test/mod')
+                .then((response:AxiosResponse<any>) => console.log(response.data))
+                .catch((err:any) => console.log(err));
         }
 
         private getUserTopTracks(){
-            Axios.get('/api/test/toptracks')
-                .then((response) => {
-                    console.log(response.data);
-                })
+            this.$axios.get('/api/test/toptracks')
+                .then((response:AxiosResponse<any>) => console.log(response.data))
+                .catch((err:any) => console.log(err));
         }
         
         private refreshToken(){
-            Axios.get('/api/test/refreshToken')
-                .then((response) => console.log(response.data));
+            this.$axios.get('/api/test/refreshToken')
+                .then((response:AxiosResponse<any>) => console.log(response.data))
+                .catch((err:any) => console.log(err));
         }
     }
 </script>

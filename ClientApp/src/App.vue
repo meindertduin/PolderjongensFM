@@ -49,6 +49,7 @@ import vuetify from "@/plugins/vuetify";
 import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types";
 import {Watch} from "vue-property-decorator";
+import Axios from "axios";
 
 @Component({
   name: 'App',
@@ -65,14 +66,27 @@ export default class App extends Vue{
     const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
     this.$vuetify.theme.dark = userSettings.darkMode;
   }
-  
+
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }
   
-  @Watch("oidcAuthenticated")
-  setModStatus(newValue:any, oldValue:any){
-    console.log(newValue);
+  get accessToken():string{
+    return this.$store.state.oidcStore.access_token;
+    
+  }
+  
+  @Watch('accessToken')
+  setAxiosInterceptor(newValue:any, oldValue:any){
+      this.$axios.interceptors.request.use(
+              (config:any) => {
+                config.headers.common["Authorization"] = `Bearer ${newValue}`;
+                config.withCredentials = true;
+                return config;
+            },        
+      )
+      this.$store.dispatch('profileModule/loadModState');
+
     this.$store.dispatch('profileModule/loadModState');
   }
   

@@ -1,6 +1,4 @@
-﻿import Axios from "axios";
-
-import { GetterTree, MutationTree, ActionTree } from "vuex"
+﻿import { GetterTree, MutationTree, ActionTree } from "vuex"
 import {applicationUser} from "@/common/types";
 import axios from "axios";
 import App from "@/App.vue";
@@ -24,17 +22,29 @@ const getters = <GetterTree<State, any>>{
 }
 
 const actions = <ActionTree<State, any>>{
-    loadIncludedUsers({commit}){
-        return axios.get('api/playback/mod/include')
+    loadIncludedUsers(context){
+        return axios.get('api/playback/mod/include',{
+            baseURL: process.env.VUE_APP_API_BASE_URL,
+            withCredentials: true,
+            headers: {
+                authorization: `Bearer ${context.rootState.oidcStore.access_token}`
+            }
+        })
             .then((response) => {
-                commit('SET_INCLUDED_USERS', response.data);
+                context.commit('SET_INCLUDED_USERS', response.data);
             })
             .catch((err) => console.log(err));
     },
-    loadUsers({commit}){
-        return axios.get('api/user/members')
+    loadUsers(context){
+        return axios.get('api/user/members',{
+            baseURL: process.env.VUE_APP_API_BASE_URL,
+            withCredentials: true,
+            headers: {
+                authorization: `Bearer ${context.rootState.oidcStore.access_token}`
+            }
+        })
             .then(({data}:{data:Array<applicationUser>}) => {
-                commit('SET_LOADED_USERS', data);
+                context.commit('SET_LOADED_USERS', data);
             })
             .catch((err) => console.log(err))
     }

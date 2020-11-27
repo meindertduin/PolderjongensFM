@@ -1,4 +1,4 @@
-﻿import Axios from "axios";
+﻿import axios from '@/plugins/axios';
 
 import { GetterTree, MutationTree, ActionTree } from "vuex"
 import {applicationUser} from "@/common/types";
@@ -19,16 +19,32 @@ const getters = <GetterTree<State, any>>{
 }
 
 const actions = <ActionTree<State, any>>{
-    getUserProfile({commit}){
-        return Axios.get('api/auth/profile')
-            .then(({data}) => commit('SET_USER_PROFILE', data.data))
+    getUserProfile(context){
+        return axios.get('api/auth/profile',
+            {
+                baseURL: process.env.VUE_APP_API_BASE_URL,
+                withCredentials: true,
+                headers: {
+                    authorization: `Bearer ${context.rootState.oidcStore.access_token}`
+                }
+            })
+            .then(({data}) => {
+                context.commit('SET_USER_PROFILE', data.data)
+                console.log(data);
+            })
             .catch(err => console.log(err));
     },
-    loadModState({commit}){
-        Axios.get('api/auth/mod')
+    loadModState(context){
+        axios.get('api/auth/mod',
+            {
+                baseURL: process.env.VUE_APP_API_BASE_URL,
+                withCredentials: true,
+                headers: {
+                    authorization: `Bearer ${context.rootState.oidcStore.access_token}`
+                }
+            })
             .then((response) => {
-                commit('SET_USER_MOD_STATE', response.data);
-                console.log(response.data);
+                context.commit('SET_USER_MOD_STATE', response.data);
             })
             .catch((err) => console.log(err));
     }
