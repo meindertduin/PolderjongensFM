@@ -140,12 +140,12 @@ export default class App extends Vue{
   private async setRadioConnection():void{
     let radioConnection: HubConnection | null = null;
 
-    if (this.$store.getters['playbackModule/getRadioConnection'] != null) {
-      await this.$store.getters['playbackModule/getRadioConnection'].stop();
-    }
+    // if (this.$store.getters['playbackModule/getRadioConnection'] != null) {
+    //   await this.$store.getters['playbackModule/getRadioConnection'].stop();
+    // }
     
     radioConnection = new HubConnectionBuilder()
-        .withUrl("/radio")
+        .withUrl("https://localhost:5001/radio")
         .build();
 
     radioConnection.start()
@@ -168,7 +168,6 @@ export default class App extends Vue{
   
   get accessToken():string{
     return this.$store.state.oidcStore.access_token;
-    
   }
   
   @Watch('accessToken')
