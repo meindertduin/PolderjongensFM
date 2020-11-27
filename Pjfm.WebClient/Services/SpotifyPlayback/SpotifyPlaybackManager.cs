@@ -75,9 +75,13 @@ namespace Pjfm.WebClient.Services
         private async void TimerDone(object stateInfo)
         {
             _trackTimerAutoEvent.Set();
-            var nextTrackDuration = await PlayNextTrack();
-            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
-            _trackTimerAutoEvent.WaitOne();
+            
+            if (_trackTimer != null)
+            {
+                var nextTrackDuration = await PlayNextTrack();
+                _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+                _trackTimerAutoEvent.WaitOne();
+            }
         }
         
         public async Task StopPlayingTracks(int afterDelay)
