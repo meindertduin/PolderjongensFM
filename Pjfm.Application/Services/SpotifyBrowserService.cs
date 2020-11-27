@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Domain.Common;
 using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Application.Services
@@ -44,6 +47,18 @@ namespace Pjfm.Application.Services
             request.RequestUri = new Uri($"https://api.spotify.com/v1/tracks/{trackId}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+        }
+
+        public Task<HttpResponseMessage> GetUserPlaylists(string userId, string accessToken, PlaylistRequestDto playlistRequest)
+        {
+            var request = new HttpRequestMessage();
+
+            request.Method = HttpMethod.Get;
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/me/playlists?limit={playlistRequest.Limit}&offset={playlistRequest.Offset}"); 
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            
             return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
         }
     }

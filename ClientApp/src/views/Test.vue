@@ -4,6 +4,7 @@
         <v-btn @click="getModMessage">Mod</v-btn>
         <v-btn @click="getUserTopTracks">Top Tracks</v-btn>
         <v-btn @click="refreshToken">Refresh token</v-btn>
+        <v-btn @click="playlists">Playlists</v-btn>
     </div>
 </template>
 
@@ -37,6 +38,12 @@
         private refreshToken(){
             this.$axios.get('/api/test/refreshToken')
                 .then((response:AxiosResponse<any>) => console.log(response.data))
+                .catch((err:any) => console.log(err));
+        }
+        
+        private playlists(){
+            this.$axios.get('api/playlist')
+                .then((response:AxiosResponse) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
     }

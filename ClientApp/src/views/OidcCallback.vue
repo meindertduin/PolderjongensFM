@@ -24,7 +24,7 @@
                         `?client_id=ebc49acde46148eda6128d944c067b5d` + 
                         `&response_type=code` +
                         `&redirect_uri=${process.env.VUE_APP_API_BASE_URL}/api/spotify/account/callback` + 
-                        `&scope=user-top-read user-read-private streaming user-read-playback-state`;
+                        `&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative`;
                     
                     location.href = url;
                 })
