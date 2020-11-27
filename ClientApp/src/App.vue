@@ -108,21 +108,21 @@
               Als je tijdens het luisteren wilt dat PJFM stopt met het besturen van jouw account kan je op STOP onder in het scherm klikken.<br><br>
               <v-spacer></v-spacer>
               <v-radio-group
-                  v-model="row"
+                  v-model="subscribeDuration"
                   row
                   class="align-content-center"
               >
                 <v-radio
                     label="30 minuten"
-                    value="30"
+                    value="5"
                 ></v-radio>
                 <v-radio
                     label="2 uur"
-                    value="120"
+                    value="10"
                 ></v-radio>
                 <v-radio
                     label="4 uur"
-                    value="240"
+                    value="15"
                 ></v-radio>
               </v-radio-group>
             </v-card-text>
@@ -175,12 +175,17 @@ import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 export default class App extends Vue{
   private dialog: boolean = false;
   private drawer: boolean = null;
+  private subscribeDuration: number = 0;
   private playbackConnected: boolean = false;
   private radioConnection: HubConnection | null = null;
   
   created(){
     this.setUserPreferences();
     this.setRadioConnection();
+  }
+  
+  private test(){
+    console.log(this.subscribeDuration);
   }
   
   private async setRadioConnection():void{
@@ -253,9 +258,9 @@ export default class App extends Vue{
 
   private connectWithPlayer(){
     this.playbackConnected = true;
-    this.dialog = false
-
-    this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer")
+    this.dialog = false;
+    
+    this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", parseInt(this.subscribeDuration))
         .then(() => console.log("connection started with player"))
         .catch((err) => console.log(err));
   }
