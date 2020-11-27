@@ -61,5 +61,18 @@ namespace Pjfm.Application.Services
             
             return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
         }
+
+        public Task<HttpResponseMessage> GetPlaylistTracks(string userId, string accessToken, PlaylistTracksRequestDto playlistTracksRequestDto)
+        {
+            var request = new HttpRequestMessage();
+            request.Method = HttpMethod.Get;
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/playlists/{playlistTracksRequestDto.PlaylistId}/tracks" +
+                                         $"?limit={playlistTracksRequestDto.Limit}" +
+                                         $"&offset={playlistTracksRequestDto.Offset}");
+            
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+        }
     }
 }

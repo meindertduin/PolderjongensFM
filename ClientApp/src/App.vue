@@ -125,9 +125,6 @@ export default class App extends Vue{
   created(){
     this.setUserPreferences();
     this.setRadioConnection();
-    setInterval(() => {
-      console.log(this.userProfile)
-    }, 2500)
   }
   
   private async setRadioConnection():void{

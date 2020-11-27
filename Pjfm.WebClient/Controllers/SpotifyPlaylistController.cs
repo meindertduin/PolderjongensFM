@@ -1,16 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
-using Pjfm.Domain.Common;
 
 namespace pjfm.Controllers
 {
@@ -27,17 +20,35 @@ namespace pjfm.Controllers
             _spotifyBrowserService = spotifyBrowserService;
         }
         
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] int limit = 50 ,[FromQuery] int offset = 0)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var playlistRequestResult = await _spotifyBrowserService.GetUserPlaylists(user.Id, user.SpotifyAccessToken,
                 new PlaylistRequestDto()
                 {
-                    Limit = 50,
-                    Offset = 0,
+                    Limit = limit,
+                    Offset = offset,
                 });
 
             var content = await playlistRequestResult.Content.ReadAsStringAsync();
+            
+            return Ok(content);
+        }
+
+        [Route("tracks")]
+        public async Task<IActionResult> GetPlaylistTopTracks([FromQuery] string playlistId,[FromQuery] int limit = 100 ,[FromQuery] int offset = 0)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var playlistTracksResult = await _spotifyBrowserService.GetPlaylistTracks(user.Id, user.SpotifyAccessToken,
+                new PlaylistTracksRequestDto()
+                {
+                    PlaylistId = playlistId,
+                    Limit = limit,
+                    Offset = offset,
+                });
+
+            var content = await playlistTracksResult.Content.ReadAsStringAsync();
             
             return Ok(content);
         }

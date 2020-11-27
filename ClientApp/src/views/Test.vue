@@ -5,6 +5,7 @@
         <v-btn @click="getUserTopTracks">Top Tracks</v-btn>
         <v-btn @click="refreshToken">Refresh token</v-btn>
         <v-btn @click="playlists">Playlists</v-btn>
+        <v-btn @click="getPlaylistTracks">Playlists Tracks</v-btn>
     </div>
 </template>
 
@@ -43,6 +44,12 @@
         
         private playlists(){
             this.$axios.get('api/playlist')
+                .then((response:AxiosResponse) => console.log(response.data))
+                .catch((err:any) => console.log(err));
+        }
+        
+        private getPlaylistTracks(){
+            this.$axios.get('api/playlist/tracks?playlistId=3cEYpjA9oz9GiPac4AsH4n&offset=0')
                 .then((response:AxiosResponse) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
