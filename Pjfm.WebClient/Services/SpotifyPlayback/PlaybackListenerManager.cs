@@ -52,6 +52,19 @@ namespace Pjfm.WebClient.Services
 
         public bool TrySetTimedListener(string userId, int minutes)
         {
+            if (TimedUsers.ContainsKey(userId))
+            {
+                var removeResult = TimedUsers.TryRemove(userId, out CancellationTokenSource inUseStoppingToken);
+                if (removeResult)
+                {
+                    inUseStoppingToken.Cancel();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            
             var stoppingTokenSource = new CancellationTokenSource();
 
             var addResult = TimedUsers.TryAdd(userId, stoppingTokenSource);
