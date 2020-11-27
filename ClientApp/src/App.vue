@@ -13,12 +13,12 @@
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
+            <v-list-item-title>Radio</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link @click="navigate('/search')">
           <v-list-item-action>
-            <v-icon>mdi-baguette</v-icon>
+            <v-icon>mdi-playlist-plus</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Verzoekje doen</v-list-item-title>
@@ -46,16 +46,6 @@
           </v-list-item>
         </div>
         <div v-else>
-          <div>
-            <v-list-item link @click="">
-              <v-list-item-action>
-                <v-icon>mdi-music</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Mijn Spotify</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </div>
           <v-list-item link @click="signOutOidcClient()">
             <v-list-item-action>
               <v-icon>mdi-logout-variant</v-icon>
