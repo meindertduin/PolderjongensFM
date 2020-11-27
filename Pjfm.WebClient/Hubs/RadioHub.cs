@@ -45,14 +45,13 @@ namespace pjfm.Hubs
         }
         
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task ConnectWithPlayer()
+        public async Task ConnectWithPlayer(int minutes)
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
             
             await _playbackListenerManager.AddListener(user);
             
-            int minutes = 1;
             if (minutes != 0)
             {
                 _playbackListenerManager.TrySetTimedListener(user.Id, minutes);
