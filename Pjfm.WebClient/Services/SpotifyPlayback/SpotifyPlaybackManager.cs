@@ -93,6 +93,7 @@ namespace Pjfm.WebClient.Services
             if (_trackTimer != null)
             {
                 await _trackTimer.DisposeAsync();
+                _trackTimer = null;
             }
             await PausePlayerForAll();
         }
@@ -101,6 +102,7 @@ namespace Pjfm.WebClient.Services
         {
             if(_trackTimer != null){
                 await _trackTimer.DisposeAsync();
+                _trackTimer = null;
             }
             
             var nextTrackDuration = await PlayNextTrack();
