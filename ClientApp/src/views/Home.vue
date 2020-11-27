@@ -18,9 +18,6 @@
           </v-row>
       </v-col>
     </v-row>
-    <v-btn v-if="playbackState !== 0 || isMod" id="sticky-button" class="float-right mx-1" fab dark color="orange" @click="navigate('/search')">
-      <v-icon large>mdi-magnify</v-icon>
-    </v-btn>
   </div>
 </template>
 

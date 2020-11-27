@@ -1,20 +1,22 @@
 ﻿<template>
-    <v-container fluid class="livechat-container">
-        <v-row no-gutters justify="center">
-            <div class="text-h5">Live Chat</div>
+  <v-card
+      class="pa-4"
+      outlined
+      round
+  >
+    <span class="overline grey--text">Live Chat</span><br>
+      <div class="message-container" id="livechat-messagebox">
+        <Message v-for="(messageModel, index) in messages" :key="index" :message-content="messageModel" />
+      </div>
+      <div v-if="oidcAuthenticated" class="chat-input-container">
+        <MessageInput />
+      </div>
+      <div v-else class="chat-input-container">
+        <v-row justify="center" align-content="center">
+          <v-btn @click="signInOidcClient" color="green">Login om mee te chatten</v-btn>
         </v-row>
-        <div class="message-container" id="livechat-messagebox">
-            <Message v-for="(messageModel, index) in messages" :key="index" :message-content="messageModel" />
-        </div>
-        <div v-if="oidcAuthenticated" class="chat-input-container">
-            <MessageInput />
-        </div>
-        <div v-else class="chat-input-container">
-            <v-row justify="center" align-content="center">
-                <v-btn @click="signInOidcClient" color="green">Login om mee te chatten</v-btn>
-            </v-row>
-        </div>
-    </v-container>
+      </div>
+  </v-card>
 </template>
 
 <script lang="ts">
