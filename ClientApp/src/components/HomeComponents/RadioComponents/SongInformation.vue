@@ -81,7 +81,7 @@
                       artist: this.playbackInfo.priorityQueuedTracks[0].artists[0],
                       title: this.playbackInfo.priorityQueuedTracks[0].title,
                       startingTime: this.playbackInfo.priorityQueuedTracks[0].startingTime,
-                      duration: this.playbackInfo.priorityQueuedTracks.songDurationMs
+                      duration: this.playbackInfo.priorityQueuedTracks[0].songDurationMs
                   }
               }else if((Array.isArray(this.playbackInfo.secondaryQueuedTracks) && this.playbackInfo.secondaryQueuedTracks.length)){
                   this.nextSongInfo = {
@@ -107,20 +107,20 @@
         this.updateRadio();
       }
 
-        updateElapsedTime() : void {
-            let now = new Date();
+      updateElapsedTime() : void {
+          let now = new Date();
 
-            if(this.currentSongInfo != null){
-                let elapsed = now.getTime() - new Date(this.currentSongInfo.startingTime).getTime();
-                this.elapsedTime = elapsed;
+          if(this.currentSongInfo != null){
+              let elapsed = now.getTime() - new Date(this.currentSongInfo.startingTime).getTime();
+              this.elapsedTime = elapsed;
 
-                if(this.timer == null){
-                    this.timer = setInterval(() => {
-                        this.elapsedTime += 1000;
-                    }, 1000)
-                }
-            }
-        }
+              if(this.timer == null){
+                  this.timer = setInterval(() => {
+                      this.elapsedTime += 1000;
+                  }, 1000)
+              }
+          }
+      }
 
         convertMsToMMSS(ms) : string {
             let date = new Date(null);
