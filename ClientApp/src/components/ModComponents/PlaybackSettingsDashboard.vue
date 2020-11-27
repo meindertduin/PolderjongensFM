@@ -102,6 +102,12 @@
         
         private selectedState :any | null = null;
         
+        @Watch("selectedState")
+        onSelectedStateChanged(newValue, oldValue){
+            this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
+                .catch((err:any) => console.log(err));
+        }
+        
         private loadedPlaybackSettings: playbackSettings | null = null;
         
         created(){
@@ -149,7 +155,6 @@
         
         
         async handleReset(){
-            await this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`);
             await this.$axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
             
             await this.$axios.put('api/playback/mod/reset');
