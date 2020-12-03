@@ -18,6 +18,7 @@ using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Service;
 using pjfm.Models;
 using Pjfm.WebClient.Services;
+using Serilog;
 using VueCliMiddleware;
 
 namespace pjfm
@@ -93,6 +94,8 @@ namespace pjfm
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
+
+            app.UseSerilogRequestLogging();
             
             app.UseCors("AllowAllOrigins");
             
