@@ -20,6 +20,7 @@ namespace pjfm.Controllers
             _spotifyBrowserService = spotifyBrowserService;
         }
         
+        [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int limit = 50 ,[FromQuery] int offset = 0)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -35,6 +36,7 @@ namespace pjfm.Controllers
             return Ok(content);
         }
 
+        [HttpGet]
         [Route("tracks")]
         public async Task<IActionResult> GetPlaylistTopTracks([FromQuery] string playlistId,[FromQuery] int limit = 100 ,[FromQuery] int offset = 0)
         {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
@@ -38,6 +39,11 @@ namespace pjfm
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration, WebHostEnvironment);
+            
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Pjfm.Api", Version = "v1"});
+            });
             
             services.AddSingleton<ISpotifyPlaybackManager, SpotifyPlaybackManager>();
             services.AddSingleton<IPlaybackListenerManager, PlaybackListenerManager>();
@@ -87,6 +93,8 @@ namespace pjfm
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pjfm.Api v1"));
             }
             else
             {
