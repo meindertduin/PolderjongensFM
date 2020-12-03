@@ -16,10 +16,7 @@ namespace Pjfm.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddMediatR(typeof(LogoutCommand).Assembly);
-
-            services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>();
-            services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
-            services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
+           
 
             return services;
         }

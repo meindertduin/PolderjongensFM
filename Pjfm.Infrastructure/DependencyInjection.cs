@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Services;
 using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
@@ -18,6 +19,10 @@ namespace Pjfm.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
+            services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>();
+            services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
+            services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
+            
             services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
             services.AddTransient<IRetrieveStrategy, SpotifyTopTracksRetrieveStrategy>();
             
