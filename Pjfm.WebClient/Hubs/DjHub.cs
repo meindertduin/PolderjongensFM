@@ -36,7 +36,7 @@ namespace pjfm.Hubs
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
             var djInfo = infoModelFactory.CreateDjInfoModel();
 
-            Clients.Caller.SendAsync("ReceiveDjPlaybackInfo", djInfo);
+            await Clients.Caller.SendAsync("ReceiveDjPlaybackInfo", djInfo);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)

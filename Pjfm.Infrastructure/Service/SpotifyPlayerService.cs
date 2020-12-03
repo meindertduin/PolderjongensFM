@@ -16,8 +16,6 @@ namespace Pjfm.Application.Services
     public class SpotifyPlayerService : ISpotifyPlayerService
     {
         private readonly ISpotifyHttpClientService _httpClientService;
-        private readonly string _apibaseAddress = "https://api.spotify.com";
-
         public SpotifyPlayerService(ISpotifyHttpClientService httpClientService)
         {
             _httpClientService = httpClientService;

@@ -43,7 +43,7 @@ namespace Pjfm.WebClient.Services
             return TimedUsers.ContainsKey(userId);
         }
         
-        public async Task<ApplicationUser> RemoveListener(string userId)
+        public ApplicationUser RemoveListener(string userId)
         {
             ConnectedUsers.TryRemove(userId, out ApplicationUser user);
             
@@ -94,7 +94,7 @@ namespace Pjfm.WebClient.Services
         private async Task RunTimedEvent(string userId,int minutes, CancellationToken stopToken)
         {
             await Task.Delay(minutes * 60_000, stopToken);
-            await RemoveListener(userId);
+            RemoveListener(userId);
         }
     }
 }

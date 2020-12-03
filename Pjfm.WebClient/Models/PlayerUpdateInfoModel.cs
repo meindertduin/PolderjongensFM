@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Entities;
-using Pjfm.Domain.Enums;
 
 namespace pjfm.Models
 {
@@ -12,7 +10,6 @@ namespace pjfm.Models
         public DateTime StartingTime { get; set; }
         public PlaybackSettingsDto PlaybackSettings { get; set; }
         public List<TrackDto> FillerQueuedTracks { get; set; }
-        public List<TrackDto> SecondaryQueuedTracks { get; set; }
-        public List<TrackDto> PriorityQueuedTracks { get; set; }
+        
     }
 }

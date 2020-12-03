@@ -6,7 +6,8 @@ namespace pjfm.Models
 {
     public class DjPlaybackInfoModel : PlayerUpdateInfoModel
     {
+        public List<TrackDto> SecondaryQueuedTracks { get; set; }
         public List<TrackDto> PriorityQueuedTracks { get; set; }
-        public List<TrackDto> FillerQueuedTracks { get; set; }
+
     }
 }

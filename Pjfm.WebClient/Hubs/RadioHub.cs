@@ -33,7 +33,7 @@ namespace pjfm.Hubs
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
             var userInfo = infoModelFactory.CreateUserInfoModel();
 
-            Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userInfo);
+            await Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userInfo);
 
             await base.OnConnectedAsync();
         }
@@ -66,7 +66,7 @@ namespace pjfm.Hubs
 
             if (_playbackListenerManager.IsUserTimedListener(user.Id) == false)
             {
-                await _playbackListenerManager.RemoveListener(user.Id);
+                _playbackListenerManager.RemoveListener(user.Id);
                 await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
             }
         }
