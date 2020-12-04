@@ -69,7 +69,7 @@
       <v-toolbar-title>PJFM</v-toolbar-title>
       <v-spacer></v-spacer>
 
-      <span class="align-bottom overline grey--text" v-if="oidcAuthenticated">INGELOGD ALS <span class="orange--text">{{userProfile.userName}}</span></span>
+      <span class="align-bottom overline grey--text" v-if="userProfile != null">INGELOGD ALS <span class="orange--text">{{userProfile.userName}}</span></span>
       <v-img
           class="mx-2 float-right"
           src="/assets/logo.png"
@@ -93,50 +93,8 @@
 
     <template>
       <v-row justify="center">
-        <v-dialog
-            v-model="dialog"
-            persistent
-            max-width="600"
-        >
-          <v-card>
-            <v-card-title>
-              PJFM - Instellingen
-            </v-card-title>
-            <v-card-text>
-              Bij het luisteren naar PJFM wordt je Spotify tijdelijk bestuurd door de PJFM app.<br><br>
-              Hieronder kan je aangeven hoelang de PJFM app je Spotify mag besturen.<br><br>
-              Als je tijdens het luisteren wilt dat PJFM stopt met het besturen van jouw account kan je op STOP onder in het scherm klikken.<br><br>
-              <v-spacer></v-spacer>
-              <v-radio-group
-                  v-model="subscribeDuration"
-                  row
-                  class="align-content-center"
-              >
-                <v-radio
-                    label="30 minuten"
-                    value="5"
-                ></v-radio>
-                <v-radio
-                    label="2 uur"
-                    value="10"
-                ></v-radio>
-                <v-radio
-                    label="4 uur"
-                    value="15"
-                ></v-radio>
-              </v-radio-group>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                  color="orange darken-1"
-                  text
-                  @click="connectWithPlayer()"
-              >
-                Prima!
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+        <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
+          <PlayerTimeSelectComponent />
         </v-dialog>
       </v-row>
     </template>
@@ -145,7 +103,7 @@
     <v-bottom-navigation fixed>
 
 
-        <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="openDialog" block>
+        <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="togglePlayerTimerOverlay" block>
           <span>Start</span>
           <v-icon>mdi-play</v-icon>
         </v-btn>
@@ -164,16 +122,17 @@ import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySetti
 import {userSettings} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
+import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
 
 @Component({
   name: 'App',
   components: {
     DisplaySettingsItemGroup,
+    PlayerTimeSelectComponent,
   }
 })
 
 export default class App extends Vue{
-  private dialog: boolean = false;
   private drawer: boolean = null;
   private subscribeDuration: number = 0;
   private playbackConnected: boolean = false;
@@ -182,6 +141,10 @@ export default class App extends Vue{
   created(){
     this.setUserPreferences();
     this.setRadioConnection();
+  }
+
+  get playerTimerOverlayActive():boolean{
+    return this.$store.getters['playbackModule/getPlayerTimerOverlayActive'];
   }
   
   private test(){
@@ -212,9 +175,10 @@ export default class App extends Vue{
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
   }
   
-  private openDialog(){
-    this.dialog = true;
+  private togglePlayerTimerOverlay(){
+    this.$store.commit('playbackModule/TOGGLE_PLAYER_TIMER_OVERLAY');
   }
+  
   
   private setUserPreferences():void{
     const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
@@ -259,15 +223,7 @@ export default class App extends Vue{
   private signOutOidcClient(){
     this.$store.dispatch('oidcStore/signOutOidc');
   }
-
-  private connectWithPlayer(){
-    this.dialog = false;
-    
-    this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", parseInt(this.subscribeDuration))
-        .then(() => console.log("connection started with player"))
-        .catch((err) => console.log(err));
-  }
-
+  
   private disconnectWithPlayer(){
     this.playbackConnected = false;
 
