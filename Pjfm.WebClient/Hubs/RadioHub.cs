@@ -31,18 +31,21 @@ namespace pjfm.Hubs
         public override async Task OnConnectedAsync()
         {
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
-            var userInfo = infoModelFactory.CreateUserInfoModel();
+            var userPlayerBackInfo = infoModelFactory.CreateUserInfoModel();
 
-            await Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userInfo);
+            await Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userPlayerBackInfo);
 
+            var context = Context.GetHttpContext();
+            var user = await _userManager.GetUserAsync(context.User);
+
+            if (user != null)
+            {
+                await Clients.Caller.SendAsync("IsConnected", _playbackListenerManager.IsUserTimedListener(user.Id));
+            }
+            
             await base.OnConnectedAsync();
         }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            await DisconnectWithPlayer();
-            await base.OnDisconnectedAsync(exception);
-        }
+        
         
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task ConnectWithPlayer(int minutes)
@@ -55,6 +58,7 @@ namespace pjfm.Hubs
             if (minutes != 0)
             {
                 _playbackListenerManager.TrySetTimedListener(user.Id, minutes);
+                await Clients.Caller.SendAsync("ISConnected", true);
             }
         }
 
@@ -64,20 +68,9 @@ namespace pjfm.Hubs
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
 
-            if (_playbackListenerManager.IsUserTimedListener(user.Id) == false)
-            {
-                _playbackListenerManager.RemoveListener(user.Id);
-                await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
-            }
-        }
-
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task CancelTimedListenSession()
-        {
-            var context = Context.GetHttpContext();
-            var user = await _userManager.GetUserAsync(context.User);
-
             _playbackListenerManager.TryRemoveTimedListener(user.Id);
+            await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
         }
+        
     }
 }

@@ -205,6 +205,10 @@ export default class App extends Vue{
     radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) =>
         this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
 
+    radioConnection.on("ISConnected", (connected:boolean) =>{
+        this.playbackConnected = connected;
+    })
+    
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
   }
   
@@ -257,7 +261,6 @@ export default class App extends Vue{
   }
 
   private connectWithPlayer(){
-    this.playbackConnected = true;
     this.dialog = false;
     
     this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", parseInt(this.subscribeDuration))

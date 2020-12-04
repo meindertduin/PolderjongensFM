@@ -84,6 +84,7 @@ namespace Pjfm.WebClient.Services
             var removeResult = TimedUsers.TryRemove(userId, out CancellationTokenSource stoppingTokenSource);
             if (removeResult)
             {
+                RemoveListener(userId);
                 stoppingTokenSource.Cancel();
                 return true;
             }
@@ -94,7 +95,7 @@ namespace Pjfm.WebClient.Services
         private async Task RunTimedEvent(string userId,int minutes, CancellationToken stopToken)
         {
             await Task.Delay(minutes * 60_000, stopToken);
-            RemoveListener(userId);
+            TryRemoveTimedListener(userId);
         }
     }
 }
