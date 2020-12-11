@@ -15,6 +15,7 @@
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="tab">
+            <!-- refactor to seperate components -->
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
@@ -25,7 +26,7 @@
                         color="primary"
                     >
                       <v-list-item
-                          v-for="(result, i) in results"
+                          v-for="(result, i) in searchResults"
                       >
                         <v-list-item-content @click="requestSong(result)">
                           {{i + 1}}. {{result.artists[0]}} - {{ result.title }}
@@ -36,14 +37,44 @@
                 </v-card-text>
               </v-card>
             </v-tab-item>
+            <!--  -->
+            <!-- refactor to seperate components -->
             <v-tab-item>
               <v-card flat>
-                <v-card-text>Niet zoeken</v-card-text>
+                <v-list dense>
+                  <v-list-item-group
+                      class=""
+                  >
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          1. Mijn Top 50 (vier weken) <span class="grey--text float-right">Playlist</span>
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          2. Mijn Top 50 (zes maanden) <span class="grey--text float-right">Playlist</span>
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          3. Mijn Top 50 (all-time) <span class="grey--text float-right">Playlist</span>
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
               </v-card>
             </v-tab-item>
+            <!--  -->
           </v-tabs-items>
         </v-card>
-          
   </div>
 </template>
 
@@ -61,13 +92,18 @@ window.$ = JQuery
 })
 export default class SearchBox extends Vue { 
   private query = '';
-  private results = [];
+  private searchResults = [];
+  
+  private shortTopTracks = [];
+  private mediumTopTracks = [];
+  private longTopTracks = [];
+  
   private loading = false;
   private tab = null;
-  private items = [
-    { tab: 'Zoeken', content: 'Tab 1 Content' },
-    { tab: 'Mijn Spotify', content: 'Tab 2 Content' },
-  ];
+  
+  created(){
+    this.fetchTopTracks();
+  }
 
   searchBarKeyUp(e){
     clearTimeout($.data(this, 'timer'));
@@ -83,21 +119,43 @@ export default class SearchBox extends Vue {
     if (!force && this.query.length < 3) return;
     this.loading = true;
     this.items = []
+
+    this.loading = true;
     
     this.$axios.post(`https://localhost:5001/api/playback/search`, {
       query: this.query,
       type: 'track'
     }).then((response:AxiosResponse) => {
-      this.results = response.data;
-      console.log(response.data);
-    }).catch(() => {})
-    .then(() => {
+      this.searchResults = response.data;
       this.loading = false;
     })
   }
   requestSong(track : trackDto) {
     this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response:AxiosResponse) => {
       this.$router.push('/');
+    }).catch((error:any) => {
+      console.log(error);
+    })
+  }
+
+  fetchTopTracks() {
+    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=short_term`).then((response:AxiosResponse) => {
+      this.shortTopTracks = response.data;
+      console.log(this.shortTopTracks);
+    }).catch((error:any) => {
+      console.log(error);
+    })
+   
+    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=medium_term`).then((response:AxiosResponse) => {
+      this.mediumTopTracks = response.data;
+      console.log(this.mediumTopTracks);
+    }).catch((error:any) => {
+      console.log(error);
+    })
+    
+    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=long_term`).then((response:AxiosResponse) => {
+      this.longTopTracks = response.data;
+      console.log(this.longTopTracks);
     }).catch((error:any) => {
       console.log(error);
     })

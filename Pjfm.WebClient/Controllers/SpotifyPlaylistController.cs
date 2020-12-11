@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
+using Pjfm.Application.Test.Queries;
 
 namespace pjfm.Controllers
 {
@@ -51,6 +53,26 @@ namespace pjfm.Controllers
                 });
 
             var content = await playlistTracksResult.Content.ReadAsStringAsync();
+            
+            return Ok(content);
+        }
+        
+        
+        [HttpGet("top-tracks")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        public async Task<IActionResult> GetUserTopTracks([FromQuery] string term = "short_term",[FromQuery] int limit = 50 ,[FromQuery] int offset = 0)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var topTracksResult = await _spotifyBrowserService.GetTopTracks(user.Id, user.SpotifyAccessToken,
+                new TopTracksRequestDto()
+                {
+                    Term = term,
+                    Limit = limit,
+                    Offset = offset,
+                });
+
+            var content = await topTracksResult.Content.ReadAsStringAsync();
             
             return Ok(content);
         }
