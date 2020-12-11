@@ -123,7 +123,6 @@ namespace Pjfm.WebClient.Services
             }
             
             var nextTrack = await _playbackQueue.GetNextQueuedTrack();
-            
             CurrentPlayingTrack = nextTrack;
             CurrentTrackStartTime = DateTime.Now;
 

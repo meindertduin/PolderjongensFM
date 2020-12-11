@@ -190,6 +190,10 @@ namespace Pjfm.WebClient.Services
                 IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
             });
 
+            if (result.Data.Count <= 0)
+            {
+            }
+            
             foreach (var fillerTrack in result.Data)
             {
                 _fillerQueue.Enqueue(fillerTrack);

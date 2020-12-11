@@ -101,8 +101,6 @@
     
     
     <v-bottom-navigation fixed>
-
-
         <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="togglePlayerTimerOverlay" block>
           <span>Start</span>
           <v-icon>mdi-play</v-icon>
@@ -112,6 +110,7 @@
           <v-icon>mdi-pause</v-icon>
         </v-btn>
     </v-bottom-navigation>
+    <ModServerMessageSnackBar v-if="isMod" />
   </v-app>
 </template>
 
@@ -123,12 +122,14 @@ import {userSettings} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
+import ModServerMessageSnackBar from "@/components/ModComponents/ModServerMessageSnackBar.vue";
 
 @Component({
   name: 'App',
   components: {
     DisplaySettingsItemGroup,
     PlayerTimeSelectComponent,
+    ModServerMessageSnackBar
   }
 })
 
@@ -141,6 +142,10 @@ export default class App extends Vue{
   created(){
     this.setUserPreferences();
     this.setRadioConnection();
+  }
+
+  get isMod(){
+    return this.$store.getters['profileModule/isMod'];
   }
 
   get playerTimerOverlayActive():boolean{

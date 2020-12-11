@@ -258,6 +258,5 @@ namespace pjfm.Controllers
             var settings = _playbackController.GetPlaybackSettings();
             return Ok(settings);
         }
-        
     }
 }

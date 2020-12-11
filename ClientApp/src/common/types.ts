@@ -46,3 +46,8 @@ export enum playbackState{
     'wachtrij-mode',
     'random-mode',
 }
+
+export interface hubServerMessage{
+    message: string,
+    error: boolean,
+}

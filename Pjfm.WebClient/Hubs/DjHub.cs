@@ -19,8 +19,7 @@ namespace pjfm.Hubs
         private static ApplicationUser _connectedUser;
         
         private readonly object _djConnectionLock = new object();
-
-
+        
         public DjHub(UserManager<ApplicationUser> userManager, IPlaybackController playbackController)
         {
             _userManager = userManager;
