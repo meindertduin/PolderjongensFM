@@ -14,5 +14,8 @@ namespace Pjfm.Application.Services
 
         Task<HttpResponseMessage> GetPlaylistTracks(string userId, string accessToken,
             PlaylistTracksRequestDto playlistTracksRequestDto);
+        
+        Task<HttpResponseMessage> GetTopTracks(string userId, string accessToken,
+            TopTracksRequestDto topTracksRequestDto);
     }
 }

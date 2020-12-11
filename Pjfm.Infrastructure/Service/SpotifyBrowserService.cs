@@ -74,5 +74,21 @@ namespace Pjfm.Application.Services
 
             return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
         }
+
+        public Task<HttpResponseMessage> GetTopTracks(string userId, string accessToken, TopTracksRequestDto topTracksRequestDto)
+        {
+            var request = new HttpRequestMessage();
+            
+            request.Method = HttpMethod.Get;
+            
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/me/top/tracks" +
+                                          $"?time_range={topTracksRequestDto.Term}" +
+                                          $"&limit={topTracksRequestDto.Limit}" +
+                                          $"&offset={topTracksRequestDto.Offset}");
+            
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+        }
     }
 }
