@@ -1,34 +1,50 @@
 ﻿<template>
-      <v-card
-          class="pa-2"
-          outlined
-          round
-      >
-          <span class="overline grey--text">Zoeken</span><br>
-          <v-text-field prepend-icon="mdi-magnify" label="Zoeken" v-on:keyup="searchBarKeyUp($event)" v-model="query"></v-text-field>
-          <v-divider></v-divider>
-        <span class="overline grey--text">Resultaten</span><br>
-        <div class="text-center">
-          <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
-        </div>
-        <v-list dense v-if="results.length > 0 && !loading">
-          <v-list-item-group
-              class=""
+  <div>
+        <v-card>
+          <v-tabs
+              v-model="tab"
+              fixed-tabs
+              background-color="primary"
+              dark
           >
-            <v-list-item
-                v-for="(item, i) in results"
-                :key="i"
-                @click="requestSong(item)"
-            >
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{i + 1}}. {{item.artists[0]}} - {{item.title}}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
+            <v-tab>
+              Zoeken
+            </v-tab>
+            <v-tab>
+              Mijn Spotify
+            </v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="tab">
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>
+                  <v-text-field prepend-icon="mdi-magnify" label="Zoek naar artiesten of nummers" v-on:keyup="searchBarKeyUp($event)" v-model="query"></v-text-field>
+
+                  <v-list dense>
+                    <v-list-item-group
+                        color="primary"
+                    >
+                      <v-list-item
+                          v-for="(result, i) in results"
+                      >
+                        <v-list-item-content @click="requestSong(result)">
+                          {{i + 1}}. {{result.artists[0]}} - {{ result.title }}
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>Niet zoeken</v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+          
+  </div>
 </template>
 
 <script lang="ts">
@@ -47,6 +63,11 @@ export default class SearchBox extends Vue {
   private query = '';
   private results = [];
   private loading = false;
+  private tab = null;
+  private items = [
+    { tab: 'Zoeken', content: 'Tab 1 Content' },
+    { tab: 'Mijn Spotify', content: 'Tab 2 Content' },
+  ];
 
   searchBarKeyUp(e){
     clearTimeout($.data(this, 'timer'));
