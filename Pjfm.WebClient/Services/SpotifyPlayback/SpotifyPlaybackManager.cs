@@ -9,6 +9,9 @@ using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
+using pjfm.Models;
+using pjfm.Services;
+using Serilog;
 
 namespace Pjfm.WebClient.Services
 {
@@ -21,17 +24,19 @@ namespace Pjfm.WebClient.Services
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly IPlaybackQueue _playbackQueue;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDjHubMessageService _djHubMessageService;
 
         private Timer _trackTimer;
         private AutoResetEvent _trackTimerAutoEvent;
         private bool _isCurrentlyPlaying;
 
         public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, 
-            IPlaybackQueue playbackQueue, IServiceProvider serviceProvider)
+            IPlaybackQueue playbackQueue, IServiceProvider serviceProvider, IDjHubMessageService djHubMessageService)
         {
             _spotifyPlayerService = spotifyPlayerService;
             _playbackQueue = playbackQueue;
             _serviceProvider = serviceProvider;
+            _djHubMessageService = djHubMessageService;
         }
 
         bool ISpotifyPlaybackManager.IsCurrentlyPlaying
@@ -49,21 +54,27 @@ namespace Pjfm.WebClient.Services
             await _playbackQueue.SetIncludedUsers();
             
             var nextTrackDuration = await PlayNextTrack();
-            CreateTimer();
+            if (nextTrackDuration > 0)
+            {
+                CreateTimer();
             
-            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
-            _trackTimerAutoEvent.WaitOne();
+                _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+                _trackTimerAutoEvent.WaitOne();
+            }
         }
 
         public async Task ResetPlayingTracks(int afterDelay)
         {
-            await StopPlayingTracks(afterDelay);
+            await StopPlayback(afterDelay);
             
             _isCurrentlyPlaying = true;
             var nextTrackDuration = await PlayNextTrack();
-            CreateTimer();
-            _trackTimer.Change(nextTrackDuration, nextTrackDuration);
-            _trackTimerAutoEvent.WaitOne();
+            if (nextTrackDuration > 0)
+            {
+                CreateTimer();
+                _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+                _trackTimerAutoEvent.WaitOne();
+            }
         }
 
         private void CreateTimer()
@@ -84,7 +95,7 @@ namespace Pjfm.WebClient.Services
             }
         }
         
-        public async Task StopPlayingTracks(int afterDelay)
+        public async Task StopPlayback(int afterDelay)
         {
             await Task.Delay(afterDelay);
             _isCurrentlyPlaying = false;
@@ -122,14 +133,35 @@ namespace Pjfm.WebClient.Services
                 await _playbackQueue.AddToFillerQueue(_fillerQueueLength);
             }
             
-            var nextTrack = await _playbackQueue.GetNextQueuedTrack();
-            CurrentPlayingTrack = nextTrack;
-            CurrentTrackStartTime = DateTime.Now;
-
-            await PlayTrackForAll(nextTrack);
-            NotifyObserversPlayingStatus(_isCurrentlyPlaying);
+            try
+            {
+                var nextTrack = await _playbackQueue.GetNextQueuedTrack();
             
-            return nextTrack.SongDurationMs;
+                CurrentPlayingTrack = nextTrack;
+                CurrentTrackStartTime = DateTime.Now;
+
+                await PlayTrackForAll(nextTrack);
+                NotifyObserversPlayingStatus(_isCurrentlyPlaying);
+            
+                return nextTrack.SongDurationMs;
+            }
+            catch (Exception e)
+            {
+                Log.Error("fillertracks could not be loaded due to an error");
+                await HandlePlaybackErrorShutdown("Playback is afgesloten, kon geen volgend nummer verkrijgen.");
+                return 0;
+            }
+        }
+
+        private async Task HandlePlaybackErrorShutdown(string message)
+        {
+            _djHubMessageService.SendMessageToClient(new HubServerMessage()
+            {
+                Message = message,
+                Error = true,
+            });
+            
+            await StopPlayback(0);
         }
         
         private async Task PlayTrackForAll(TrackDto track)

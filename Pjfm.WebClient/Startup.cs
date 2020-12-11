@@ -18,6 +18,7 @@ using pjfm.Hubs;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Service;
 using pjfm.Models;
+using pjfm.Services;
 using Pjfm.WebClient.Services;
 using Serilog;
 using VueCliMiddleware;
@@ -51,6 +52,7 @@ namespace pjfm
             services.AddSingleton<IPlaybackEventTransmitter, PlaybackEventTransmitter>();
             
             services.AddTransient<IPlaybackController, PlaybackController>();
+            services.AddTransient<IDjHubMessageService, DjHubMessageService>();
 
             services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
             

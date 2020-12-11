@@ -36,7 +36,7 @@ export default class ModServerMessageSnackBar extends Vue{
   
   connectToDjHub(){
     this.djHubSocketConnection = new HubConnectionBuilder()
-        .withUrl(`${process.env.VUE_APP_API_BASE_URL}/livechat`)
+        .withUrl(`${process.env.VUE_APP_API_BASE_URL}/radio/dj`)
         .build();
     
     this.djHubSocketConnection.start()

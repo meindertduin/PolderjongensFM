@@ -8,6 +8,7 @@ using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Spotify.Queries;
 using pjfm.Models;
+using Serilog;
 
 namespace Pjfm.WebClient.Services
 {
@@ -29,7 +30,6 @@ namespace Pjfm.WebClient.Services
         {
             _serviceProvider = serviceProvider;
             _currentTermFilter = TopTrackTermFilter.AllTerms;
-            
         }
 
         public void Reset()
@@ -189,11 +189,7 @@ namespace Pjfm.WebClient.Services
                 TopTrackTermFilter = _currentTermFilter.ConvertToTopTrackTerms(),
                 IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
             });
-
-            if (result.Data.Count <= 0)
-            {
-            }
-            
+                
             foreach (var fillerTrack in result.Data)
             {
                 _fillerQueue.Enqueue(fillerTrack);
