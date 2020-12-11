@@ -1,10 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
+using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Enums;
 using Pjfm.Infrastructure.Service;
@@ -19,19 +24,22 @@ namespace pjfm.Controllers
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
         private readonly IPlaybackEventTransmitter _eventTransmitter;
+        private readonly IMediator _mediator;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public SpotifyWebPlaybackController(IPlaybackController playbackController,
-            ISpotifyBrowserService spotifyBrowserService, 
+            ISpotifyBrowserService spotifyBrowserService,
             UserManager<ApplicationUser> userManager,
-            IPlaybackEventTransmitter eventTransmitter)
+            IPlaybackEventTransmitter eventTransmitter,
+            IMediator mediator)
         {
             _playbackController = playbackController;
             _spotifyBrowserService = spotifyBrowserService;
             _eventTransmitter = eventTransmitter;
+            _mediator = mediator;
             _userManager = userManager;
         }
-        
+
         [HttpPut("mod/on")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult TurnOnPlaybackController()
@@ -94,10 +102,15 @@ namespace pjfm.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
             var result = await _spotifyBrowserService.Search(user.Id, user.SpotifyAccessToken, searchRequest);
-            var trackSerializer = new SpotifyTrackSerializer();
-            var tracks = trackSerializer.ConvertMultiple(await result.Content.ReadAsStringAsync());
 
-            return Ok(tracks);
+            if (result.IsSuccessStatusCode)
+            {
+                var trackSerializer = new SpotifyTrackSerializer();
+                var tracks = trackSerializer.ConvertMultiple(await result.Content.ReadAsStringAsync());
+                return Ok(tracks);
+            }
+
+            return StatusCode((int) result.StatusCode);
         }
 
         [HttpPut("request/{trackId}")]
@@ -105,37 +118,52 @@ namespace pjfm.Controllers
         public async Task<IActionResult> UserRequestTrack(string trackId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role, ApplicationIdentityConstants.Roles.Mod);
+            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
+                ApplicationIdentityConstants.Roles.Mod);
 
-            var requestedTrack = await GetTrackOfId(trackId, user);
+            var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
 
-            if (requestedTrack == null)
+            if (trackResponse.IsSuccessStatusCode)
             {
-                return BadRequest();
+                var requestedTrack = await SerializeTrackOfResponse(await trackResponse.Content.ReadAsStringAsync());
+
+                if (requestedTrack == null)
+                {
+                    return BadRequest();
+                }
+
+                var response = MakeRequestWithTrackDto(isMod, requestedTrack, user);
+
+                if (response.Error)
+                {
+                    return Conflict(response);
+                }
+
+                _eventTransmitter.PublishUpdatePlaybackInfoEvents();
+
+                return Accepted(response);
             }
-            
+
+            return StatusCode((int) trackResponse.StatusCode);
+        }
+
+        private Response<bool> MakeRequestWithTrackDto(bool isMod, TrackDto requestedTrack, ApplicationUser user)
+        {
             Response<bool> response;
-            
+
             if (isMod)
             {
                 response = _playbackController.AddPriorityTrack(requestedTrack);
             }
             else
             {
-                response = _playbackController.AddSecondaryTrack(requestedTrack, ApplicationUserSerializer.SerializeToDto(user));
+                response = _playbackController.AddSecondaryTrack(requestedTrack,
+                    ApplicationUserSerializer.SerializeToDto(user));
             }
-            
-            if (response.Error)
-            {
-                return Conflict(response);
-            }
-            
-            _eventTransmitter.PublishUpdatePlaybackInfoEvents();
 
-
-            return Accepted(response);
+            return response;
         }
-        
+
 
         [HttpPut("mod/skip")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
@@ -147,18 +175,43 @@ namespace pjfm.Controllers
 
         [HttpPost("mod/include")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult IncludeUsers(ApplicationUserDto user)
+        public async Task<IActionResult> IncludeUsers(ApplicationUserDto user)
         {
-            _playbackController.AddIncludedUser(user);
-            return Accepted();
+            var userResult = await _mediator.Send(new GetUserProfileByIdQuery()
+            {
+                Id = user.Id,
+            });
+
+            if (userResult.Data != null)
+            {
+                _playbackController.AddIncludedUser(userResult.Data);
+                return Accepted();
+            }
+
+            return NotFound();
         }
 
         [HttpPost("mod/exclude")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult RemoveIncludedUser(ApplicationUserDto user)
+        public async Task<IActionResult> RemoveIncludedUser(ApplicationUserDto user)
         {
-            _playbackController.RemoveIncludedUser(user);
-            return Accepted();
+            var userResult = await _mediator.Send(new GetUserProfileByIdQuery()
+            {
+                Id = user.Id,
+            });
+
+            if (userResult.Data != null)
+            {
+                var removeSucceeded = _playbackController.TryRemoveIncludedUser(userResult.Data);
+                if (removeSucceeded)
+                {
+                    return Accepted();
+                }
+
+                return StatusCode(500);
+            }
+
+            return NotFound();
         }
 
         [HttpGet("mod/include")]
@@ -190,12 +243,10 @@ namespace pjfm.Controllers
             return Accepted();
         }
         
-        private async Task<TrackDto> GetTrackOfId(string trackId, ApplicationUser user)
+        private async Task<TrackDto> SerializeTrackOfResponse(string trackResponseContent)
         {
-
-            var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
             var trackSerializer = new SpotifyTrackSerializer();
-            var trackDto = trackSerializer.ConvertSingle(await trackResponse.Content.ReadAsStringAsync());
+            var trackDto = trackSerializer.ConvertSingle(trackResponseContent);
 
             return trackDto;
         }
