@@ -41,35 +41,29 @@
             <!-- refactor to seperate components -->
             <v-tab-item>
               <v-card flat>
-                <v-list dense>
-                  <v-list-item-group
-                      class=""
-                  >
-                    <v-list-item>
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          1. Mijn Top 50 (vier weken) <span class="grey--text float-right">Playlist</span>
-                        </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          2. Mijn Top 50 (zes maanden) <span class="grey--text float-right">Playlist</span>
-                        </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          3. Mijn Top 50 (all-time) <span class="grey--text float-right">Playlist</span>
-                        </v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
+                  <div v-if="!loading">
+                  <v-expansion-panels accordion class="mb-5">
+                      <v-expansion-panel
+                          v-for="(playlist, i) in this.playlists"
+                          :key="i"
+                      >
+                        <v-expansion-panel-header>{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <v-list dense>
+                            <v-list-item-group>
+                              <v-list-item v-for="(track, z) in playlist.tracks" @click="requestSong(track)">
+                                <v-list-item-content>
+                                  <v-list-item-title>
+                                    {{z + 1}}. {{ track.artists[0].name }} - {{ track.name }} <span class="grey--text float-right">Track</span>
+                                  </v-list-item-title>
+                                </v-list-item-content>
+                              </v-list-item>
+                            </v-list-item-group>
+                          </v-list>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </div>
               </v-card>
             </v-tab-item>
             <!--  -->
@@ -84,28 +78,31 @@ import Component from 'vue-class-component'
 import JQuery from 'jquery'
 import {trackDto} from "@/common/types";
 import {AxiosResponse} from "axios";
+import {Watch} from "vue-property-decorator";
 
 window.$ = JQuery
 
 @Component({
   name: 'SearchBox',
 })
-export default class SearchBox extends Vue { 
+export default class SearchBox extends Vue {
   private query = '';
   private searchResults = [];
   
-  private shortTopTracks = [];
-  private mediumTopTracks = [];
-  private longTopTracks = [];
+  private playlists = [];
   
-  private loading = false;
+  private loading = true;
   private tab = null;
   
-  created(){
-    this.fetchTopTracks();
+  created() {
+    this.loading = true;
+    
+    this.fetchPlaylists().then(() => {
+      this.loading = false;
+    })
   }
 
-  searchBarKeyUp(e){
+  searchBarKeyUp(e) {
     clearTimeout($.data(this, 'timer'));
 
     if (e.keyCode == 13)
@@ -113,50 +110,66 @@ export default class SearchBox extends Vue {
     else
       $(this).data('timer', setTimeout(this.search, 500));
   }
-  
-  search(force){
+
+  search(force) {
     console.log('search');
     if (!force && this.query.length < 3) return;
     this.loading = true;
     this.items = []
 
     this.loading = true;
-    
+
     this.$axios.post(`https://localhost:5001/api/playback/search`, {
       query: this.query,
       type: 'track'
-    }).then((response:AxiosResponse) => {
+    }).then((response: AxiosResponse) => {
       this.searchResults = response.data;
       this.loading = false;
     })
   }
-  requestSong(track : trackDto) {
-    this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response:AxiosResponse) => {
+
+  requestSong(track: trackDto) {
+    this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
       this.$router.push('/');
-    }).catch((error:any) => {
+    }).catch((error: any) => {
       console.log(error);
     })
   }
 
-  fetchTopTracks() {
-    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=short_term`).then((response:AxiosResponse) => {
-      this.shortTopTracks = response.data;
-      console.log(this.shortTopTracks);
-    }).catch((error:any) => {
+  async fetchPlaylists(){
+    await this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=short_term`).then((response: AxiosResponse) => {
+      this.playlists.push({name: "Mijn Top 50 (vier weken)", tracks: response.data.items})
+    }).catch((error: any) => {
       console.log(error);
     })
-   
-    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=medium_term`).then((response:AxiosResponse) => {
-      this.mediumTopTracks = response.data;
-      console.log(this.mediumTopTracks);
-    }).catch((error:any) => {
+
+    await this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=medium_term`).then((response: AxiosResponse) => {
+      this.playlists.push({name: "Mijn Top 50 (zes maanden)", tracks: response.data.items})
+    }).catch((error: any) => {
       console.log(error);
     })
     
-    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=long_term`).then((response:AxiosResponse) => {
-      this.longTopTracks = response.data;
-      console.log(this.longTopTracks);
-    }).catch((error:any) => {
+    await this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=long_term`).then((response: AxiosResponse) => {
+      this.playlists.push({name: "Mijn Top 50 (all-time)", tracks: response.data.items})
+    }).catch((error: any) => {
+      console.log(error);
+    })
+
+    await this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
+      playlistResponse.data.items.forEach((playlist) => {
+        this.$axios.get(`https://localhost:5001/api/playlist/tracks?playlistId=${playlist.id}`).then((trackResponse: AxiosResponse) => {
+          var playlistTrackArray = [];
+          
+          trackResponse.data.items.forEach((track) => {
+            playlistTrackArray.push(track.track);
+          })
+
+          this.playlists.push({name: playlist.name, tracks: playlistTrackArray})
+        })
+        }).catch((error: any) => {
+          console.log(error);
+        })
+      }).catch((error: any) => {
       console.log(error);
     })
   }

@@ -163,7 +163,6 @@
         handleSkip(){
             this.$axios.put('api/playback/mod/skip');
         }
-        
     }
         
 </script>
