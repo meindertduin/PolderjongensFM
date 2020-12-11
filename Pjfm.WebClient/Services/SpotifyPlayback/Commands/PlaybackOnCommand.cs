@@ -25,7 +25,7 @@ namespace Pjfm.WebClient.Services
 
         public void Undo()
         {
-            _spotifyPlaybackManager.StopPlayingTracks(0);
+            _spotifyPlaybackManager.StopPlayback(0);
         }
     }
 }

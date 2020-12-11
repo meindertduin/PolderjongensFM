@@ -16,10 +16,6 @@ namespace pjfm.Hubs
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlaybackController _playbackController;
-        private static ApplicationUser _connectedUser;
-        
-        private readonly object _djConnectionLock = new object();
-
 
         public DjHub(UserManager<ApplicationUser> userManager, IPlaybackController playbackController)
         {
@@ -29,40 +25,10 @@ namespace pjfm.Hubs
         
         public override async Task OnConnectedAsync()
         {
-            var context = Context.GetHttpContext();
-            var user = await _userManager.GetUserAsync(context.User);
-            TryConnectAsDj(user);
-
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
             var djInfo = infoModelFactory.CreateDjInfoModel();
 
             await Clients.Caller.SendAsync("ReceiveDjPlaybackInfo", djInfo);
         }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            var context = Context.GetHttpContext();
-            var user = await _userManager.GetUserAsync(context.User);
-            if (_connectedUser.Id == user.Id)
-            {
-                _connectedUser = null;
-            }
-        }
-
-        private void TryConnectAsDj(ApplicationUser user)
-        {
-            lock(_djConnectionLock)
-            {
-                if (_connectedUser == null)
-                {
-                    _connectedUser = user;
-                }
-                else
-                {
-                    Context.GetHttpContext().Abort();
-                }
-            }
-        }
-
     }
 }

@@ -16,7 +16,7 @@ namespace Pjfm.Domain.Interfaces
         Task<int> PlayNextTrack();
         Task StartPlayingTracks();
         Task ResetPlayingTracks(int afterDelay);
-        Task StopPlayingTracks(int afterDelay);
+        Task StopPlayback(int afterDelay);
         Task SynchWithCurrentPlayer(string userId, string accessToken);
     }
 }
