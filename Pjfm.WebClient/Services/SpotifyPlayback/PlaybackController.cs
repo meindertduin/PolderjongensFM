@@ -100,9 +100,9 @@ namespace Pjfm.WebClient.Services
             _playbackQueue.AddUsersToIncludedUsers(user);
         }
 
-        public void RemoveIncludedUser(ApplicationUserDto user)
+        public bool TryRemoveIncludedUser(ApplicationUserDto user)
         {
-            _playbackQueue.RemoveUserFromIncludedUsers(user);
+            return _playbackQueue.TryRemoveUserFromIncludedUsers(user);
         }
 
         public Response<bool> AddPriorityTrack(TrackDto track)

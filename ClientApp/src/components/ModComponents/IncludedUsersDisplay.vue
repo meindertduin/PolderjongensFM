@@ -37,7 +37,7 @@
         }
         
         excludeUser(user: applicationUser){
-            this.$axios.post("api/playback/mod/exclude",user)
+            this.$axios.post("api/playback/mod/exclude", user)
                 .then((response:AxiosResponse) => {
                     this.$store.commit('modModule/REMOVE_INCLUDED_USER', user);
                     console.log(response)

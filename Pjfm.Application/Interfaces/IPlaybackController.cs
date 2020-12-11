@@ -17,7 +17,7 @@ namespace Pjfm.WebClient.Services
         Task SynchWithPlayback(string userId, string spotifyAccessToken);
         List<ApplicationUserDto> GetIncludedUsers();
         void AddIncludedUser(ApplicationUserDto user);
-        void RemoveIncludedUser(ApplicationUserDto user);
+        bool TryRemoveIncludedUser(ApplicationUserDto user);
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
         List<TrackDto> GetPriorityQueueTracks();

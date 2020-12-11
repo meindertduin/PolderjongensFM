@@ -66,13 +66,16 @@ namespace Pjfm.WebClient.Services
             }
         }
 
-        public void RemoveUserFromIncludedUsers(ApplicationUserDto user)
+        public bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user)
         {
             var item = IncludedUsers.SingleOrDefault(x => x.Id == user.Id);
             if (item != null)
             {
                 IncludedUsers.Remove(item);
+                return true;
             }
+
+            return false;
         }
         
         public int RecentlyPlayedCount()

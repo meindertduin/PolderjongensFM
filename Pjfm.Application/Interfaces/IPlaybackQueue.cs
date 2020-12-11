@@ -15,7 +15,7 @@ namespace Pjfm.WebClient.Services
         void SetTermFilter(TopTrackTermFilter termFilter);
         Task SetIncludedUsers();
         void AddUsersToIncludedUsers(ApplicationUserDto user);
-        void RemoveUserFromIncludedUsers(ApplicationUserDto user);
+        bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user);
         public void AddPriorityTrack(TrackDto track);
         void AddSecondaryTrack(TrackRequestDto trackRequest);
         public List<TrackDto> GetFillerQueueTracks();
