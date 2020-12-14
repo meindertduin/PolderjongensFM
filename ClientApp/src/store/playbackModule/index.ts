@@ -8,6 +8,7 @@ class State {
     public PlayerTimerOverLay : boolean = false
     
     public isPlaying: boolean = false;
+    public isConnected: boolean = false;
 }
 
 const mutations = <MutationTree<State>>{
@@ -16,6 +17,7 @@ const mutations = <MutationTree<State>>{
     TOGGLE_PLAYER_TIMER_OVERLAY: state => state.PlayerTimerOverLay = ! state.PlayerTimerOverLay,
     
     SET_PLAYBACK_PLAYING_STATUS: (state, isPlaying:boolean) => state.isPlaying = isPlaying, 
+    SET_CONNECTED_STATUS: (state, isConnected:boolean) => state.isConnected = isConnected,
 }
 
 const getters = <GetterTree<State, any>>{
@@ -23,6 +25,7 @@ const getters = <GetterTree<State, any>>{
     getRadioConnection: state => state.radioConnection,
     getPlayerTimerOverlayActive: state => state.PlayerTimerOverLay,
     getPlayingStatus: state => state.isPlaying,
+    getConnectedState: state => state.isConnected,
 }
 
 const actions = <ActionTree<State, any>>{
