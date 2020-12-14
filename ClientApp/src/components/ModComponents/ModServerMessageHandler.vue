@@ -18,12 +18,13 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
-import {hubServerMessage} from "@/common/types";
+import {hubServerMessage, playbackSettings} from "@/common/types";
+import set = Reflect.set;
 
 @Component({
-  name: "ModServerMessageSnackBar",
+  name: "ModServerMessageHandler",
 })
-export default class ModServerMessageSnackBar extends Vue{
+export default class ModServerMessageHandler extends Vue{
   private snackBarOpen :boolean = true;
   private snackBarTimeOut = 5000;
   private djHubSocketConnection: HubConnection | null = null;
@@ -38,13 +39,18 @@ export default class ModServerMessageSnackBar extends Vue{
     this.djHubSocketConnection = new HubConnectionBuilder()
         .withUrl(`${process.env.VUE_APP_API_BASE_URL}/radio/dj`)
         .build();
+
+    this.djHubSocketConnection?.on("ServerMessage", (message: hubServerMessage) => {
+      this.snackBarOpen = true;
+      this.currentMessage = message;
+    })
+    this.djHubSocketConnection?.on("PlaybackSettings", (settings: playbackSettings) => {
+      this.$store.commit("modModule/SET_PLAYBACK_SETTINGS", settings);
+    })
     
     this.djHubSocketConnection.start()
       .then(() => {
-        this.djHubSocketConnection?.on("ServerMessage", (message: hubServerMessage) => {
-          this.snackBarOpen = true;
-          this.currentMessage = message;
-        })
+        
       })
   }
 }

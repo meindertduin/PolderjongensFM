@@ -1,24 +1,36 @@
 ﻿import { GetterTree, MutationTree, ActionTree } from "vuex"
-import {applicationUser} from "@/common/types";
+import {applicationUser, playbackSettings, playbackState} from "@/common/types";
 import axios from "axios";
 import App from "@/App.vue";
 
 class State {
     public includedUsers : Array<applicationUser> = [];
     public loadedUsers : Array<applicationUser> = [];
+    public playbackSettings: playbackSettings | null = null;
+    
+    
+    public playbackState: playbackState | null = null;
+    public playbackTermFilter: number | null = null;
 }
 
 const mutations = <MutationTree<State>>{
     SET_INCLUDED_USERS: (state, users: Array<applicationUser>) => state.includedUsers = users,
     ADD_INCLUDED_USER: (state, user: applicationUser) => state.includedUsers.push(user),
     REMOVE_INCLUDED_USER: (state, user:applicationUser) => state.includedUsers = state.includedUsers.filter(x => x.id !== user.id),
+    SET_LOADED_USERS: (state, users: Array<applicationUser>) => state.loadedUsers = users,
     
-    SET_LOADED_USERS: (state, users: Array<applicationUser>) => state.loadedUsers = users
+    SET_PLAYBACK_SETTINGS: (state, settings: playbackSettings) => {
+        state.includedUsers = settings.includedUsers;
+        state.playbackState = settings.playbackState;
+        state.playbackTermFilter = settings.playbackTermFilter;
+    },
 }
 
 const getters = <GetterTree<State, any>>{
     getIncludedUsers: state => state.includedUsers, 
-    getLoadedUsers: state => state.loadedUsers, 
+    getLoadedUsers: state => state.loadedUsers,
+    getPlaybackState: state => state.playbackState,
+    getPlaybackTermFiler: state => state.playbackTermFilter,
 }
 
 const actions = <ActionTree<State, any>>{

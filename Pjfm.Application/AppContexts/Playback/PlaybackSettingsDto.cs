@@ -1,4 +1,5 @@
-﻿using Pjfm.Domain.Enums;
+﻿using System.Collections.Generic;
+using Pjfm.Domain.Enums;
 using Pjfm.WebClient.Services;
 
 namespace Pjfm.Application.Common.Dto
@@ -8,5 +9,6 @@ namespace Pjfm.Application.Common.Dto
         public bool IsPlaying { get; set; }
         public TopTrackTermFilter PlaybackTermFilter { get; set; }
         public PlaybackState PlaybackState { get; set; }
+        public List<ApplicationUserDto> IncludedUsers { get; set; }
     }
 }

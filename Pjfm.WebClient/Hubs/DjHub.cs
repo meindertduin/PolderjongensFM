@@ -14,21 +14,16 @@ namespace pjfm.Hubs
     [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
     public class DjHub : Hub
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlaybackController _playbackController;
 
-        public DjHub(UserManager<ApplicationUser> userManager, IPlaybackController playbackController)
+        public DjHub(IPlaybackController playbackController)
         {
-            _userManager = userManager;
             _playbackController = playbackController;
         }
         
         public override async Task OnConnectedAsync()
         {
-            var infoModelFactory = new PlaybackInfoFactory(_playbackController);
-            var djInfo = infoModelFactory.CreateDjInfoModel();
-
-            await Clients.Caller.SendAsync("ReceiveDjPlaybackInfo", djInfo);
+            await Clients.All.SendAsync("PlaybackSettings", _playbackController.GetPlaybackSettings());
         }
     }
 }

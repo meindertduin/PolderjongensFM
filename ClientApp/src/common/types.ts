@@ -16,7 +16,6 @@ export interface playerUpdateInfo{
     fillerQueuedTracks: Array<trackDto>,
     secondaryQueuedTracks: Array<trackDto>,
     priorityQueuedTracks: Array<trackDto>,
-    
 }
 
 export interface liveChatMessageModel{
@@ -50,4 +49,11 @@ export enum playbackState{
 export interface hubServerMessage{
     message: string,
     error: boolean,
+}
+
+export interface playbackSettings {
+    isPlaying: boolean,
+    playbackTermFilter: number,
+    includedUsers: Array<applicationUser>,
+    playbackState: playbackState,
 }

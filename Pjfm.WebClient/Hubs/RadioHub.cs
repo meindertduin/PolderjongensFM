@@ -41,6 +41,7 @@ namespace pjfm.Hubs
             {
                 await Clients.Caller.SendAsync("IsConnected", _playbackListenerManager.IsUserTimedListener(user.Id));
             }
+            await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackController.GetPlaybackSettings().IsPlaying);
             
             await base.OnConnectedAsync();
         }
