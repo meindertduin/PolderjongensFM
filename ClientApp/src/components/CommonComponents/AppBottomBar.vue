@@ -1,23 +1,26 @@
 ﻿<template>
-  <v-bottom-navigation fixed>
-    <template>
-      <v-row justify="center">
-        <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
-          <PlayerTimeSelectComponent />
-        </v-dialog>
-      </v-row>
-    </template>
-    <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="togglePlayerTimerOverlay" block>
-      <span>Start</span>
-      <v-icon>mdi-play</v-icon>
-    </v-btn>
-    <div v-else>
-      <v-btn v-if="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer" block>
+  <div>
+    <v-bottom-navigation fixed v-if="oidcAuthenticated">
+      <template>
+        <v-row justify="center">
+          <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
+            <PlayerTimeSelectComponent />
+          </v-dialog>
+        </v-row>
+      </template>
+      <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="togglePlayerTimerOverlay" block>
+        <span>Start</span>
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
+      <v-btn v-else="playbackConnected" @click="disconnectWithPlayer" block>
         <span>Stop</span>
         <v-icon>mdi-pause</v-icon>
       </v-btn>
-    </div>
-  </v-bottom-navigation>
+    </v-bottom-navigation>
+    <v-bottom-navigation fixed v-else>
+      
+    </v-bottom-navigation>
+  </div>
 </template>
 
 <script lang="ts">
