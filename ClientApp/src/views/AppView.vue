@@ -1,23 +1,24 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-col cols="11" md="10">
-        <v-row justify="center">
-          <v-col cols="10" md="8">
-            <Radio />
-          </v-col>
-          <v-col md="4">
-              <PlaybackSettingsDashboard v-if="isMod" />
-              <LiveChat v-else />
-          </v-col>
-        </v-row>
-          <v-row v-if="isMod">
-              <v-col class="col-12">
-                  <UserIncludeSettingsDashboard />
-              </v-col>
-          </v-row>
-      </v-col>
+      <v-row justify="center">
+        <v-col cols="12" md="10">
+          <Radio />
+        </v-col>
+      </v-row>
     </v-row>
+    <div v-if="isMod">
+      <v-row justify="center">
+        <v-col v-if="isMod" md="10">
+          <PlaybackSettingsDashboard  />
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col md="10">
+          <UserIncludeSettingsDashboard />
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
 

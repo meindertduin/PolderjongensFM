@@ -48,7 +48,6 @@ namespace Pjfm.WebClient.Services
                 var infoModelFactory = new PlaybackInfoFactory(_playbackController);
                 var userInfo = infoModelFactory.CreateUserInfoModel();
                 var djInfo = infoModelFactory.CreateUserInfoModel();
-                    
 
                 radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", userInfo);
                 djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
