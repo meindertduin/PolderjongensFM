@@ -34,6 +34,10 @@ namespace pjfm
                 jeremyUser.Member = true;
                 userManager.CreateAsync(jeremyUser, "password").GetAwaiter().GetResult();
                 
+                var jordiUser = new ApplicationUser("Jordi"){ Email = "jordimulder7@gmail.com"};
+                jordiUser.Member = true;
+                userManager.CreateAsync(jordiUser, "password").GetAwaiter().GetResult();
+                
                 var mod = new ApplicationUser("mod"){Email = "mod@mail.com"};
                 mod.Member = true;
                 userManager.CreateAsync(mod, "password").GetAwaiter().GetResult();
