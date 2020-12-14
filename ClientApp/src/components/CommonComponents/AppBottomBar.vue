@@ -1,5 +1,6 @@
 ﻿<template>
   <div>
+    <!-- Authenticated -->
     <v-bottom-navigation fixed v-if="oidcAuthenticated">
       <template>
         <v-row justify="center">
@@ -8,18 +9,25 @@
           </v-dialog>
         </v-row>
       </template>
-      <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="togglePlayerTimerOverlay" block>
+      <v-btn v-if="!playbackConnected" @click="togglePlayerTimerOverlay" block>
         <span>Start</span>
         <v-icon>mdi-play</v-icon>
       </v-btn>
-      <v-btn v-else="playbackConnected" @click="disconnectWithPlayer" block>
+      <v-btn v-else-if="playbackConnected" @click="disconnectWithPlayer" block>
         <span>Stop</span>
         <v-icon>mdi-pause</v-icon>
       </v-btn>
     </v-bottom-navigation>
+    <!--  -->
+    
+    <!-- Not Authenticated -->
     <v-bottom-navigation fixed v-else>
-      
+      <v-btn @click="signInOidcClient" block>
+        <span>Inloggen</span>
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
     </v-bottom-navigation>
+    <!--  -->
   </div>
 </template>
 
@@ -46,6 +54,10 @@ export default class AppBottomBar extends Vue{
 
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+  }
+
+  private signInOidcClient(){
+    this.$store.dispatch('oidcStore/authenticateOidc');
   }
   
   private togglePlayerTimerOverlay(){

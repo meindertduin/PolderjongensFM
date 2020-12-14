@@ -15,7 +15,7 @@
           <v-list-item-title>Radio</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item link @click="navigate('/search')">
+      <v-list-item link v-if="songRequestIsAvailable()" @click="navigate('/search')">
         <v-list-item-action>
           <v-icon>mdi-playlist-plus</v-icon>
         </v-list-item-action>
@@ -67,8 +67,8 @@ import Component from "vue-class-component";
   name: 'AppSideBar',
 })
 export default class AppSideBar extends Vue{
-  get sideBar():boolean{
-    this.sideBarOpen  = this.$store.getters["userSettingsModule/getSidebarOpenState"];
+  get sideBar(): boolean {
+    this.sideBarOpen = this.$store.getters["userSettingsModule/getSidebarOpenState"];
   }
   
   private sideBarOpen:boolean = false;
@@ -77,8 +77,18 @@ export default class AppSideBar extends Vue{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }
 
-  private navigate(uri){
+  private navigate(uri : string){
     this.$router.push(uri);
+  }
+  
+  private songRequestIsAvailable(): boolean {
+    if(!this.oidcAuthenticated) return false;
+    
+    // Add max song request check
+    
+    // Add playback mode check
+    
+    return true;
   }
 
   private signInOidcClient(){
