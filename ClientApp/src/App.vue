@@ -1,6 +1,5 @@
 <template>
   <v-app>
-
     <v-navigation-drawer
         v-model="drawer"
         app
@@ -16,7 +15,7 @@
             <v-list-item-title>Radio</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link @click="navigate('/search')">
+        <v-list-item link @click="onClickRequestSong()" v-if="oidcAuthenticated">
           <v-list-item-action>
             <v-icon>mdi-playlist-plus</v-icon>
           </v-list-item-action>
@@ -56,9 +55,7 @@
           </v-list-item>
         </div>
       </v-list>
-
     </v-navigation-drawer>
-    
     
     <v-app-bar
         app
@@ -66,7 +63,9 @@
     >
 
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>PJFM</v-toolbar-title>
+      <v-toolbar-title>      
+        PJFM
+      </v-toolbar-title>
       <v-spacer></v-spacer>
 
       <span class="align-bottom overline grey--text" v-if="userProfile != null">INGELOGD ALS <span class="orange--text">{{userProfile.userName}}</span></span>
@@ -105,10 +104,14 @@
           <span>Start</span>
           <v-icon>mdi-play</v-icon>
         </v-btn>
-        <v-btn v-else="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer" block>
+        <v-btn v-else-if="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer" block>
           <span>Stop</span>
           <v-icon>mdi-pause</v-icon>
         </v-btn>
+      <v-btn v-else @click="signInOidcClient()" block>
+        <span>Login</span>
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
     </v-bottom-navigation>
     <ModServerMessageSnackBar v-if="isMod" />
   </v-app>
@@ -173,7 +176,7 @@ export default class App extends Vue{
     radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) =>
         this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
 
-    radioConnection.on("ISConnected", (connected:boolean) =>{
+    radioConnection.on("IsConnected", (connected:boolean) =>{
         this.playbackConnected = connected;
     })
     
@@ -219,6 +222,14 @@ export default class App extends Vue{
 
   private navigate(uri){
     this.$router.push(uri);
+  }
+
+  private redirect(uri){
+    window.location.href = uri;
+  }
+  
+  private onClickRequestSong(){
+    this.navigate('/search');
   }
   
   private signInOidcClient(){

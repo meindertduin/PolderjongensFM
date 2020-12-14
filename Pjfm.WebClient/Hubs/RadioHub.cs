@@ -9,7 +9,6 @@ using Pjfm.WebClient.Services;
 
 namespace pjfm.Hubs
 {
-    [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
     public class RadioHub : Hub
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -27,7 +26,7 @@ namespace pjfm.Hubs
             _playbackController = playbackController;
             _spotifyPlayerService = spotifyPlayerService;
         }
-
+        
         public override async Task OnConnectedAsync()
         {
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
@@ -58,7 +57,7 @@ namespace pjfm.Hubs
             if (minutes != 0)
             {
                 _playbackListenerManager.TrySetTimedListener(user.Id, minutes);
-                await Clients.Caller.SendAsync("ISConnected", true);
+                await Clients.Caller.SendAsync("IsConnected", true);
             }
         }
 

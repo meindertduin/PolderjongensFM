@@ -31,7 +31,7 @@
     import {playbackState, playerUpdateInfo} from "@/common/types";
 
     @Component({
-    name: 'Home',
+    name: 'AppView',
     components: {
         UserIncludeSettingsDashboard,
         Radio,
@@ -39,7 +39,7 @@
         PlaybackSettingsDashboard  
     }
   })
-  export default class Home extends Vue {
+  export default class AppView extends Vue {
     get isMod(){
         return this.$store.getters['profileModule/isMod'];
     }
