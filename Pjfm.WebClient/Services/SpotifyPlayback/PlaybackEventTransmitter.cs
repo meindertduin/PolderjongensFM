@@ -31,6 +31,7 @@ namespace Pjfm.WebClient.Services
 
         public void OnNext(bool value)
         {
+            PublishPlayingStatus(value);
             if (value)
             {
                 PublishUpdatePlaybackInfoEvents();
@@ -50,8 +51,16 @@ namespace Pjfm.WebClient.Services
                     
 
                 radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", userInfo);
-                
                 djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
+            }
+        }
+
+        public void PublishPlayingStatus(bool isPlaying)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var radioHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<RadioHub>>();
+                radioHubContext.Clients.All.SendAsync("ReceivePlayingStatus", isPlaying);
             }
         }
     }
@@ -59,5 +68,6 @@ namespace Pjfm.WebClient.Services
     public interface IPlaybackEventTransmitter
     {
         void PublishUpdatePlaybackInfoEvents();
+        void PublishPlayingStatus(bool isPlaying);
     }
 }

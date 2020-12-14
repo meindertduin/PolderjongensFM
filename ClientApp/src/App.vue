@@ -110,7 +110,7 @@
           <v-icon>mdi-pause</v-icon>
         </v-btn>
     </v-bottom-navigation>
-    <ModServerMessageSnackBar v-if="isMod" />
+    <ModServerMessageHandler v-if="isMod" />
   </v-app>
 </template>
 
@@ -122,14 +122,14 @@ import {userSettings} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
-import ModServerMessageSnackBar from "@/components/ModComponents/ModServerMessageSnackBar.vue";
+import ModServerMessageHandler from "@/components/ModComponents/ModServerMessageHandler.vue";
 
 @Component({
   name: 'App',
   components: {
     DisplaySettingsItemGroup,
     PlayerTimeSelectComponent,
-    ModServerMessageSnackBar
+    ModServerMessageHandler
   }
 })
 
@@ -176,6 +176,10 @@ export default class App extends Vue{
     radioConnection.on("ISConnected", (connected:boolean) =>{
         this.playbackConnected = connected;
     })
+    
+    radioConnection.on("ReceivePlayingStatus", (isPlaying:boolean) => {
+      this.$store.commit("playbackModule/SET_PLAYBACK_PLAYING_STATUS", isPlaying);
+    });
     
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
   }

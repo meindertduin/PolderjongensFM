@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
+using pjfm.Hubs;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
 
 namespace Pjfm.WebClient.Services
@@ -13,16 +15,21 @@ namespace Pjfm.WebClient.Services
     {
         private readonly IPlaybackQueue _playbackQueue;
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
+        private readonly IHubContext<DjHub> _djHubContext;
+        private readonly IHubContext<RadioHub> _radioHubContext;
 
         private readonly ICommand[] _onCommands = new ICommand[20];
         private readonly ICommand[] _offCommands = new ICommand[20];
         private ICommand _undoCommand;
         
 
-        public PlaybackController(IPlaybackQueue playbackQueue, ISpotifyPlaybackManager spotifyPlaybackManager)
+        public PlaybackController(IPlaybackQueue playbackQueue, ISpotifyPlaybackManager spotifyPlaybackManager,
+            IHubContext<DjHub> djHubContext, IHubContext<RadioHub> radioHubContext)
         {
             _playbackQueue = playbackQueue;
             _spotifyPlaybackManager = spotifyPlaybackManager;
+            _djHubContext = djHubContext;
+            _radioHubContext = radioHubContext;
 
             _undoCommand = new NoCommand();
 
@@ -66,23 +73,27 @@ namespace Pjfm.WebClient.Services
         public void SetPlaybackState(IPlaybackState state)
         {
             IPlaybackController.CurrentPlaybackState = state;
+            NotifyChangePlaybackSettings();
         }
         
         public void TurnOn(PlaybackControllerCommands command)
         {
             _onCommands[(int) command].Execute();
             _undoCommand = _onCommands[(int) command];
+            NotifyChangePlaybackSettings();
         }
 
         public void TurnOff(PlaybackControllerCommands command)
         {
             _offCommands[(int) command].Execute();
             _undoCommand = _offCommands[(int) command];
+            NotifyChangePlaybackSettings();
         }
 
         public void Undo()
         {
             _undoCommand.Execute();
+            NotifyChangePlaybackSettings();
         }
 
         public Task SynchWithPlayback(string userId, string spotifyAccessToken)
@@ -114,22 +125,18 @@ namespace Pjfm.WebClient.Services
             return IPlaybackController.CurrentPlaybackState.AddSecondaryTrack(track, user);
         }
         
-
         public List<TrackDto> GetPriorityQueueTracks()
         {
             return _playbackQueue.GetPriorityQueueTracks();
         }
-        
         public List<TrackDto> GetSecondaryQueueTracks()
         {
             return _playbackQueue.GetSecondaryQueueTracks();
         }
-        
         public List<TrackDto> GetFillerQueueTracks()
         {
             return _playbackQueue.GetFillerQueueTracks();
         }
-
         public PlaybackSettingsDto GetPlaybackSettings()
         {
             PlaybackState currentPlaybackState = PlaybackState.DefaultPlaybackState;
@@ -147,6 +154,7 @@ namespace Pjfm.WebClient.Services
                 IsPlaying = _spotifyPlaybackManager.IsCurrentlyPlaying,
                 PlaybackTermFilter = _playbackQueue.CurrentTermFilter,
                 PlaybackState = currentPlaybackState,
+                IncludedUsers = _playbackQueue.IncludedUsers,
             };
 
             return playbackSettings;
@@ -159,6 +167,12 @@ namespace Pjfm.WebClient.Services
                 _spotifyPlaybackManager.CurrentTrackStartTime);
 
             return result;
+        }
+
+        private void NotifyChangePlaybackSettings()
+        {
+            var playbackSettings = GetPlaybackSettings();
+            _djHubContext.Clients.All.SendAsync("PlaybackSettings", playbackSettings);
         }
 
         public IDisposable SubscribeToPlayingStatus(IObserver<bool> observer)

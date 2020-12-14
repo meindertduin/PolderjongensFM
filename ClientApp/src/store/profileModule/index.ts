@@ -30,7 +30,6 @@ const actions = <ActionTree<State, any>>{
             })
             .then(({data}) => {
                 context.commit('SET_USER_PROFILE', data.data)
-                console.log(data);
             })
             .catch(err => console.log(err));
     },

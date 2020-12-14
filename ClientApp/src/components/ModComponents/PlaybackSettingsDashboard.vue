@@ -15,7 +15,7 @@
                             <v-slider
                                     v-model="selectedTerm"
                                     :tick-labels="terms"
-                                    :value="selectedTerm"
+                                    :value="playbackTermFilter"
                                     :max="5"
                                     step="1"
                                     ticks="always"
@@ -23,7 +23,7 @@
                             ></v-slider>
                         </div>
                         <div class="text-h6 ma-2">Staat</div>
-                        <v-select :items="stateItems" v-model="selectedState" outlined label="Playback staat"></v-select>
+                        <v-select :items="stateItems" v-model="selectedState" :value="playbackState" outlined label="Playback staat"></v-select>
                     </v-card>
                 </v-col>
             </v-row>
@@ -93,7 +93,22 @@
         name: "PlaybackSettingsDashboard",
     })
     export default class PlaybackSettingsDashboard extends Vue{
-        private playbackOn: boolean | null = null;
+        get playbackOn(){
+          return this.$store.getters['playbackModule/getPlayingStatus'];
+        }  
+        
+        get playbackTermFilter(){
+          const selectedTerm = this.$store.getters['modModule/getPlaybackTermFiler'];
+          this.selectedTerm = selectedTerm;
+          return selectedTerm;
+        }
+        
+        get playbackState(){
+          const selectedState = this.$store.getters['modModule/getPlaybackState'];
+          this.selectedState = selectedState;
+          return selectedState;
+        }
+      
         private selectedTerm: number = 0;
         private terms :any[] = ['short', 'short-med', 'med', 'med-long', 'long', 'all'];
         private stateItems :any[] = [{text: 'Dj-mode', value: 0}, {text: 'wachtrij-mode', value: 1}, {text: 'random-mode', value: 2}]
@@ -110,32 +125,10 @@
         
         private loadedPlaybackSettings: playbackSettings | null = null;
         
-        created(){
-            this.$axios.get('api/playback/mod/playbackSettings')
-                .then(({ data }: { data: playbackSettings}) => {
-                    this.playbackOn = data.isPlaying? data.isPlaying : null;
-                    this.selectedTerm = data.playbackTermFilter;
-                    
-                    switch (data.playbackState) {
-                        case playbackState["Dj-mode"]:
-                            this.selectedState = this.stateItems[0].value;
-                            break;
-                        case playbackState["wachtrij-mode"]:
-                            this.selectedState = this.stateItems[1].value;
-                            break;
-                        case playbackState["random-mode"]:
-                            this.selectedState = this.stateItems[2].value;
-                            break;
-                    }
-                })
-                .catch((err:any) => console.log(err));
-        }
-        
-        
         async handleConfirmPlaybackSet(){
             this.showConfirmNotification = false;
             try {
-                if (this.playbackOn){
+                if (this.playbackOn === false){
                     await this.$axios.put('api/playback/mod/on');
                 }
                 else{
@@ -143,17 +136,14 @@
                 }
             }
             catch (e) {
-                console.log(e.message);
-                this.playbackOn = this.playbackOn? null: true;
+              console.log(e)
             }
         }
         
         async handleRejectPlaybackSet(){
-            this.playbackOn = this.playbackOn? null: true;
             this.showConfirmNotification = false;
         }
-        
-        
+      
         async handleReset(){
             await this.$axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
             
