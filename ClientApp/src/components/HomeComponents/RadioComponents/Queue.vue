@@ -1,11 +1,11 @@
 <template>
     <v-row>
       <v-col>
-          <v-card
-          class="pa-2"
-          outlined
-          round
-          >
+          <v-card 
+              class="pa-2" 
+              outlined 
+              round
+          >             
               <span class="overline grey--text">Wachtrij</span><br>
                   <v-list dense>
                   <v-list-item-group

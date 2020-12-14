@@ -20,6 +20,8 @@ class State {
 
 const mutations = <MutationTree<State>>{
     SET_PLAYBACK_INFO: (state, playerUpdateInfo:playerUpdateInfo) => {
+        state.playbackInfo = playerUpdateInfo;
+        
         state.currentSongInfo = playerUpdateInfo.currentPlayingTrack;
         state.fillerQueuedTracks = playerUpdateInfo.fillerQueuedTracks;
         state.priorityQueuedTracks = playerUpdateInfo.priorityQueuedTracks;
