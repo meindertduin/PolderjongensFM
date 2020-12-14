@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '../views/Home.vue'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
 import store from '@/store'
 import vuetify from "@/plugins/vuetify";
@@ -11,14 +10,16 @@ import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types";
 import Search from "@/views/Search.vue";
 import DjView from "@/views/DjView.vue";
+import AppView from "@/views/AppView.vue";
+import Landing from "@/views/Landing.vue";
 
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    name: 'App',
+    component: AppView,
     meta: {
       isPublic: true,
     }
@@ -27,6 +28,9 @@ const routes: Array<RouteConfig> = [
     path: '/search',
     name: 'Search',
     component: Search,
+    meta: {
+      isPublic: false,
+    }
   },
   {
     path: '/Test',

@@ -1,13 +1,123 @@
 <template>
   <v-app>
+<<<<<<< HEAD
     <AppSideBar />
     <AppBar />
+=======
+    <v-navigation-drawer
+        v-model="drawer"
+        app
+        clipped
+    >
+      <v-list rounded>
+        <v-subheader>Menu</v-subheader>
+        <v-list-item link @click="navigate('/')">
+          <v-list-item-action>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Radio</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link @click="onClickRequestSong()" v-if="oidcAuthenticated">
+          <v-list-item-action>
+            <v-icon>mdi-playlist-plus</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Verzoekje doen</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider></v-divider>
+
+        <v-subheader>Account</v-subheader>
+        <div v-if="!oidcAuthenticated">
+          <v-list-item link @click="signInOidcClient()">
+            <v-list-item-action>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Inloggen</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link @click="redirect('/register')">
+            <v-list-item-action>
+              <v-icon>mdi-logout-variant</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Registreren</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+        <div v-else>
+          <v-list-item link @click="signOutOidcClient()">
+            <v-list-item-action>
+              <v-icon>mdi-logout-variant</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Uitloggen</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+      </v-list>
+    </v-navigation-drawer>
+    
+    <v-app-bar
+        app
+        clipped-left
+    >
+
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>      
+        PJFM
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+
+      <span class="align-bottom overline grey--text" v-if="userProfile != null">INGELOGD ALS <span class="orange--text">{{userProfile.userName}}</span></span>
+      <v-img
+          class="mx-2 float-right"
+          src="/assets/logo.png"
+          max-height="40"
+          max-width="40"
+          contain
+      ></v-img>
+    </v-app-bar>
+
+    <!-- Sizes your content based upon application components -->
+>>>>>>> 447a24cb887d24d583ced88d2a3407ceb925a49d
     <v-main>
       <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
+<<<<<<< HEAD
     <AppBottomBar />
+=======
+
+
+    <template>
+      <v-row justify="center">
+        <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
+          <PlayerTimeSelectComponent />
+        </v-dialog>
+      </v-row>
+    </template>
+    
+    
+    <v-bottom-navigation fixed>
+        <v-btn v-if="oidcAuthenticated && !playbackConnected" @click="togglePlayerTimerOverlay" block>
+          <span>Start</span>
+          <v-icon>mdi-play</v-icon>
+        </v-btn>
+        <v-btn v-else-if="oidcAuthenticated && playbackConnected" @click="disconnectWithPlayer" block>
+          <span>Stop</span>
+          <v-icon>mdi-pause</v-icon>
+        </v-btn>
+      <v-btn v-else @click="signInOidcClient()" block>
+        <span>Login</span>
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
+>>>>>>> 447a24cb887d24d583ced88d2a3407ceb925a49d
     <ModServerMessageHandler v-if="isMod" />
   </v-app>
 </template>
@@ -59,8 +169,13 @@ export default class App extends Vue{
     radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) =>
         this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
 
+<<<<<<< HEAD
     radioConnection.on("ISConnected", (connected:boolean) =>{
         this.$store.commit('playbackModule/SET_CONNECTED_STATUS', connected);
+=======
+    radioConnection.on("IsConnected", (connected:boolean) =>{
+        this.playbackConnected = connected;
+>>>>>>> 447a24cb887d24d583ced88d2a3407ceb925a49d
     })
     
     radioConnection.on("ReceivePlayingStatus", (isPlaying:boolean) => {
@@ -93,5 +208,36 @@ export default class App extends Vue{
     this.$store.dispatch('profileModule/loadModState');
     this.$store.dispatch('profileModule/getUserProfile');
   }
+<<<<<<< HEAD
+=======
+
+  private navigate(uri){
+    this.$router.push(uri);
+  }
+
+  private redirect(uri){
+    window.location.href = uri;
+  }
+  
+  private onClickRequestSong(){
+    this.navigate('/search');
+  }
+  
+  private signInOidcClient(){
+    this.$store.dispatch('oidcStore/authenticateOidc');
+  }
+  
+  private signOutOidcClient(){
+    this.$store.dispatch('oidcStore/signOutOidc');
+  }
+  
+  private disconnectWithPlayer(){
+    this.playbackConnected = false;
+
+    this.$store.getters['playbackModule/getRadioConnection']?.invoke("DisconnectWithPlayer")
+        .then(() => console.log("Disconnected with player"))
+        .catch((err) => console.log(err));
+  }
+>>>>>>> 447a24cb887d24d583ced88d2a3407ceb925a49d
 }
 </script>
