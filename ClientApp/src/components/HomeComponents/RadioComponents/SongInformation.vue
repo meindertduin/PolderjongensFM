@@ -1,126 +1,110 @@
 <template>
     <v-row>
       <v-col class="d-block">
-          <v-card
-          class="pa-2"
-          outlined
-          round
-          v-if="currentSongInfo"
-          >
+          <v-card class="pa-2" outlined round v-if="currentTrackInfo">
               <span class="overline grey--text">HUIDIGE POKOE</span><br>
-              <span class="subtitle-1">{{ currentSongInfo.artist }} - {{ currentSongInfo.title }}</span><br>
-              <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentSongDuration) }} </span>
+              <span class="subtitle-1">{{ currentTrackInfo.artist }} - {{ currentTrackInfo.title }}</span><br>
+              <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentTrackDuration) }} </span>
           </v-card>
       </v-col>
       <v-col class="d-none d-md-block">
-        <v-card
-          class="pa-2"
-          outlined
-          round
-          v-if="nextSongInfo"
-          >
+        <v-card class="pa-2" outlined round v-if="nextTrackInfo">
           <span class="overline grey--text">VOLGENDE POKOE</span><br>
-          <span class="subtitle-1">{{ nextSongInfo.artist }} - {{ nextSongInfo.title }}</span><br>
-          <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextSongDuration) }}</span>
+          <span class="subtitle-1">{{ nextTrackInfo.artist }} - {{ nextTrackInfo.title }}</span><br>
+          <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
         </v-card>
       </v-col>
     </v-row>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import Component from 'vue-class-component'
-    import {Watch} from "vue-property-decorator";
-    import {HubConnectionBuilder, TransferFormat, LogLevel, HubConnection} from "@microsoft/signalr";
-    import {playerUpdateInfo} from "@/common/types";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import {playerUpdateInfo, trackDto} from "@/common/types";
+import {Watch} from "vue-property-decorator";
 
-    @Component({
+@Component({
         name: 'SongInformation',
     })
     export default class SongInformation extends Vue {
-        private currentSongInfo = null;
-        private nextSongInfo = null;
         private elapsedTime = null;
         private timer = null;
-
-        get currentSongDuration(){
-            if(this.currentSongInfo != null){
-                let duration = new Date(this.currentSongInfo.duration).getTime();
-                return duration;
+        
+        get currentTrackDuration(){
+            const currentTrackInfo = this.currentTrackInfo;
+            if(currentTrackInfo){
+              return new Date(currentTrackInfo.songDurationMs).getTime();
             }
 
             return 0;
         }
 
-        get nextSongDuration(){
-            if(this.nextSongInfo != null){
-                console.log(this.nextSongInfo);
-                let duration = new Date(this.nextSongInfo.duration == null ?  new Date(0).getTime() : this.nextSongInfo.duration).getTime();
-                return duration;
+        get nextTrackDuration(){
+          const nextTrackInfo = this.nextTrackInfo;
+            if(nextTrackInfo){
+              return new Date(nextTrackInfo.songDurationMs).getTime();
             }
 
             return 0;
         }
-        
-        get playbackInfo():playerUpdateInfo{
-            return this.$store.getters['playbackModule/getPlaybackInfo'];
+
+        get priorityTracksQueue():Array<trackDto>{
+          return this.$store.getters['playbackModule/getPriorityQueuedTracks'];
         }
         
-      @Watch('playbackInfo')
-      updateRadio(){
-          if (this.playbackInfo){
-              this.currentSongInfo = {
-                  artist: this.playbackInfo.currentPlayingTrack.artists[0],
-                  title: this.playbackInfo.currentPlayingTrack.title,
-                  startingTime: this.playbackInfo.startingTime,
-                  duration: this.playbackInfo.currentPlayingTrack.songDurationMs
-              }
-
-              if((Array.isArray(this.playbackInfo.priorityQueuedTracks) && this.playbackInfo.priorityQueuedTracks.length)){
-                  this.nextSongInfo = {
-                      artist: this.playbackInfo.priorityQueuedTracks[0].artists[0],
-                      title: this.playbackInfo.priorityQueuedTracks[0].title,
-                      startingTime: this.playbackInfo.priorityQueuedTracks[0].startingTime,
-                      duration: this.playbackInfo.priorityQueuedTracks[0].songDurationMs
-                  }
-              }else if((Array.isArray(this.playbackInfo.secondaryQueuedTracks) && this.playbackInfo.secondaryQueuedTracks.length)){
-                  this.nextSongInfo = {
-                      artist: this.playbackInfo.secondaryQueuedTracks[0].artists[0],
-                      title: this.playbackInfo.secondaryQueuedTracks[0].title,
-                      startingTime: this.playbackInfo.secondaryQueuedTracks[0].startingTime,
-                      duration: this.playbackInfo.secondaryQueuedTracks[0].songDurationMs
-                  }
-              }else{
-                  this.nextSongInfo = {
-                      artist: this.playbackInfo.fillerQueuedTracks[0].artists[0],
-                      title: this.playbackInfo.fillerQueuedTracks[0].title,
-                      startingTime: this.playbackInfo.fillerQueuedTracks[0].startingTime,
-                      duration: this.playbackInfo.fillerQueuedTracks[0].songDurationMs
-                  }
-              }
-
-              this.updateElapsedTime();
+        get fillerTracksQueue():Array<trackDto>{
+          return this.$store.getters['playbackModule/getFillerQueuedTracks'];
+        }
+        
+        get secondaryTracksQueue():Array<trackDto>{
+          return this.$store.getters['playbackModule/getSecondaryQueuedTracks'];
+        }
+  
+        get currentTrackInfo():trackDto{
+          return this.$store.getters['playbackModule/getCurrentTrack'];
+        }
+        
+        get currentTrackStartingTime():string {
+          return this.$store.getters['playbackModule/getCurrentTrackStartingTime'];
+        }
+  
+        get nextTrackInfo():trackDto{
+          let result = null;
+          
+          if (this.priorityTracksQueue.length > 0){
+            result = this.priorityTracksQueue[0];
+          } else if(this.secondaryTracksQueue.length > 0){
+            result = this.secondaryTracksQueue[0];
+          } else if(this.fillerTracksQueue.length > 0){
+            result = this.fillerTracksQueue[0];
           }
-      }
-        
-      created() : void {
-        this.updateRadio();
-      }
+          this.updateElapsedTime();
+          return result;
+        }
 
-      updateElapsedTime() : void {
+        @Watch("currentTrackInfo")
+        onCurrentTrackInfoChange(newValue){
+          this.updateElapsedTime();
+        }
+      
+        @Watch("nextTrackInfo")
+        onNextTrackInfoChange(newValue){
+          this.updateElapsedTime();
+        }
+        
+        
+        updateElapsedTime() : void {
           let now = new Date();
 
-          if(this.currentSongInfo != null){
-              let elapsed = now.getTime() - new Date(this.currentSongInfo.startingTime).getTime();
-              this.elapsedTime = elapsed;
-
+          if(this.currentTrackInfo){
+              this.elapsedTime = now.getTime() - new Date(this.currentTrackStartingTime).getTime();
               if(this.timer == null){
                   this.timer = setInterval(() => {
                       this.elapsedTime += 1000;
                   }, 1000)
               }
           }
-      }
+        } 
 
         convertMsToMMSS(ms) : string {
             let date = new Date(null);
