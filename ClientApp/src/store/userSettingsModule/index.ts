@@ -4,13 +4,15 @@ import {userSettings} from "@/common/types"
 import get = Reflect.get;
 
 class State {
-
+    public sideBarOpen:boolean = false;
 }
 
 const mutations = <MutationTree<State>>{
+    TOGGLE_SIDE_BAR: state => state.sideBarOpen = ! state.sideBarOpen,
 }
 
 const getters = <GetterTree<State, any>>{
+    getSidebarOpenState: state => state.sideBarOpen,
     loadUserSettings: () => {
         const userSettings = localStorage.getItem("userSettings");
         if (userSettings){

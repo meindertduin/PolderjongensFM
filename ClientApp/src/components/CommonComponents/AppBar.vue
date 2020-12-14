@@ -3,7 +3,7 @@
       app
       clipped-left
   >
-    <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+    <v-app-bar-nav-icon @click.stop="toggleDrawer" />
     <v-toolbar-title>PJFM</v-toolbar-title>
     <v-spacer></v-spacer>
 
@@ -28,6 +28,10 @@ import Component from "vue-class-component";
 export default class AppBar extends Vue{
   get userProfile(){
     return this.$store.getters['profileModule/userProfile'];
+  }
+  
+  toggleDrawer(){
+    this.$store.commit('userSettingsModule/TOGGLE_SIDE_BAR');
   }
 }
 </script>

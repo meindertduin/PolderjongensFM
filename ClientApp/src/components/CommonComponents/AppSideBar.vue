@@ -1,6 +1,7 @@
 ﻿<template>
   <v-navigation-drawer
-      v-model="drawer"
+      v-model="sideBarOpen"
+      :value="sideBar"
       app
       clipped
   >
@@ -66,6 +67,12 @@ import Component from "vue-class-component";
   name: 'AppSideBar',
 })
 export default class AppSideBar extends Vue{
+  get sideBar():boolean{
+    this.sideBarOpen  = this.$store.getters["userSettingsModule/getSidebarOpenState"];
+  }
+  
+  private sideBarOpen:boolean = false;
+  
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }
