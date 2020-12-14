@@ -3,14 +3,14 @@
       <v-col class="d-block">
           <v-card class="pa-2" outlined round v-if="currentTrackInfo">
               <span class="overline grey--text">HUIDIGE POKOE</span><br>
-              <span class="subtitle-1">{{ currentTrackInfo.artist }} - {{ currentTrackInfo.title }}</span><br>
+              <span class="subtitle-1">{{ currentTrackInfo.artists[0] }} - {{ currentTrackInfo.title }}</span><br>
               <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentTrackDuration) }} </span>
           </v-card>
       </v-col>
       <v-col class="d-none d-md-block">
         <v-card class="pa-2" outlined round v-if="nextTrackInfo">
           <span class="overline grey--text">VOLGENDE POKOE</span><br>
-          <span class="subtitle-1">{{ nextTrackInfo.artist }} - {{ nextTrackInfo.title }}</span><br>
+          <span class="subtitle-1">{{ nextTrackInfo.artists[0] }} - {{ nextTrackInfo.title }}</span><br>
           <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
         </v-card>
       </v-col>
