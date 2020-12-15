@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
+using pjfm.Models;
 using Pjfm.WebClient.Services;
 
 namespace pjfm.Hubs
@@ -44,6 +45,14 @@ namespace pjfm.Hubs
             }
             
             await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackController.GetPlaybackSettings().IsPlaying);
+
+            var playbackSettings = _playbackController.GetPlaybackSettings();
+            
+            await Clients.All.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
+            {
+                PlaybackState = playbackSettings.PlaybackState,
+                IsPlaying = playbackSettings.IsPlaying,
+            });
             
             await base.OnConnectedAsync();
         }

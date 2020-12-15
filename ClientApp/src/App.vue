@@ -17,7 +17,7 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySettingsItemGroup.vue";
-import {userSettings} from "@/common/types";
+import {userPlaybackInfo, userPlaybackSettings, userSettings} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 import ModServerMessageHandler from "@/components/ModComponents/ModServerMessageHandler.vue";
@@ -57,8 +57,8 @@ export default class App extends Vue{
     radioConnection.start()
         .then(() => console.log("radio connection started"));
 
-    radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) =>
-        this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
+    radioConnection.on("ReceivePlaybackInfo", (playbackInfo: userPlaybackInfo) =>
+        this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo));
 
     radioConnection.on("IsConnected", (connected:boolean) =>{
         this.$store.commit('playbackModule/SET_CONNECTED_STATUS', connected);
@@ -71,6 +71,10 @@ export default class App extends Vue{
     radioConnection.on("ReceivePlayingStatus", (isPlaying:boolean) => {
       this.$store.commit("playbackModule/SET_PLAYBACK_PLAYING_STATUS", isPlaying);
     });
+    
+    radioConnection.on("PlaybackSettings", (playbackSettings: userPlaybackSettings) => {
+      this.$store.commit("playbackModule/SET_PLAYBACK_SETTINGS", playbackSettings)
+    })
     
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
   }
