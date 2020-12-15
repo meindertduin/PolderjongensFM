@@ -54,7 +54,6 @@ namespace Pjfm.Application.Spotify.Queries
                     {
                         Id = x.ApplicationUser.Id,
                         DisplayName = x.ApplicationUser.DisplayName,
-                        Email = x.ApplicationUser.Email,
                         Member = x.ApplicationUser.Member,
                     },
                 })
