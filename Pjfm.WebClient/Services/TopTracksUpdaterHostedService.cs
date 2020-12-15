@@ -24,7 +24,7 @@ namespace pjfm.Services
         
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(InitializeTopTracksUpdate, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            _timer = new Timer(InitializeTopTracksUpdate, null, TimeSpan.Zero, TimeSpan.FromHours(12));
             return Task.CompletedTask;
 
             void InitializeTopTracksUpdate(object state)

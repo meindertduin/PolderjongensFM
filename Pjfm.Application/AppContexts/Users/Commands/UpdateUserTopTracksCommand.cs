@@ -20,7 +20,6 @@ namespace Pjfm.Application.Spotify.Commands
 {
     public class UpdateUserTopTracksCommand : IRequestWrapper<string>
     {
-        public string AccessToken { get; set; }
         public ApplicationUser User { get; set; }
     }
 
@@ -44,6 +43,8 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 return Response.Fail<string>("User has no refresh token");
             }
+
+            List<TopTrack> updatedTopTracks = new List<TopTrack>();
             
             for (int i = 0; i < 3; i++)
             {
@@ -59,18 +60,36 @@ namespace Pjfm.Application.Spotify.Commands
                     });
 
                     var topTracksMapper = new TopTracksMapper();
-                
-                    var termTopTracks = _ctx.ApplicationUsers
-                        .Where(u => u.Id == request.User.Id)
-                        .SelectMany(x => x.TopTracks.Where(t => t.Term == (TopTrackTerm) i))
-                        .ToList();
-                
-                    termTopTracks = topTracksMapper.MapTopTrackItems(objectResult, i, request.User.Id);
-                
-                    await _ctx.SaveChangesAsync(cancellationToken);
+                    updatedTopTracks.AddRange(topTracksMapper.MapTopTrackItems(objectResult, i, request.User.Id));
                 }
             }
             
+            var termTopTracks = _ctx.ApplicationUsers
+                .Where(u => u.Id == request.User.Id)
+                .SelectMany(x => x.TopTracks)
+                .ToArray();
+
+            if (termTopTracks.Length <= 0)
+            {
+                await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
+            }
+            else
+            {
+                for (int i = 0; i < updatedTopTracks.Count; i++)
+                {
+                    foreach (var termTopTrack in termTopTracks)
+                    {
+                        termTopTrack.Artists = updatedTopTracks[i].Artists;
+                        termTopTrack.Term = updatedTopTracks[i].Term;
+                        termTopTrack.Title = updatedTopTracks[i].Title;
+                        termTopTrack.TimeAdded = updatedTopTracks[i].TimeAdded;
+                        termTopTrack.SongDurationMs = updatedTopTracks[i].SongDurationMs;
+                    }
+                }
+            }
+            
+            await _ctx.SaveChangesAsync(cancellationToken);
+
             return Response.Ok("succeeded", "topt racks have been saved to the database");
         }
     }
