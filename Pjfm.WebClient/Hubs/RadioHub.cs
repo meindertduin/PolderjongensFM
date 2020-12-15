@@ -31,9 +31,8 @@ namespace pjfm.Hubs
         public override async Task OnConnectedAsync()
         {
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
-            var userPlayerBackInfo = infoModelFactory.CreateUserInfoModel();
-
-            await Clients.Caller.SendAsync("ReceivePlayingTrackInfo", userPlayerBackInfo);
+            var userInfo = infoModelFactory.CreateUserInfoModel();
+            await Clients.All.SendAsync("ReceivePlaybackInfo", userInfo);
 
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);

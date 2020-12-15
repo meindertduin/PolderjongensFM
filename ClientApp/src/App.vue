@@ -47,9 +47,9 @@ export default class App extends Vue{
     return this.$store.getters['profileModule/isMod'];
   }
   
-  private async setRadioConnection():void{
+  private async setRadioConnection():void {
     let radioConnection: HubConnection | null = null;
-    
+
     radioConnection = new HubConnectionBuilder()
         .withUrl("https://localhost:5001/radio")
         .build();
@@ -57,12 +57,14 @@ export default class App extends Vue{
     radioConnection.start()
         .then(() => console.log("radio connection started"));
 
-    radioConnection.on("ReceivePlaybackInfo", (playbackInfo: userPlaybackInfo) =>
-        this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo));
+    radioConnection.on("ReceivePlaybackInfo", (playbackInfo: userPlaybackInfo) => {
+        console.log(playbackInfo)
+        this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo);
+    });
 
-    radioConnection.on("IsConnected", (connected:boolean) =>{
+    radioConnection.on("IsConnected", (connected:boolean) => {
         this.$store.commit('playbackModule/SET_CONNECTED_STATUS', connected);
-    })
+    });
     
     radioConnection.on("SubscribeTime", ((minutes: number) => {
       this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);  

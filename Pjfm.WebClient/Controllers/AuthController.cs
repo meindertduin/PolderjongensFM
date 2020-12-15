@@ -68,7 +68,7 @@ namespace pjfm.Controllers
                 return BadRequest();
             }
 
-            if (user.Id != null)
+            if (user != null)
             {
                 _playbackListenerManager.TryRemoveTimedListener(user.Id);
             }
