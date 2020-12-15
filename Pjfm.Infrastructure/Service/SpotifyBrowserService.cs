@@ -20,6 +20,16 @@ namespace Pjfm.Application.Services
             _spotifyHttpClientService = spotifyHttpClientService;
         }
 
+        public Task<HttpResponseMessage> GetUserTopTracks(string userId, string accessToken, int term)
+        {
+             string[] terms = {"short_term", "medium_term", "long_term" };
+            var request = new HttpRequestMessage();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range={terms[term]}");
+            
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+        }
+
         public Task<HttpResponseMessage> Search(string userId , string accessToken, SearchRequestDto searchRequestInfo)
         {
             var request = new HttpRequestMessage();

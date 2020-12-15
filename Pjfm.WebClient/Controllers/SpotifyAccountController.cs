@@ -50,21 +50,7 @@ namespace pjfm.Controllers
                 Code = code,
                 RedirectUri = _configuration["Spotify:CallbackUrl"],
             });
-            
-            if (user.SpotifyAuthenticated)
-            {
-                var updateTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
-                {
-                    AccessToken = result.Data.AccessToken,
-                    User = user,
-                });
-                
-                if (updateTopTracksResult.Error == false)
-                {
-                    return Redirect("https://localhost:8085");
-                }
-            }
-            
+
             var setTopTracksResult = await _mediator.Send(new SetUserTopTracksCommand()
             {
                 AccessToken = result.Data.AccessToken,
