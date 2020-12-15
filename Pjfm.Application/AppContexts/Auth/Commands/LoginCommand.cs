@@ -10,7 +10,7 @@ namespace Pjfm.Application.Auth.Querys
 {
     public class LoginCommand : IRequestWrapper<ApplicationUser>
     {
-        public string Username { get; set; }
+        public string EmailAddress { get; set; }
         public string Password { get; set; }
     }
 
@@ -27,10 +27,10 @@ namespace Pjfm.Application.Auth.Querys
         
         public async Task<Response<ApplicationUser>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var signingResult = await _signInManager.PasswordSignInAsync(request.Username, request.Password, true, false);
+            var signingResult = await _signInManager.PasswordSignInAsync(request.EmailAddress, request.Password, true, false);
             if (signingResult.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(request.Username);
+                var user = await _userManager.FindByNameAsync(request.EmailAddress);
                 return Response.Ok("login succeeded", user);
             }
             

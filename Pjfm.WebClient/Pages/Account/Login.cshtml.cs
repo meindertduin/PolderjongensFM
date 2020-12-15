@@ -29,7 +29,7 @@ namespace Pjfm.WebClient.Pages.Account
 
             var loginResult = await mediator.Send(new LoginCommand()
             {
-                Username = Form.Username,
+                EmailAddress = Form.EmailAddress,
                 Password = Form.Password,
             });
 
@@ -46,10 +46,11 @@ namespace Pjfm.WebClient.Pages.Account
     public class LoginForm
     {
         public string ReturnUrl { get; set; }
-        [Required]
-        public string Username { get; set; }
+        [Required(ErrorMessage = "Verplicht veld")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email in")]
+        public string EmailAddress { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Verplicht veld")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }

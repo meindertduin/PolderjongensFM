@@ -33,7 +33,7 @@ namespace Pjfm.WebClient.Pages.Account
             {
                 var loginResult = await mediator.Send(new LoginCommand()
                 {
-                    Username = Form.Username,
+                    EmailAddress = Form.Username,
                     Password = Form.Password,
                 });
 
