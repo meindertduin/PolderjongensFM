@@ -50,34 +50,23 @@ namespace pjfm.Controllers
                 Code = code,
                 RedirectUri = _configuration["Spotify:CallbackUrl"],
             });
-            
-            if (user.SpotifyAuthenticated)
-            {
-                var updateTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
-                {
-                    AccessToken = result.Data.AccessToken,
-                    User = user,
-                });
-                
-                if (updateTopTracksResult.Error == false)
-                {
-                    return Redirect("https://localhost:8085");
-                }
-            }
-            
-            var setTopTracksResult = await _mediator.Send(new SetUserTopTracksCommand()
-            {
-                AccessToken = result.Data.AccessToken,
-                User = user,
-            });
-            
-            if (setTopTracksResult.Error == false)
+
+            if (result.Error == false && trackedUserProfile != null)
             {
                 trackedUserProfile.SpotifyAuthenticated = true;
                 trackedUserProfile.SpotifyAccessToken = result.Data.AccessToken;
                 trackedUserProfile.SpotifyRefreshToken = result.Data.RefreshToken;
                 await _ctx.SaveChangesAsync(CancellationToken.None);
-                return Redirect("https://localhost:8085");
+
+                var setTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
+                {
+                    User = user,
+                });
+            
+                if (setTopTracksResult.Error == false)
+                {
+                    return Redirect("https://localhost:8085");
+                }
             }
 
             return BadRequest();

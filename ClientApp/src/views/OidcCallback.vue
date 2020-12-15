@@ -27,6 +27,7 @@
                         `&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative`;
                     
                     location.href = url;
+                    
                 })
                 .catch((err) => {
                     console.error(err);

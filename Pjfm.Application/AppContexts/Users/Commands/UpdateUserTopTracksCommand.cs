@@ -4,9 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
+using Pjfm.Application.Services;
+using Pjfm.Domain.Common;
+using Pjfm.Domain.Converters;
+using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
 
@@ -14,7 +20,6 @@ namespace Pjfm.Application.Spotify.Commands
 {
     public class UpdateUserTopTracksCommand : IRequestWrapper<string>
     {
-        public string AccessToken { get; set; }
         public ApplicationUser User { get; set; }
     }
 
@@ -22,70 +27,70 @@ namespace Pjfm.Application.Spotify.Commands
     {
         private readonly IAppDbContext _ctx;
         private readonly IRetrieveStrategy _retrieveStrategy;
+        private readonly ISpotifyBrowserService _spotifyBrowserService;
 
-        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, IRetrieveStrategy retrieveStrategy)
+        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, IRetrieveStrategy retrieveStrategy, 
+            ISpotifyBrowserService spotifyBrowserService)
         {
             _ctx = ctx;
             _retrieveStrategy = retrieveStrategy;
+            _spotifyBrowserService = spotifyBrowserService;
         }
         
         public async Task<Response<string>> Handle(UpdateUserTopTracksCommand request, CancellationToken cancellationToken)
         {
-            var terms = SetTermsToUpdate(request);
-
-            foreach (var term in terms)
+            if (String.IsNullOrEmpty(request.User.SpotifyRefreshToken))
             {
-                var termTopTracks = _ctx.ApplicationUsers
-                    .Where(u => u.Id == request.User.Id)
-                    .SelectMany(x => x.TopTracks.Where(t => t.Term == (TopTrackTerm) term))
-                    .ToList();
+                return Response.Fail<string>("User has no refresh token");
+            }
 
-                termTopTracks = await _retrieveStrategy.RetrieveItems(request.AccessToken, term, request.User.Id);
-                await _ctx.SaveChangesAsync(cancellationToken);
+            List<TopTrack> updatedTopTracks = new List<TopTrack>();
+            
+            for (int i = 0; i < 3; i++)
+            {
+                var newTopTracksResult =
+                    await _spotifyBrowserService.GetUserTopTracks(request.User.Id, request.User.SpotifyAccessToken, i);
+
+                if (newTopTracksResult.IsSuccessStatusCode)
+                {
+                    var jsonData = await newTopTracksResult.Content.ReadAsStringAsync();
+                    JObject objectResult = JsonConvert.DeserializeObject<dynamic>(jsonData, new JsonSerializerSettings()
+                    {
+                        ContractResolver = new UnderScorePropertyNamesContractResolver()
+                    });
+
+                    var topTracksMapper = new TopTracksMapper();
+                    updatedTopTracks.AddRange(topTracksMapper.MapTopTrackItems(objectResult, i, request.User.Id));
+                }
             }
             
-            return Response.Ok("succeeded", "toptracks have been saved to the database");
-        }
-
-        private Queue<int> SetTermsToUpdate(UpdateUserTopTracksCommand request)
-        {
-            var userTopTracks = _ctx.ApplicationUsers
+            var termTopTracks = _ctx.ApplicationUsers
                 .Where(u => u.Id == request.User.Id)
-                .Select(u => new
+                .SelectMany(x => x.TopTracks)
+                .ToArray();
+
+            if (termTopTracks.Length <= 0)
+            {
+                await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
+            }
+            else
+            {
+                for (int i = 0; i < updatedTopTracks.Count; i++)
                 {
-                    ShortTermTracksExpired = u.TopTracks
-                        .Any(x => x.Term == TopTrackTerm.ShortTerm
-                                  && x.TimeAdded < DateTime.Now.AddDays(-5)),
-
-                    MediumTermTracksExpired = u.TopTracks
-                        .Any(x => x.Term == TopTrackTerm.MediumTerm
-                                  && x.TimeAdded < DateTime.Now.AddDays(-100)),
-
-                    LongTermTracksExpired = u.TopTracks
-                        .Any(x => x.Term == TopTrackTerm.LongTerm
-                                  && x.TimeAdded < DateTime.Now.AddDays(-365)),
-                }).FirstOrDefault();
-
-            Queue<int> terms = new Queue<int>();
-
-
-            Debug.Assert(userTopTracks != null, nameof(userTopTracks) + " != null");
-            if (userTopTracks.ShortTermTracksExpired)
-            {
-                terms.Enqueue(0);
+                    foreach (var termTopTrack in termTopTracks)
+                    {
+                        termTopTrack.Artists = updatedTopTracks[i].Artists;
+                        termTopTrack.Term = updatedTopTracks[i].Term;
+                        termTopTrack.Title = updatedTopTracks[i].Title;
+                        termTopTrack.TimeAdded = updatedTopTracks[i].TimeAdded;
+                        termTopTrack.SongDurationMs = updatedTopTracks[i].SongDurationMs;
+                    }
+                }
             }
+            
+            await _ctx.SaveChangesAsync(cancellationToken);
 
-            if (userTopTracks.MediumTermTracksExpired)
-            {
-                terms.Enqueue(1);
-            }
-
-            if (userTopTracks.LongTermTracksExpired)
-            {
-                terms.Enqueue(2);
-            }
-
-            return terms;
+            return Response.Ok("succeeded", "topt racks have been saved to the database");
         }
     }
 }

@@ -40,12 +40,12 @@ namespace Pjfm.Application.Spotify.Queries
         public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request, CancellationToken cancellationToken)
         {
             var randomTopTracks = _ctx.TopTracks
-                .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.Id) == false)
+                .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.SpotifyTrackId) == false)
                 .Where(x => request.TopTrackTermFilter.Select(t => t).Contains(x.Term))
                 .Where(x => request.IncludedUsersId.Length <= 0 || request.IncludedUsersId.Select(t => t).Contains(x.ApplicationUserId))
                 .Select(x => new TrackDto()
                 {
-                    Id = x.Id,
+                    Id = x.SpotifyTrackId,
                     Title = x.Title,
                     Artists = x.Artists,
                     Term = x.Term,

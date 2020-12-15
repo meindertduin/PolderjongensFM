@@ -68,7 +68,7 @@ namespace Pjfm.Infrastructure.Service
 
                 topTracks.Add(new TopTrack
                 {
-                    Id = item.id,
+                    SpotifyTrackId = item.id,
                     Title = item.name,
                     Artists = artistNames.ToArray(),
                     Term = (TopTrackTerm) term,

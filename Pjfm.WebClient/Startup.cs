@@ -60,6 +60,8 @@ namespace pjfm
 
             services.AddControllersWithViews();
 
+            services.AddHostedService<TopTracksUpdaterHostedService>();
+
             services.AddSignalR();
             
             services.AddRazorPages();
