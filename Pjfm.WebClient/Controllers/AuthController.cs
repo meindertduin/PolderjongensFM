@@ -68,8 +68,11 @@ namespace pjfm.Controllers
                 return BadRequest();
             }
 
-            _playbackListenerManager.TryRemoveTimedListener(user.Id);
-
+            if (user.Id != null)
+            {
+                _playbackListenerManager.TryRemoveTimedListener(user.Id);
+            }
+            
             return Redirect(logoutResult.Data);
         } 
     }
