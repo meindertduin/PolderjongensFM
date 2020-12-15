@@ -10,6 +10,7 @@
     <AppBottomBar />
     <ModServerMessageHandler v-if="isMod" />
   </v-app>
+  
 </template>
 
 <script lang="ts">
@@ -59,9 +60,13 @@ export default class App extends Vue{
     radioConnection.on("ReceivePlayingTrackInfo", (trackInfo) =>
         this.$store.commit('playbackModule/SET_PLAYBACK_INFO', trackInfo));
 
-    radioConnection.on("ISConnected", (connected:boolean) =>{
+    radioConnection.on("IsConnected", (connected:boolean) =>{
         this.$store.commit('playbackModule/SET_CONNECTED_STATUS', connected);
     })
+    
+    radioConnection.on("SubscribeTime", ((minutes: number) => {
+      this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);  
+    }))
     
     radioConnection.on("ReceivePlayingStatus", (isPlaying:boolean) => {
       this.$store.commit("playbackModule/SET_PLAYBACK_PLAYING_STATUS", isPlaying);

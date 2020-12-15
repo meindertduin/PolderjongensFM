@@ -1,5 +1,5 @@
-﻿import { GetterTree, MutationTree, ActionTree } from "vuex"
-import {playerUpdateInfo, trackDto, playbackSettings} from "@/common/types"
+﻿import {ActionTree, GetterTree, MutationTree} from "vuex"
+import {playbackSettings, playerUpdateInfo, trackDto} from "@/common/types"
 import {HubConnection} from "@microsoft/signalr";
 
 class State {
@@ -9,6 +9,7 @@ class State {
     
     public isPlaying: boolean = false;
     public isConnected: boolean = false;
+    public subscribeEndDate: any | null = null;
     
     public currentSongInfo: trackDto | null = null
     public fillerQueuedTracks : Array<trackDto> = [];
@@ -34,6 +35,14 @@ const mutations = <MutationTree<State>>{
     
     SET_PLAYBACK_PLAYING_STATUS: (state, isPlaying:boolean) => state.isPlaying = isPlaying, 
     SET_CONNECTED_STATUS: (state, isConnected:boolean) => state.isConnected = isConnected,
+    
+    SET_SUBSCRIBE_TIME: (state, minutes:number) => {
+        let subscribeEndDate = new Date();
+        subscribeEndDate.setMinutes(subscribeEndDate.getMinutes() + minutes);
+        subscribeEndDate.setTime(subscribeEndDate.getTime() - subscribeEndDate.getTimezoneOffset()*60*1000)
+        
+        state.subscribeEndDate = subscribeEndDate;
+    },
 }
 
 const getters = <GetterTree<State, any>>{
@@ -41,6 +50,7 @@ const getters = <GetterTree<State, any>>{
     getPlayerTimerOverlayActive: state => state.PlayerTimerOverLay,
     getPlayingStatus: state => state.isPlaying,
     getConnectedState: state => state.isConnected,
+    getSubscribeEndDate: state => state.subscribeEndDate,
 
     getPlaybackSettings: state => state.playbackSettings,
     getPlaybackInfo: state => state.playbackInfo,

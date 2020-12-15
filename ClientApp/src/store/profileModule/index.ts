@@ -4,18 +4,21 @@ import { GetterTree, MutationTree, ActionTree } from "vuex"
 import {applicationUser} from "@/common/types";
 
 class State {
-    public userProfile: applicationUser | null = null; 
+    public userProfile: applicationUser | null = null;
+    public playlistDialog : boolean = false
     public isMod : boolean = false;
 }
 
 const mutations = <MutationTree<State>>{
     SET_USER_PROFILE: (state, profile:applicationUser) => state.userProfile = profile,
     SET_USER_MOD_STATE: (state, value:boolean) => state.isMod = value,
+    TOGGLE_PLAYLIST_DIALOG: state => state.playlistDialog = !state.playlistDialog,
 }
 
 const getters = <GetterTree<State, any>>{
     userProfile: (state) => state.userProfile,
     isMod: state => state.isMod,
+    isPlaylistDialogActive: state => state.playlistDialog,
 }
 
 const actions = <ActionTree<State, any>>{

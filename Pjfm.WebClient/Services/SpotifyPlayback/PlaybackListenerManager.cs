@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -12,6 +13,8 @@ namespace Pjfm.WebClient.Services
     {
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private readonly IPlaybackController _playbackController;
+        
+        private static readonly ConcurrentDictionary<string, int> UserSubscribeTimeList = new ConcurrentDictionary<string,int>();
 
         public static readonly ConcurrentDictionary<string, ApplicationUser> ConnectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
@@ -42,6 +45,17 @@ namespace Pjfm.WebClient.Services
         {
             return TimedUsers.ContainsKey(userId);
         }
+
+        public int? GetUserSubscribeTime(string userId)
+        {
+            if (UserSubscribeTimeList.ContainsKey(userId))
+            {
+                return UserSubscribeTimeList[userId];   
+            }
+
+            return null;
+        }
+        
         
         public ApplicationUser RemoveListener(string userId)
         {
@@ -71,6 +85,8 @@ namespace Pjfm.WebClient.Services
 
             if (addResult)
             {
+                UserSubscribeTimeList.TryAdd(userId, minutes);
+                
                 var stoppingToken = stoppingTokenSource.Token;
                 Task.Run(() => RunTimedEvent(userId, minutes, stoppingToken), stoppingToken);
                 return true;
@@ -84,15 +100,18 @@ namespace Pjfm.WebClient.Services
             var removeResult = TimedUsers.TryRemove(userId, out CancellationTokenSource stoppingTokenSource);
             if (removeResult)
             {
+                UserSubscribeTimeList.TryRemove(userId, out var value);
+
                 RemoveListener(userId);
                 stoppingTokenSource.Cancel();
+
                 return true;
             }
 
             return false;
         }
 
-        private async Task RunTimedEvent(string userId,int minutes, CancellationToken stopToken)
+        private async Task RunTimedEvent(string userId, int minutes, CancellationToken stopToken)
         {
             await Task.Delay(minutes * 60_000, stopToken);
             TryRemoveTimedListener(userId);

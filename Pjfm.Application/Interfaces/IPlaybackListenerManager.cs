@@ -8,6 +8,7 @@ namespace Pjfm.WebClient.Services
     {
         Task AddListener(ApplicationUser user);
         ApplicationUser RemoveListener(string userId);
+        int? GetUserSubscribeTime(string userId);
         bool TrySetTimedListener(string userId, int minutes);
         bool TryRemoveTimedListener(string userId);
         bool IsUserTimedListener(string userId);

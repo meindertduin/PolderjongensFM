@@ -1,4 +1,5 @@
 ﻿<template>
+  
   <v-navigation-drawer
       v-model="sideBarOpen"
       :value="sideBar"
@@ -51,6 +52,7 @@
             <v-list-item-title>Registreren</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
       </div>
       <div v-else>
         <v-list-item link @click="signOutOidcClient()">
@@ -61,15 +63,25 @@
             <v-list-item-title>Uitloggen</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
       </div>
+      <v-list-item>
+        <v-list-item-content>
+          <!-- Playback Connected -->
+          <v-list-item-subtitle v-if="isPlaybackConnected()">Verbonden tot: <span class="orange--text">{{ subscribeEndTime }}</span></v-list-item-subtitle>
+          <!-- No Playback -->
+          <v-list-item-subtitle v-if="!isPlaybackConnected()" class="red--text">Niet verbonden met PJFM</v-list-item-subtitle>
+          <!--  -->
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
-
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from "vue-class-component";
+import {Watch} from "vue-property-decorator";
 
 @Component({
   name: 'AppSideBar',
@@ -87,6 +99,25 @@ export default class AppSideBar extends Vue{
   
   get playbackSettings():any|null{
     return this.$store.getters['playbackModule/getPlaybackSettings']
+  }
+
+  get connectedState():any|null{
+    return this.$store.getters['playbackModule/getConnectedState']
+  }
+
+  get subscribeEndDate():any|null{
+    return this.$store.getters['playbackModule/getSubscribeEndDate']
+  }
+
+  get subscribeEndTime():any|null{
+    return this.subscribeEndDate.toISOString().substr(11, 5);
+  }
+  
+  private isPlaybackConnected() : boolean{
+    if (!this.connectedState) return false;
+    // More checks?
+    
+    return true;
   }
 
   private navigate(uri : string){
