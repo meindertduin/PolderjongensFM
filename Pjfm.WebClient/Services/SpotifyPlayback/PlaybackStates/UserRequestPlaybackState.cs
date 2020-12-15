@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
@@ -42,5 +43,10 @@ namespace Pjfm.WebClient.Services
             }
             
             return Response.Fail($"U heeft al het maximum van {MaxRequestPerUserAmount} voerzoekjes opgegeven, probeer het later opnieuw", false); }
+
+        public List<TrackDto> GetSecondaryTracks()
+        {
+            return _playbackQueue.GetSecondaryQueueTracks();
+        }
     }
 }

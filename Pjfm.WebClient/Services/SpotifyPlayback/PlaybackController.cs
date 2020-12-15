@@ -131,7 +131,7 @@ namespace Pjfm.WebClient.Services
         }
         public List<TrackDto> GetSecondaryQueueTracks()
         {
-            return _playbackQueue.GetSecondaryQueueTracks();
+            return IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
         }
         public List<TrackDto> GetFillerQueueTracks()
         {

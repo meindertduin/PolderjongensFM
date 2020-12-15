@@ -1,4 +1,5 @@
-﻿using Pjfm.Application.Common.Dto;
+﻿using System.Collections.Generic;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 
 namespace Pjfm.WebClient.Services
@@ -7,5 +8,6 @@ namespace Pjfm.WebClient.Services
     {
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
+        List<TrackDto> GetSecondaryTracks();
     }
 }
