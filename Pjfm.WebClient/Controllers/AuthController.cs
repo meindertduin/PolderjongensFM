@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Auth.Querys;
 using Pjfm.Application.Identity;
+using Pjfm.WebClient.Services;
 
 namespace pjfm.Controllers
 {
@@ -12,10 +15,14 @@ namespace pjfm.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IPlaybackListenerManager _playbackListenerManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(IMediator mediator)
+        public AuthController(IMediator mediator, IPlaybackListenerManager playbackListenerManager, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
+            _playbackListenerManager = playbackListenerManager;
+            _userManager = userManager;
         }
 
         [HttpGet("mod")]
@@ -49,6 +56,8 @@ namespace pjfm.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> Logout(string logoutId)
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
             var logoutResult = await _mediator.Send(new LogoutCommand()
             {
                 LogoutId = logoutId,
@@ -58,6 +67,8 @@ namespace pjfm.Controllers
             {
                 return BadRequest();
             }
+
+            _playbackListenerManager.TryRemoveTimedListener(user.Id);
 
             return Redirect(logoutResult.Data);
         } 

@@ -41,7 +41,7 @@ namespace Pjfm.WebClient.Pages.Account
                 {
                     return Page();
                 }
-            
+                
                 return Redirect(Form.ReturnUrl);
             }
             return Page();
