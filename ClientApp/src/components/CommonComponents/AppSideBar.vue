@@ -23,6 +23,14 @@
           <v-list-item-title>Verzoekje doen</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
+      <v-list-item disabled link v-if="!songRequestIsAvailable()">
+        <v-list-item-action>
+          <v-icon>mdi-playlist-plus</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>Verzoekje doen</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
       <v-divider></v-divider>
 
       <v-subheader>Account</v-subheader>
@@ -76,17 +84,20 @@ export default class AppSideBar extends Vue{
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }
+  
+  get playbackSettings():any|null{
+    return this.$store.getters['playbackModule/getPlaybackSettings']
+  }
 
   private navigate(uri : string){
     this.$router.push(uri);
   }
   
   private songRequestIsAvailable(): boolean {
-    if(!this.oidcAuthenticated) return false;
+    if(!this.oidcAuthenticated) return false; // Login check
+    if(this.playbackSettings.playbackState == 0) return false; // Request mode check
     
     // Add max song request check
-    
-    // Add playback mode check
     
     return true;
   }

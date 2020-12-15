@@ -42,6 +42,7 @@ const getters = <GetterTree<State, any>>{
     getPlayingStatus: state => state.isPlaying,
     getConnectedState: state => state.isConnected,
 
+    getPlaybackSettings: state => state.playbackSettings,
     getPlaybackInfo: state => state.playbackInfo,
     getCurrentTrack: state => state.currentSongInfo,
     getCurrentTrackStartingTime: state => state.currentTrackStartingTime,

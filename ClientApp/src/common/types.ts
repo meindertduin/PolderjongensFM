@@ -41,9 +41,9 @@ export interface playbackSettings {
 }
 
 export enum playbackState{
-    'Dj-mode',
-    'wachtrij-mode',
-    'random-mode',
+    'DJ Only Mode',
+    'Verzoekjes (op volgorde)',
+    'Verzoekjes (random)',
 }
 
 export interface hubServerMessage{

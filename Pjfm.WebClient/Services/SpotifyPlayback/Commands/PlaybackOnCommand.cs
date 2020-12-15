@@ -20,7 +20,7 @@ namespace Pjfm.WebClient.Services
         public void Execute()
         {
             _spotifyPlaybackManager.StartPlayingTracks();
-            _playbackController.SetPlaybackState(new DefaultPlaybackState(_playbackQueue));
+            _playbackController.SetPlaybackState(new UserRequestPlaybackState(_playbackQueue));
         }
 
         public void Undo()
