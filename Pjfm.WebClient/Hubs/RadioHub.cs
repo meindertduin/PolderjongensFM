@@ -40,7 +40,9 @@ namespace pjfm.Hubs
             if (user != null)
             {
                 await Clients.Caller.SendAsync("IsConnected", _playbackListenerManager.IsUserTimedListener(user.Id));
+                await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
             }
+            
             await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackController.GetPlaybackSettings().IsPlaying);
             
             await base.OnConnectedAsync();
@@ -58,6 +60,7 @@ namespace pjfm.Hubs
             if (minutes != 0)
             {
                 _playbackListenerManager.TrySetTimedListener(user.Id, minutes);
+                await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
                 await Clients.Caller.SendAsync("IsConnected", true);
             }
         }

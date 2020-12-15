@@ -47,7 +47,7 @@
                           v-for="(playlist, i) in this.playlists"
                           :key="i"
                       >
-                        <v-expansion-panel-header>{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
+                        <v-expansion-panel-header @click="togglePlaylistDialog">{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
                         <v-expansion-panel-content>
                           <v-list dense>
                             <v-list-item-group>
@@ -69,6 +69,13 @@
             <!--  -->
           </v-tabs-items>
         </v-card>
+    <template>
+        <v-row justify="center">
+          <v-dialog v-model="playlistDialogActive" persistent max-width="600">
+            <Playlist />
+          </v-dialog>
+        </v-row>
+      </template>
   </div>
 </template>
 
@@ -79,11 +86,16 @@ import JQuery from 'jquery'
 import {trackDto} from "@/common/types";
 import {AxiosResponse} from "axios";
 import {Watch} from "vue-property-decorator";
+import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
+import Playlist from "@/components/SearchComponents/Playlist.vue";
 
 window.$ = JQuery
 
 @Component({
   name: 'SearchBox',
+  components: {
+    Playlist,
+  }
 })
 export default class SearchBox extends Vue {
   private query = '';
@@ -109,6 +121,14 @@ export default class SearchBox extends Vue {
       this.search(true);
     else
       $(this).data('timer', setTimeout(this.search, 500));
+  }
+
+  private togglePlaylistDialog(){
+    this.$store.commit('profileModule/TOGGLE_PLAYLIST_DIALOG');
+  }
+
+  get playlistDialogActive():boolean{
+    return this.$store.getters['profileModule/isPlaylistDialogActive'];
   }
 
   search(force) {
