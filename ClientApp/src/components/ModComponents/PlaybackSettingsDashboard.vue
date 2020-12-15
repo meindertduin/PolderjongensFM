@@ -33,7 +33,7 @@
                         <v-switch
                                 @click="showConfirmNotification = true"
                                 class="ma-2"
-                                v-model="playbackOn"
+                                v-model="isPlaying"
                                 label="Playback aan/uit"
                                 color="red"
                                 :value="playbackOn"
@@ -94,7 +94,9 @@
     })
     export default class PlaybackSettingsDashboard extends Vue{
         get playbackOn(){
-          return this.$store.getters['playbackModule/getPlayingStatus'];
+          const playbackOn = this.$store.getters['playbackModule/getPlayingStatus'];
+          this.isPlaying = playbackOn;
+          return playbackOn;
         }  
         
         get playbackTermFilter(){
@@ -109,6 +111,7 @@
           return selectedState;
         }
       
+        private isPlaying:boolean = false;
         private selectedTerm: number = 0;
         private terms :any[] = ['short', 'short-med', 'med', 'med-long', 'long', 'all'];
         private stateItems :any[] = [{text: 'Dj-mode', value: 0}, {text: 'wachtrij-mode', value: 1}, {text: 'random-mode', value: 2}]
@@ -128,7 +131,7 @@
         async handleConfirmPlaybackSet(){
             this.showConfirmNotification = false;
             try {
-                if (this.playbackOn === false){
+                if (this.isPlaying){
                     await this.$axios.put('api/playback/mod/on');
                 }
                 else{
