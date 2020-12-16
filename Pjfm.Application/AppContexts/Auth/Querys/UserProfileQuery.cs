@@ -29,7 +29,7 @@ namespace Pjfm.Application.Auth.Querys
             {
                 return Response.Ok("user successfully retrieved", new UserProfileViewModel()
                 {
-                    UserName = user.UserName,
+                    DisplayName = user.DisplayName,
                     Email = user.Email,
                 });
             }
