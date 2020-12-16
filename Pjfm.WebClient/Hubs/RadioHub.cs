@@ -68,7 +68,7 @@ namespace pjfm.Hubs
 
             if (minutes != 0)
             {
-                _playbackListenerManager.TrySetTimedListener(user.Id, minutes);
+                _playbackListenerManager.TrySetTimedListener(user.Id, minutes, Context.ConnectionId);
                 await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
                 await Clients.Caller.SendAsync("IsConnected", true);
             }

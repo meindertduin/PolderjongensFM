@@ -1,6 +1,8 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.SignalR;
+using Moq;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
+using pjfm.Hubs;
 using Pjfm.WebClient.Services;
 using Xunit;
 
@@ -13,7 +15,7 @@ namespace Pjfm.WebClient.UnitTests.ServicesTests
         public PlaybackListenerManagerTest()
         {
             _playbackListenerManager = new PlaybackListenerManager(new Mock<ISpotifyPlaybackManager>().Object,
-                new Mock<IPlaybackController>().Object);
+                new Mock<IPlaybackController>().Object, new Mock<IHubContext<RadioHub>>().Object);
         }
         
         [Fact]
@@ -33,8 +35,9 @@ namespace Pjfm.WebClient.UnitTests.ServicesTests
         {
             var fakeUserId = "123";
             var minutes = 5;
+            var fakeConnectionId = "123";
 
-            var setTimedListenerResult = _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes);
+            var setTimedListenerResult = _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes, fakeConnectionId);
             
             Assert.True(setTimedListenerResult);
         }
@@ -44,7 +47,9 @@ namespace Pjfm.WebClient.UnitTests.ServicesTests
         {
             var fakeUserId = "123";
             var minutes = 5;
-            _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes);
+            var fakeConnectionId = "123";
+            
+            _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes, fakeConnectionId);
             var removeResult = _playbackListenerManager.TryRemoveTimedListener(fakeUserId);
             Assert.True(removeResult);
         }
@@ -62,7 +67,9 @@ namespace Pjfm.WebClient.UnitTests.ServicesTests
         {
             var fakeUserId = "123";
             var minutes = 5;
-            _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes);
+            var fakeConnectionId = "123";
+            
+            _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes, fakeConnectionId);
             _playbackListenerManager.TryRemoveTimedListener(fakeUserId);
             var removeResult = _playbackListenerManager.TryRemoveTimedListener(fakeUserId);
             Assert.False(removeResult);
@@ -73,7 +80,8 @@ namespace Pjfm.WebClient.UnitTests.ServicesTests
         {
             var fakeUserId = "123";
             var minutes = 5;
-            _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes);
+            var fakeConnectionId = "123";
+            _playbackListenerManager.TrySetTimedListener(fakeUserId, minutes, fakeConnectionId);
             var subscribeTime = _playbackListenerManager.GetUserSubscribeTime(fakeUserId);
             Assert.Equal(minutes, subscribeTime);
         }

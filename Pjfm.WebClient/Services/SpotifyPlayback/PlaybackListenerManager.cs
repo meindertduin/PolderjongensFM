@@ -1,8 +1,13 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
+using pjfm.Hubs;
+using pjfm.Models;
+using Serilog;
 
 namespace Pjfm.WebClient.Services
 {
@@ -10,18 +15,20 @@ namespace Pjfm.WebClient.Services
     {
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private readonly IPlaybackController _playbackController;
-        
-        private static readonly ConcurrentDictionary<string, int> UserSubscribeTimeList = new ConcurrentDictionary<string,int>();
+        private readonly IHubContext<RadioHub> _radioHubContext;
 
         public static readonly ConcurrentDictionary<string, ApplicationUser> ConnectedUsers 
             = new ConcurrentDictionary<string, ApplicationUser>();
 
-        public static readonly ConcurrentDictionary<string, CancellationTokenSource> TimedUsers = new ConcurrentDictionary<string, CancellationTokenSource>();
+        public static readonly ConcurrentDictionary<string, TimedListenerModel> SubscribedListeners = new ConcurrentDictionary<string, TimedListenerModel>();
         
-        public PlaybackListenerManager(ISpotifyPlaybackManager spotifyPlaybackManager, IPlaybackController playbackController)
+        
+        public PlaybackListenerManager(ISpotifyPlaybackManager spotifyPlaybackManager, IPlaybackController playbackController, 
+            IHubContext<RadioHub> radioHubContext)
         {
             _spotifyPlaybackManager = spotifyPlaybackManager;
             _playbackController = playbackController;
+            _radioHubContext = radioHubContext;
         }
         
         public async Task AddListener(ApplicationUser user)
@@ -40,16 +47,17 @@ namespace Pjfm.WebClient.Services
 
         public bool IsUserTimedListener(string userId)
         {
-            return TimedUsers.ContainsKey(userId);
+            return SubscribedListeners.ContainsKey(userId);
         }
 
         public int? GetUserSubscribeTime(string userId)
         {
-            if (UserSubscribeTimeList.ContainsKey(userId))
+            var getResult = SubscribedListeners.TryGetValue(userId, out var subscribedUserInfo);
+            if (getResult)
             {
-                return UserSubscribeTimeList[userId];   
+                return subscribedUserInfo.SubscribeTimeMinutes;
             }
-
+            
             return null;
         }
         
@@ -61,14 +69,14 @@ namespace Pjfm.WebClient.Services
             return user;
         }
 
-        public bool TrySetTimedListener(string userId, int minutes)
+        public bool TrySetTimedListener(string userId, int minutes, string userConnectionId)
         {
-            if (TimedUsers.ContainsKey(userId))
+            if (SubscribedListeners.ContainsKey(userId))
             {
-                var removeResult = TimedUsers.TryRemove(userId, out CancellationTokenSource inUseStoppingToken);
+                var removeResult = SubscribedListeners.TryRemove(userId, out TimedListenerModel userPreviousSubscribeSession);
                 if (removeResult)
                 {
-                    inUseStoppingToken.Cancel();
+                    userPreviousSubscribeSession.TimedListenerCancellationTokenSource.Cancel();
                 }
                 else
                 {
@@ -78,12 +86,16 @@ namespace Pjfm.WebClient.Services
             
             var stoppingTokenSource = new CancellationTokenSource();
 
-            var addResult = TimedUsers.TryAdd(userId, stoppingTokenSource);
+            var addResult = SubscribedListeners.TryAdd(userId, new TimedListenerModel()
+            {
+                TimeAdded = DateTime.Now,
+                SubscribeTimeMinutes = minutes,
+                ConnectionId = userConnectionId,
+                TimedListenerCancellationTokenSource = stoppingTokenSource,
+            });
 
             if (addResult)
             {
-                UserSubscribeTimeList.TryAdd(userId, minutes);
-                
                 var stoppingToken = stoppingTokenSource.Token;
                 Task.Run(() => RunTimedEvent(userId, minutes, stoppingToken), stoppingToken);
                 return true;
@@ -94,20 +106,28 @@ namespace Pjfm.WebClient.Services
 
         public bool TryRemoveTimedListener(string userId)
         {
-            var removeResult = TimedUsers.TryRemove(userId, out CancellationTokenSource stoppingTokenSource);
+            var removeResult = SubscribedListeners.TryRemove(userId, out TimedListenerModel subscribedListenerInfo);
             if (removeResult)
             {
-                UserSubscribeTimeList.TryRemove(userId, out var value);
-
                 RemoveListener(userId);
-                stoppingTokenSource.Cancel();
-
+                subscribedListenerInfo.TimedListenerCancellationTokenSource.Cancel();
+                
+                try
+                {
+                    _radioHubContext.Clients.Client(subscribedListenerInfo.ConnectionId)
+                        .SendAsync("IsConnected", false);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+                
                 return true;
             }
 
             return false;
         }
-
+        
         private async Task RunTimedEvent(string userId, int minutes, CancellationToken stopToken)
         {
             await Task.Delay(minutes * 60_000, stopToken);
