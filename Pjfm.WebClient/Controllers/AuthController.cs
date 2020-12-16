@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Auth.Querys;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Services;
+using Pjfm.Domain.Interfaces;
 using Pjfm.WebClient.Services;
 
 namespace pjfm.Controllers
@@ -17,12 +19,15 @@ namespace pjfm.Controllers
         private readonly IMediator _mediator;
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ISpotifyPlayerService _spotifyPlayerService;
 
-        public AuthController(IMediator mediator, IPlaybackListenerManager playbackListenerManager, UserManager<ApplicationUser> userManager)
+        public AuthController(IMediator mediator, IPlaybackListenerManager playbackListenerManager, 
+            UserManager<ApplicationUser> userManager, ISpotifyPlayerService spotifyPlayerService)
         {
             _mediator = mediator;
             _playbackListenerManager = playbackListenerManager;
             _userManager = userManager;
+            _spotifyPlayerService = spotifyPlayerService;
         }
 
         [HttpGet("mod")]
@@ -70,7 +75,11 @@ namespace pjfm.Controllers
 
             if (user != null)
             {
-                _playbackListenerManager.TryRemoveTimedListener(user.Id);
+                var removed = _playbackListenerManager.TryRemoveTimedListener(user.Id);
+                if (removed)
+                {
+                    await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken);
+                }
             }
             
             return Redirect(logoutResult.Data);
