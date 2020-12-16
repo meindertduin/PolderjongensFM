@@ -24,6 +24,8 @@
                         </div>
                         <div class="text-h6 ma-2">Staat</div>
                         <v-select :items="stateItems" v-model="selectedState" :value="playbackState" outlined label="Playback staat"></v-select>
+                        <div class="text-h6 ma-2">Max requests gebruiker</div>
+                        <v-select :disabled="playbackState === 0" :items="maxRequestItems" v-model="maxRequestAmount" :value="maxUserRequestAmount" outlined label="Playback staat"></v-select>
                     </v-card>
                 </v-col>
             </v-row>
@@ -107,15 +109,35 @@
         
         get playbackState(){
           const selectedState = this.$store.getters['modModule/getPlaybackState'];
-          this.selectedState = selectedState;
+          if (this.selectedState === null){
+            this.selectedState = selectedState;
+          }
           return selectedState;
+        }
+        
+        get maxUserRequestAmount(){
+          const maxRequestAmount = this.$store.getters['modModule/getMaxRequestsPerUser'];
+          if (this.maxRequestAmount === null){
+            this.maxRequestAmount = maxRequestAmount;
+          }
+          return maxRequestAmount;
         }
       
         private isPlaying:boolean = false;
         private selectedTerm: number = 0;
         private terms :any[] = ['short', 'short-med', 'med', 'med-long', 'long', 'all'];
         private stateItems :any[] = [{text: 'Dj-mode', value: 0}, {text: 'wachtrij-mode', value: 1}, {text: 'random-mode', value: 2}]
-        
+      
+        private maxRequestItems: any[] = [
+          {text: "1", value: 1},
+          {text: "2", value: 2},
+          {text: "3", value: 3},
+          {text: "4", value: 4},
+          {text: "5", value: 5},
+          {text: "10", value: 10},
+          {text: "20", value: 20},
+        ];
+               
         private showConfirmNotification :boolean = false;
         
         private selectedState :any | null = null;
@@ -125,8 +147,20 @@
             this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
                 .catch((err:any) => console.log(err));
         }
-        
-        private loadedPlaybackSettings: playbackSettings | null = null;
+
+      private maxRequestAmount : number | null = null;
+      
+      @Watch("maxRequestAmount")
+      onMaxRequestAmountChanged(newValue, oldValue){
+        if (newValue !== oldValue){
+          if (this.maxRequestAmount >= 0 && this.maxRequestAmount < 21){
+            this.$axios.put(`api/playback/mod/userRequestAmount?amount=${this.maxRequestAmount}`)
+                .catch((err:any) => console.log(err));
+          }
+        }
+      }
+
+      private loadedPlaybackSettings: playbackSettings | null = null;
         
         async handleConfirmPlaybackSet(){
             this.showConfirmNotification = false;
