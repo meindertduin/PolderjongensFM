@@ -11,6 +11,7 @@ namespace Pjfm.WebClient.Services
     {
         static IPlaybackState CurrentPlaybackState { get; protected set; }
         void SetPlaybackState(IPlaybackState state);
+        void SetMaxRequestsPerUserAmount(int amount);
         void TurnOn(PlaybackControllerCommands command);
         void TurnOff(PlaybackControllerCommands command);
         void Undo();

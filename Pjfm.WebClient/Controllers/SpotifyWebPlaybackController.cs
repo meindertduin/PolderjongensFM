@@ -87,6 +87,19 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        [HttpPut("mod/userRequestAmount")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult SetMaxRequestPerUser([FromQuery] int amount)
+        {
+            if (amount >= 0)
+            {
+                _playbackController.SetMaxRequestsPerUserAmount(amount);
+                return Accepted();
+            }
+
+            return BadRequest();
+        }
+
         [HttpPut("mod/reset")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult ResetPlayer()

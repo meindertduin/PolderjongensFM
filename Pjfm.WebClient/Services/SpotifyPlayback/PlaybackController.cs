@@ -71,6 +71,7 @@ namespace Pjfm.WebClient.Services
             
             _onCommands[11] = new RandomRequestPlaybackStateOnCommand(this, _playbackQueue);
             _offCommands[11] = new NoCommand();
+            
         }
         
         public void SetPlaybackState(IPlaybackState state)
@@ -84,6 +85,11 @@ namespace Pjfm.WebClient.Services
             IPlaybackController.CurrentPlaybackState = state;
             
             NotifyChangePlaybackSettings();
+        }
+
+        public void SetMaxRequestsPerUserAmount(int amount)
+        {
+            IPlaybackController.CurrentPlaybackState.SetMaxRequestsPerUser(amount);
         }
         
         public void TurnOn(PlaybackControllerCommands command)
