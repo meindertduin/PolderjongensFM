@@ -54,6 +54,7 @@ const mutations = <MutationTree<State>>{
     SET_CONNECTED_STATUS: (state, isConnected:boolean) => state.isConnected = isConnected,
     
     SET_SUBSCRIBE_TIME: (state, minutes:number) => {
+        console.log("st " + minutes);
         let subscribeEndDate = new Date();
         subscribeEndDate.setMinutes(subscribeEndDate.getMinutes() + minutes);
         subscribeEndDate.setTime(subscribeEndDate.getTime() - subscribeEndDate.getTimezoneOffset()*60*1000)
