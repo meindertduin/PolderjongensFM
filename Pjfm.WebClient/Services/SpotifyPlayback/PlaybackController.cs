@@ -73,7 +73,14 @@ namespace Pjfm.WebClient.Services
         
         public void SetPlaybackState(IPlaybackState state)
         {
+            if (IPlaybackController.CurrentPlaybackState != null)
+            {
+                var maxRequestsAmount = IPlaybackController.CurrentPlaybackState.GetMaxRequestsPerUser();
+                state.SetMaxRequestsPerUser(maxRequestsAmount);
+            }
+            
             IPlaybackController.CurrentPlaybackState = state;
+            
             NotifyChangePlaybackSettings();
         }
         
@@ -148,7 +155,10 @@ namespace Pjfm.WebClient.Services
                 currentPlaybackState = PlaybackState.RequestPlaybackState;
             if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
                 currentPlaybackState = PlaybackState.RandomRequestPlaybackState;
-            
+
+            var maxRequestsPerUser = IPlaybackController.CurrentPlaybackState != null
+                ? IPlaybackController.CurrentPlaybackState.GetMaxRequestsPerUser()
+                : 0;
 
             var playbackSettings = new PlaybackSettingsDto()
             {
@@ -156,6 +166,7 @@ namespace Pjfm.WebClient.Services
                 PlaybackTermFilter = _playbackQueue.CurrentTermFilter,
                 PlaybackState = currentPlaybackState,
                 IncludedUsers = _playbackQueue.IncludedUsers,
+                MaxRequestsPerUser = maxRequestsPerUser,
             };
 
             return playbackSettings;
@@ -178,6 +189,7 @@ namespace Pjfm.WebClient.Services
             {
                 PlaybackState = playbackSettings.PlaybackState,
                 IsPlaying = playbackSettings.IsPlaying,
+                MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
             });
         }
 

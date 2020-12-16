@@ -9,7 +9,7 @@ namespace Pjfm.WebClient.Services
     public class DefaultPlaybackState : IPlaybackState
     {
         private readonly IPlaybackQueue _playbackQueue;
-
+        private  int _maxRequestsPerUserAmount = 3;
         public DefaultPlaybackState(IPlaybackQueue playbackQueue)
         {
             _playbackQueue = playbackQueue;
@@ -31,6 +31,16 @@ namespace Pjfm.WebClient.Services
         public List<TrackDto> GetSecondaryTracks()
         {
             return _playbackQueue.GetSecondaryQueueTracks();
+        }
+
+        public void SetMaxRequestsPerUser(int amount)
+        {
+            _maxRequestsPerUserAmount = amount;
+        }
+
+        public int GetMaxRequestsPerUser()
+        {
+            return _maxRequestsPerUserAmount;
         }
     }
 }

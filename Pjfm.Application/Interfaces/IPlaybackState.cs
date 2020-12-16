@@ -9,5 +9,7 @@ namespace Pjfm.WebClient.Services
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
         List<TrackDto> GetSecondaryTracks();
+        void SetMaxRequestsPerUser(int amount);
+        int GetMaxRequestsPerUser();
     }
 }

@@ -10,5 +10,6 @@ namespace Pjfm.Application.Common.Dto
         public TopTrackTermFilter PlaybackTermFilter { get; set; }
         public PlaybackState PlaybackState { get; set; }
         public List<ApplicationUserDto> IncludedUsers { get; set; }
+        public int MaxRequestsPerUser { get; set; }
     }
 }

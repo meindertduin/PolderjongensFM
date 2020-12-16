@@ -47,6 +47,7 @@ export interface playbackSettings {
     playbackTermFilter: number,
     includedUsers: Array<applicationUser>,
     playbackState: playbackState,
+    maxRequestsPerUser: number,
 }
 
 export interface userPlaybackInfo {
@@ -68,4 +69,5 @@ export interface djPlaybackInfo {
 export interface userPlaybackSettings {
     playbackState: playbackState,
     isPlaying: boolean,
+    maxRequestsPerUser: number,
 }

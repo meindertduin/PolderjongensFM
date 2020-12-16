@@ -51,6 +51,7 @@ namespace pjfm.Hubs
             {
                 PlaybackState = playbackSettings.PlaybackState,
                 IsPlaying = playbackSettings.IsPlaying,
+                MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
             });
             
             await base.OnConnectedAsync();

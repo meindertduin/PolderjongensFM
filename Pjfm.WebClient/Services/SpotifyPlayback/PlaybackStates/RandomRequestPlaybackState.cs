@@ -14,7 +14,7 @@ namespace Pjfm.WebClient.Services
         private IDisposable _unsubscriber;
         private List<TrackRequestDto> _tracksBuffer = new List<TrackRequestDto>();
 
-        private const int MaxRequestsPerUserAmount = 3;
+        private  int _maxRequestsPerUserAmount = 3;
 
         private Random _random = new Random();
 
@@ -24,6 +24,7 @@ namespace Pjfm.WebClient.Services
             _playbackController = playbackController;
 
             _unsubscriber = _playbackController.SubscribeToPlayingStatus(this);
+
         }
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
@@ -36,7 +37,7 @@ namespace Pjfm.WebClient.Services
         {
             if (_tracksBuffer
                 .Select(t => t.User.Id)
-                .Count(t => t == user.Id) <= MaxRequestsPerUserAmount)
+                .Count(t => t == user.Id) <= _maxRequestsPerUserAmount)
             {
                 _tracksBuffer.Add(new TrackRequestDto()
                 {
@@ -47,7 +48,7 @@ namespace Pjfm.WebClient.Services
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
             }
             
-            return Response.Fail($"U heeft al het maximum van {MaxRequestsPerUserAmount} verzoekjes opgegeven, probeer het later opnieuw", false);
+            return Response.Fail($"U heeft al het maximum van {_maxRequestsPerUserAmount} verzoekjes opgegeven, probeer het later opnieuw", false);
         }
 
         public List<TrackDto> GetSecondaryTracks()
@@ -65,6 +66,16 @@ namespace Pjfm.WebClient.Services
             }
             
             return result;
+        }
+
+        public void SetMaxRequestsPerUser(int amount)
+        {
+            _maxRequestsPerUserAmount = amount;
+        }
+
+        public int GetMaxRequestsPerUser()
+        {
+            return _maxRequestsPerUserAmount;
         }
 
         public void OnCompleted()

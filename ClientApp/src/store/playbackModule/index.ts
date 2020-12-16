@@ -25,6 +25,7 @@ class State {
     public secondaryQueuedTracks : Array<trackDto> = [];
     
     public playbackState: playbackState | null = null;
+    public maxRequestsPerUser: number | null = null;
     
 }
 
@@ -43,6 +44,7 @@ const mutations = <MutationTree<State>>{
     SET_PLAYBACK_SETTINGS: (state, playbackSettings:userPlaybackSettings) => {
         state.playbackState = playbackSettings.playbackState;
         state.isPlaying = playbackSettings.isPlaying;
+        state.maxRequestsPerUser = playbackSettings.maxRequestsPerUser;
     },
     
     SET_RADIO_CONNECTION: (state, radioConnection:HubConnection) => state.radioConnection = radioConnection,
@@ -77,7 +79,7 @@ const getters = <GetterTree<State, any>>{
 
     // playback settings
     getPlaybackState: state => state.playbackState,
-
+    getMaxRequestsPerUser: state => state.maxRequestsPerUser,
 }
 
 const actions = <ActionTree<State, any>>{

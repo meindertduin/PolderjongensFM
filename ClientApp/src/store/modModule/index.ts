@@ -12,6 +12,7 @@ class State {
     public playbackState: playbackState | null = null;
     public playbackTermFilter: number | null = null;
     public isPlaying: boolean = false;
+    public maxRequestsPerUser: number | null = null
     
     // misc
     public isConnected: boolean = false;
@@ -28,6 +29,7 @@ const mutations = <MutationTree<State>>{
         state.includedUsers = settings.includedUsers;
         state.playbackState = settings.playbackState;
         state.playbackTermFilter = settings.playbackTermFilter;
+        state.maxRequestsPerUser = settings.maxRequestsPerUser;
     },
     
     SET_DJ_PLAYBACK_INFO: (state, playbackInfo:djPlaybackInfo) => {
@@ -40,6 +42,7 @@ const getters = <GetterTree<State, any>>{
     getLoadedUsers: state => state.loadedUsers,
     getPlaybackState: state => state.playbackState,
     getPlaybackTermFiler: state => state.playbackTermFilter,
+    getMaxRequestsPerUser: state => state.maxRequestsPerUser,
 }
 
 const actions = <ActionTree<State, any>>{
