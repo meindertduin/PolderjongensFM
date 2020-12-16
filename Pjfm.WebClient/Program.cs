@@ -26,19 +26,19 @@ namespace pjfm
             using (var scope = host.Services.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var testUser = new ApplicationUser("test"){ Email = "test@mail.com"};
+                var testUser = new ApplicationUser("test@mail.com"){ Email = "test@mail.com", DisplayName = "test"};
                 testUser.Member = true;
                 userManager.CreateAsync(testUser, "password").GetAwaiter().GetResult();
                 
-                var jeremyUser = new ApplicationUser("Jeremy"){ Email = "jeremymulder1@gmail.com"};
+                var jeremyUser = new ApplicationUser("jeremymulder1@gmail.com"){ Email = "jeremymulder1@gmail.com", DisplayName = "Jeremy"};
                 jeremyUser.Member = true;
                 userManager.CreateAsync(jeremyUser, "password").GetAwaiter().GetResult();
                 
-                var jordiUser = new ApplicationUser("Jordi"){ Email = "jordimulder7@gmail.com"};
+                var jordiUser = new ApplicationUser("jordimulder7@gmail.com"){ Email = "jordimulder7@gmail.com", DisplayName = "Jordi"};
                 jordiUser.Member = true;
                 userManager.CreateAsync(jordiUser, "password").GetAwaiter().GetResult();
                 
-                var mod = new ApplicationUser("mod"){Email = "mod@mail.com"};
+                var mod = new ApplicationUser("mod@mail.com"){Email = "mod@mail.com", DisplayName = "Mod"};
                 mod.Member = true;
                 userManager.CreateAsync(mod, "password").GetAwaiter().GetResult();
                 userManager.AddClaimAsync(mod,

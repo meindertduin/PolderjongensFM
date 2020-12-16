@@ -7,6 +7,7 @@ using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
+using pjfm.Models;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
 
 namespace Pjfm.WebClient.Services
@@ -131,7 +132,7 @@ namespace Pjfm.WebClient.Services
         }
         public List<TrackDto> GetSecondaryQueueTracks()
         {
-            return _playbackQueue.GetSecondaryQueueTracks();
+            return IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
         }
         public List<TrackDto> GetFillerQueueTracks()
         {
@@ -173,6 +174,11 @@ namespace Pjfm.WebClient.Services
         {
             var playbackSettings = GetPlaybackSettings();
             _djHubContext.Clients.All.SendAsync("PlaybackSettings", playbackSettings);
+            _radioHubContext.Clients.All.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
+            {
+                PlaybackState = playbackSettings.PlaybackState,
+                IsPlaying = playbackSettings.IsPlaying,
+            });
         }
 
         public IDisposable SubscribeToPlayingStatus(IObserver<bool> observer)

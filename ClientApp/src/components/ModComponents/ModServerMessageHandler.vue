@@ -18,8 +18,7 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
-import {hubServerMessage, playbackSettings} from "@/common/types";
-import set = Reflect.set;
+import {djPlaybackInfo, hubServerMessage, playbackSettings} from "@/common/types";
 
 @Component({
   name: "ModServerMessageHandler",
@@ -46,6 +45,9 @@ export default class ModServerMessageHandler extends Vue{
     })
     this.djHubSocketConnection?.on("PlaybackSettings", (settings: playbackSettings) => {
       this.$store.commit("modModule/SET_PLAYBACK_SETTINGS", settings);
+    })
+    this.djHubSocketConnection?.on("ReceiveDjPlaybackInfo", (playbackInfo: djPlaybackInfo) => {
+      this.$store.commit("modModule/SET_DJ_PLAYBACK_INFO", playbackInfo);
     })
     
     this.djHubSocketConnection.start()

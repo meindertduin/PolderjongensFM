@@ -12,7 +12,7 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackQueue _playbackQueue;
         private readonly IPlaybackController _playbackController;
         private IDisposable _unsubscriber;
-        private List<TrackRequestDto> tracksBuffer = new List<TrackRequestDto>();
+        private List<TrackRequestDto> _tracksBuffer = new List<TrackRequestDto>();
 
         private const int MaxRequestsPerUserAmount = 3;
 
@@ -34,11 +34,11 @@ namespace Pjfm.WebClient.Services
 
         public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
-            if (tracksBuffer
+            if (_tracksBuffer
                 .Select(t => t.User.Id)
                 .Count(t => t == user.Id) <= MaxRequestsPerUserAmount)
             {
-                tracksBuffer.Add(new TrackRequestDto()
+                _tracksBuffer.Add(new TrackRequestDto()
                 {
                     Track = track,
                     User = user,
@@ -48,6 +48,23 @@ namespace Pjfm.WebClient.Services
             }
             
             return Response.Fail($"U heeft al het maximum van {MaxRequestsPerUserAmount} verzoekjes opgegeven, probeer het later opnieuw", false);
+        }
+
+        public List<TrackDto> GetSecondaryTracks()
+        {
+            var result = new List<TrackDto>();
+
+            foreach (var request in _tracksBuffer)
+            {
+                var trackDto = new TrackDto();
+
+                trackDto = request.Track;
+                trackDto.User = request.User;
+
+                result.Add(trackDto);
+            }
+            
+            return result;
         }
 
         public void OnCompleted()
@@ -62,11 +79,11 @@ namespace Pjfm.WebClient.Services
 
         public void OnNext(bool value)
         {
-            if (tracksBuffer.Count > 0)
+            if (_tracksBuffer.Count > 0)
             {
-                var randomIndex = _random.Next(tracksBuffer.Count);
-                _playbackQueue.AddSecondaryTrack(tracksBuffer[randomIndex]);
-                tracksBuffer.RemoveAt(randomIndex);
+                var randomIndex = _random.Next(_tracksBuffer.Count);
+                _playbackQueue.AddSecondaryTrack(_tracksBuffer[randomIndex]);
+                _tracksBuffer.RemoveAt(randomIndex);
             }
         }
     }

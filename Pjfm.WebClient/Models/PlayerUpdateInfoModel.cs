@@ -8,7 +8,6 @@ namespace pjfm.Models
     {
         public TrackDto CurrentPlayingTrack { get; set; }
         public DateTime StartingTime { get; set; }
-        public PlaybackSettingsDto PlaybackSettings { get; set; }
         public List<TrackDto> FillerQueuedTracks { get; set; }
         
     }

@@ -29,7 +29,7 @@
     import LiveChat from "@/components/HomeComponents/Livechat";
     import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
     import UserIncludeSettingsDashboard from "@/components/ModComponents/UserIncludeSettingsDashboard.vue";
-    import {playbackState, playerUpdateInfo} from "@/common/types";
+    import {playbackState, djPlaybackInfo} from "@/common/types";
 
     @Component({
     name: 'AppView',
@@ -46,7 +46,7 @@
     }
 
       get playbackState():playbackState{
-          const playbackSettings:playerUpdateInfo = this.$store.getters['playbackModule/getPlaybackInfo'];
+          const playbackSettings:djPlaybackInfo = this.$store.getters['playbackModule/getPlaybackInfo'];
           if (playbackSettings){
               return playbackSettings.playbackSettings.playbackState;
           }

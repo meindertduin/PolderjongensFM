@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
@@ -25,6 +26,11 @@ namespace Pjfm.WebClient.Services
         public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
             throw new InvalidOperationException("Cant add secondary while in Default playback state");
+        }
+
+        public List<TrackDto> GetSecondaryTracks()
+        {
+            return _playbackQueue.GetSecondaryQueueTracks();
         }
     }
 }

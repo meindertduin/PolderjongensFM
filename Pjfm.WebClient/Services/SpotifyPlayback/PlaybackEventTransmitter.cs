@@ -49,7 +49,7 @@ namespace Pjfm.WebClient.Services
                 var userInfo = infoModelFactory.CreateUserInfoModel();
                 var djInfo = infoModelFactory.CreateUserInfoModel();
 
-                radioHubContext.Clients.All.SendAsync("ReceivePlayingTrackInfo", userInfo);
+                radioHubContext.Clients.All.SendAsync("ReceivePlaybackInfo", userInfo);
                 djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
             }
         }

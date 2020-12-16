@@ -25,14 +25,14 @@ namespace Pjfm.Application.Test.Queries
             _ctx = ctx;
         }
         
-        public async Task<Response<List<TopTrack>>> Handle(GetUserTopTracksQuery request, CancellationToken cancellationToken)
+        public Task<Response<List<TopTrack>>> Handle(GetUserTopTracksQuery request, CancellationToken cancellationToken)
         {
             var userTopTracks = _ctx.TopTracks
                 .AsNoTracking()
                 .Where(x => x.ApplicationUserId == request.UserID)
                 .ToList();
 
-            return Response.Ok("user top tracks were succesfully queries", userTopTracks);
+            return Task.FromResult(Response.Ok("user top tracks were succesfully queries", userTopTracks));
         }
     }
 }

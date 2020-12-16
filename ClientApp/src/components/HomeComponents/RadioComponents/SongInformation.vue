@@ -20,7 +20,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import {playerUpdateInfo, trackDto} from "@/common/types";
+import {djPlaybackInfo, trackDto} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 
 @Component({

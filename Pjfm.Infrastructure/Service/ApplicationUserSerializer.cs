@@ -11,7 +11,6 @@ namespace Pjfm.Infrastructure.Service
             {
                 Id = user.Id,
                 DisplayName = user.DisplayName,
-                Email = user.Email
             };
         }
     }

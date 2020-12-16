@@ -20,7 +20,7 @@ namespace Pjfm.WebClient.Services
             var fillerQueuedTracks = _playbackController.GetFillerQueueTracks();
             var secondaryQueueTracks = _playbackController.GetSecondaryQueueTracks();
             var queuedPriorityTracks = _playbackController.GetPriorityQueueTracks();
-
+            
             infoModel.PriorityQueuedTracks = queuedPriorityTracks;
             infoModel.SecondaryQueuedTracks = secondaryQueueTracks;
             infoModel.FillerQueuedTracks = fillerQueuedTracks;
@@ -47,8 +47,7 @@ namespace Pjfm.WebClient.Services
         private void  FillInBaseValues(PlayerUpdateInfoModel infoModel)
         {
             var playingTrackInfo = _playbackController.GetPlayingTrackInfo();
-
-            infoModel.PlaybackSettings = _playbackController.GetPlaybackSettings();
+            
             infoModel.CurrentPlayingTrack = playingTrackInfo.Item1;
             infoModel.StartingTime = playingTrackInfo.Item2;
         }

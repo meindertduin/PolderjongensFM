@@ -1,16 +1,21 @@
 ﻿import { GetterTree, MutationTree, ActionTree } from "vuex"
-import {applicationUser, playbackSettings, playbackState} from "@/common/types";
+import {applicationUser, djPlaybackInfo, playbackSettings, playbackState, trackDto} from "@/common/types";
 import axios from "axios";
 import App from "@/App.vue";
 
 class State {
+    public playbackInfo: djPlaybackInfo | null = null;
     public includedUsers : Array<applicationUser> = [];
     public loadedUsers : Array<applicationUser> = [];
-    public playbackSettings: playbackSettings | null = null;
     
-    
+    public playbackSettings : playbackSettings | null = null;
     public playbackState: playbackState | null = null;
     public playbackTermFilter: number | null = null;
+    public isPlaying: boolean = false;
+    
+    // misc
+    public isConnected: boolean = false;
+
 }
 
 const mutations = <MutationTree<State>>{
@@ -24,6 +29,10 @@ const mutations = <MutationTree<State>>{
         state.playbackState = settings.playbackState;
         state.playbackTermFilter = settings.playbackTermFilter;
     },
+    
+    SET_DJ_PLAYBACK_INFO: (state, playbackInfo:djPlaybackInfo) => {
+        state.playbackInfo = playbackInfo;
+    }, 
 }
 
 const getters = <GetterTree<State, any>>{

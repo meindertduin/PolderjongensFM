@@ -9,15 +9,6 @@ export interface userSettings{
     darkMode: boolean,
 }
 
-export interface playerUpdateInfo{
-    currentPlayingTrack: trackDto,
-    startingTime: string,
-    playbackSettings: playbackSettings,
-    fillerQueuedTracks: Array<trackDto>,
-    secondaryQueuedTracks: Array<trackDto>,
-    priorityQueuedTracks: Array<trackDto>,
-}
-
 export interface liveChatMessageModel{
     userName: string,
     message: string,
@@ -56,4 +47,25 @@ export interface playbackSettings {
     playbackTermFilter: number,
     includedUsers: Array<applicationUser>,
     playbackState: playbackState,
+}
+
+export interface userPlaybackInfo {
+    secondaryQueuedTracks: Array<trackDto>,
+    priorityQueuedTracks: Array<trackDto>,
+    fillerQueuedTracks: Array<trackDto>,
+    startingTime: string,
+    currentPlayingTrack: trackDto,
+}
+
+export interface djPlaybackInfo {
+    currentPlayingTrack: trackDto,
+    startingTime: string,
+    fillerQueuedTracks: Array<trackDto>,
+    secondaryQueuedTracks: Array<trackDto>,
+    priorityQueuedTracks: Array<trackDto>,
+}
+
+export interface userPlaybackSettings {
+    playbackState: playbackState,
+    isPlaying: boolean,
 }

@@ -97,8 +97,8 @@ export default class AppSideBar extends Vue{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }
   
-  get playbackSettings():any|null{
-    return this.$store.getters['playbackModule/getPlaybackSettings']
+  get playbackState():any|null{
+    return this.$store.getters['playbackModule/getPlaybackState']
   }
 
   get connectedState():any|null{
@@ -111,6 +111,10 @@ export default class AppSideBar extends Vue{
 
   get subscribeEndTime():any|null{
     return this.subscribeEndDate.toISOString().substr(11, 5);
+  }
+
+  get isMod(){
+    return this.$store.getters['profileModule/isMod'];
   }
   
   private isPlaybackConnected() : boolean{
@@ -126,7 +130,7 @@ export default class AppSideBar extends Vue{
   
   private songRequestIsAvailable(): boolean {
     if(!this.oidcAuthenticated) return false; // Login check
-    if(this.playbackSettings.playbackState == 0) return false; // Request mode check
+    if(this.playbackState == 0 && this.isMod == false) return false; // Request mode check
     
     // Add max song request check
     

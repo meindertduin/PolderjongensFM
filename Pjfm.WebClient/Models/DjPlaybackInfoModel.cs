@@ -8,6 +8,5 @@ namespace pjfm.Models
     {
         public List<TrackDto> SecondaryQueuedTracks { get; set; }
         public List<TrackDto> PriorityQueuedTracks { get; set; }
-
     }
 }

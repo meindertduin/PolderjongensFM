@@ -33,7 +33,7 @@
     import Component from 'vue-class-component'
     import {Watch} from "vue-property-decorator";
     import {HubConnectionBuilder, TransferFormat, LogLevel, HubConnection} from "@microsoft/signalr";
-    import {playerUpdateInfo} from "@/common/types";
+    import {djPlaybackInfo} from "@/common/types";
 
     @Component({
         name: 'Queue',
@@ -45,7 +45,7 @@
         this.updateRadio();
       }
 
-      get playbackInfo():playerUpdateInfo{
+      get playbackInfo():djPlaybackInfo{
           return this.$store.getters['playbackModule/getPlaybackInfo'];
       }
       
