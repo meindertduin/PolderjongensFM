@@ -47,20 +47,7 @@
                           v-for="(playlist, i) in this.playlists"
                           :key="i"
                       >
-                        <v-expansion-panel-header @click="togglePlaylistDialog">{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                          <v-list dense>
-                            <v-list-item-group>
-                              <v-list-item v-for="(track, z) in playlist.tracks" @click="requestSong(track)">
-                                <v-list-item-content>
-                                  <v-list-item-title>
-                                    {{z + 1}}. {{ track.artists[0].name }} - {{ track.name }} <span class="grey--text float-right">Track</span>
-                                  </v-list-item-title>
-                                </v-list-item-content>
-                              </v-list-item>
-                            </v-list-item-group>
-                          </v-list>
-                        </v-expansion-panel-content>
+                        <v-expansion-panel-header @click="togglePlaylistDialog(playlist.id, playlist.name)">{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
                       </v-expansion-panel>
                     </v-expansion-panels>
                   </div>
@@ -71,8 +58,8 @@
         </v-card>
     <template>
         <v-row justify="center">
-          <v-dialog v-model="playlistDialogActive" persistent max-width="600">
-            <Playlist />
+          <v-dialog v-model="playlistDialogActive" persistent max-width="1200">
+            <Playlist :key="activePlaylistId" :playlist-id="activePlaylistId" :playlist-name="activePlaylistName"/>
           </v-dialog>
         </v-row>
       </template>
@@ -100,6 +87,8 @@ window.$ = JQuery
 export default class SearchBox extends Vue {
   private query = '';
   private searchResults = [];
+  private activePlaylistId: string | null = null
+  private activePlaylistName: string | null = null
   
   private playlists = [];
   
@@ -123,8 +112,10 @@ export default class SearchBox extends Vue {
       $(this).data('timer', setTimeout(this.search, 500));
   }
 
-  private togglePlaylistDialog(){
+  private togglePlaylistDialog(playlistId: string, playlistName: string){
     this.$store.commit('profileModule/TOGGLE_PLAYLIST_DIALOG');
+    this.activePlaylistId = playlistId;
+    this.activePlaylistName = playlistName;
   }
 
   get playlistDialogActive():boolean{
@@ -157,39 +148,11 @@ export default class SearchBox extends Vue {
   }
 
   async fetchPlaylists(){
-    await this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=short_term`).then((response: AxiosResponse) => {
-      this.playlists.push({name: "Mijn Top 50 (vier weken)", tracks: response.data.items})
-    }).catch((error: any) => {
-      console.log(error);
-    })
-
-    await this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=medium_term`).then((response: AxiosResponse) => {
-      this.playlists.push({name: "Mijn Top 50 (zes maanden)", tracks: response.data.items})
-    }).catch((error: any) => {
-      console.log(error);
-    })
-    
-    await this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=long_term`).then((response: AxiosResponse) => {
-      this.playlists.push({name: "Mijn Top 50 (all-time)", tracks: response.data.items})
-    }).catch((error: any) => {
-      console.log(error);
-    })
-
-    await this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
+    this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
       playlistResponse.data.items.forEach((playlist) => {
-        this.$axios.get(`https://localhost:5001/api/playlist/tracks?playlistId=${playlist.id}`).then((trackResponse: AxiosResponse) => {
-          var playlistTrackArray = [];
-          
-          trackResponse.data.items.forEach((track) => {
-            playlistTrackArray.push(track.track);
-          })
-
-          this.playlists.push({name: playlist.name, tracks: playlistTrackArray})
-        })
-        }).catch((error: any) => {
-          console.log(error);
-        })
-      }).catch((error: any) => {
+        this.playlists.push({ id: playlist.id, name: playlist.name})
+      })
+    }).catch((error: any) => {
       console.log(error);
     })
   }

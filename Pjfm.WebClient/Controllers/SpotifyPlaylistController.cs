@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
@@ -44,7 +46,9 @@ namespace pjfm.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
-            var playlistTracksResult = await _spotifyBrowserService.GetPlaylistTracks(user.Id, user.SpotifyAccessToken,
+            var definition = new { next = "" };
+            
+            var firstPlaylistTracksResult = await _spotifyBrowserService.GetPlaylistTracks(user.Id, user.SpotifyAccessToken,
                 new PlaylistTracksRequestDto()
                 {
                     PlaylistId = playlistId,
@@ -52,9 +56,22 @@ namespace pjfm.Controllers
                     Offset = offset,
                 });
 
-            var content = await playlistTracksResult.Content.ReadAsStringAsync();
             
-            return Ok(content);
+            var content = JsonConvert.DeserializeAnonymousType(await firstPlaylistTracksResult.Content.ReadAsStringAsync(), definition);
+            var contentString = "\"results\": [" + await firstPlaylistTracksResult.Content.ReadAsStringAsync() + ", ";
+
+            while (content.next != null)
+            {
+                var recursivePlaylistTracksResult = await _spotifyBrowserService.CustomRequest(user.Id, user.SpotifyAccessToken, new Uri(content.next));
+                content = JsonConvert.DeserializeAnonymousType(await recursivePlaylistTracksResult.Content.ReadAsStringAsync(), definition);
+                contentString += await recursivePlaylistTracksResult.Content.ReadAsStringAsync();
+                if (content.next != null)
+                {
+                    contentString += ", ";
+                }
+            }
+            
+            return Ok("{" + contentString + "]}");
         }
         
         

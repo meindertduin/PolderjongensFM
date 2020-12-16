@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
 
@@ -18,5 +19,7 @@ namespace Pjfm.Application.Services
         
         Task<HttpResponseMessage> GetTopTracks(string userId, string accessToken,
             TopTracksRequestDto topTracksRequestDto);
+
+        Task<HttpResponseMessage> CustomRequest(string userId, string accessToken, Uri nextUri);
     }
 }
