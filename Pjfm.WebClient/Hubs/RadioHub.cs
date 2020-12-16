@@ -81,6 +81,7 @@ namespace pjfm.Hubs
             var user = await _userManager.GetUserAsync(context.User);
 
             _playbackListenerManager.TryRemoveTimedListener(user.Id);
+            await Clients.Caller.SendAsync("IsConnected", false);
             await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
         }
         

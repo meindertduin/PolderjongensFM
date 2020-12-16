@@ -13,9 +13,10 @@
                   hide-details
               ></v-text-field>
         <v-data-table
-            :headers="headers"
+            :headers="computedHeaders"
             :items="tracks"
             :search="search"
+            @click:row="requestSong"
         ></v-data-table>
       </v-card>
   </div>
@@ -26,6 +27,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import {Prop} from "vue-property-decorator";
 import {AxiosResponse} from "axios";
+import {trackDto} from "@/common/types";
 
 @Component({
   name: 'Playlist',
@@ -36,24 +38,39 @@ export default class Playlist extends Vue {
 
   @Prop({type: Object, required: true})
   readonly playlistName !: string
+
+  
+  get computedHeaders(){
+    return this.headers.filter((header) => {
+      return header.value != 'id'
+    })
+  }
   
   private search:string|null = null;
   private headers = [
     { text: 'Titel', value: 'name' },
     { text: 'Artiest', value: 'artist' },
     { text: 'Album', value: 'album' },
-    { text: '', value: 'duration' },
+    { text: 'Hidden', value: 'id' },
   ];
   private tracks = [];
 
   created(){
     this.tracks = [];
-    
     this.populateTracks()
   }
   
   private togglePlaylistDialog(){
     this.$store.commit('profileModule/TOGGLE_PLAYLIST_DIALOG');
+  }
+
+  private requestSong(track){
+    this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
+      this.togglePlaylistDialog();
+      this.$router.push('/');
+    }).catch((error: any) => {
+      console.log(error);
+    })
   }
   
   private populateTracks() {
@@ -64,7 +81,7 @@ export default class Playlist extends Vue {
             name: track.track.name,
             artist: track.track.artists[0].name,
             album: track.track.album.name,
-            duration: this.convertMsToMMSS(track.track.duration_ms),
+            id: track.track.id,
           });
         })
       })
