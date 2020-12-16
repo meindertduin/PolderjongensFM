@@ -31,6 +31,8 @@ namespace Pjfm.WebClient.Services
             _spotifyPlaybackManager = spotifyPlaybackManager;
             _djHubContext = djHubContext;
             _radioHubContext = radioHubContext;
+            
+            SetPlaybackState(new UserRequestPlaybackState(_playbackQueue)); // Default 
 
             _undoCommand = new NoCommand();
 
