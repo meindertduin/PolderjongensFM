@@ -42,6 +42,7 @@ namespace pjfm.Controllers
 
         [HttpGet]
         [Route("tracks")]
+        // TODO: schoonmaken
         public async Task<IActionResult> GetPlaylistTopTracks([FromQuery] string playlistId,[FromQuery] int limit = 100 ,[FromQuery] int offset = 0)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -58,7 +59,15 @@ namespace pjfm.Controllers
 
             
             var content = JsonConvert.DeserializeAnonymousType(await firstPlaylistTracksResult.Content.ReadAsStringAsync(), definition);
-            var contentString = "\"results\": [" + await firstPlaylistTracksResult.Content.ReadAsStringAsync() + ", ";
+            string contentString = null;
+            
+            if(content.next != null){ 
+                contentString = "\"results\": [" + await firstPlaylistTracksResult.Content.ReadAsStringAsync() + ", ";
+            }
+            else
+            {
+                contentString = "\"results\": [" + await firstPlaylistTracksResult.Content.ReadAsStringAsync();
+            }
 
             while (content.next != null)
             {
