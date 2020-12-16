@@ -2,7 +2,7 @@
   <div>
       <v-card>
         <v-card-title class="text-center">
-          <span class="overline orange--text">{{ playlistName }}</span><v-btn class="align-content-end" @click="togglePlaylistDialog">X</v-btn>
+          <v-btn class="align-content-end" @click="togglePlaylistDialog">X</v-btn>
         </v-card-title>
               <v-text-field
                   v-model="search"
@@ -17,6 +17,8 @@
             :items="tracks"
             :search="search"
             @click:row="requestSong"
+            :loading="loading"
+            loading-text="Laden..."
         ></v-data-table>
       </v-card>
   </div>
@@ -33,6 +35,8 @@ import {trackDto} from "@/common/types";
   name: 'Playlist',
 })
 export default class Playlist extends Vue {
+  private loading = true;
+  
   @Prop({type: Object, required: true}) 
   readonly playlistId !: string
 
@@ -85,6 +89,8 @@ export default class Playlist extends Vue {
           });
         })
       })
+      
+      this.loading = false;
     }).catch((error: any) => {
       console.log(error);
     })

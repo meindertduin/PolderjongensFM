@@ -23,7 +23,6 @@ namespace Pjfm.WebClient.Services
         private readonly ICommand[] _offCommands = new ICommand[20];
         private ICommand _undoCommand;
         
-
         public PlaybackController(IPlaybackQueue playbackQueue, ISpotifyPlaybackManager spotifyPlaybackManager,
             IHubContext<DjHub> djHubContext, IHubContext<RadioHub> radioHubContext)
         {

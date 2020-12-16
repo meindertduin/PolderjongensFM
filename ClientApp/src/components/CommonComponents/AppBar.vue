@@ -7,7 +7,7 @@
     <v-toolbar-title>PJFM</v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <span class="align-bottom overline grey--text" v-if="userProfile != null">INGELOGD ALS <span class="orange--text">{{userProfile.userName}}</span></span>
+    <span class="align-bottom overline grey--text" v-if="userProfile != null">INGELOGD ALS <span class="orange--text">{{userProfile.displayName}}</span></span>
     <v-img
         class="mx-2 float-right"
         src="/assets/logo.png"
