@@ -1,4 +1,6 @@
 using System;
+using System.Net;
+using System.Net.Http;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Services;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
@@ -20,6 +23,9 @@ using Pjfm.Infrastructure.Service;
 using pjfm.Models;
 using pjfm.Services;
 using Pjfm.WebClient.Services;
+using Polly;
+using Polly.Extensions.Http;
+using Polly.Retry;
 using Serilog;
 using VueCliMiddleware;
 
@@ -66,18 +72,26 @@ namespace pjfm
             
             services.AddRazorPages();
 
-            services.AddHttpClient();
-            
-            services.AddHttpClient(ApplicationConstants.HttpClientNames.SpotifyApiClient, client =>
-            {
-                client.BaseAddress = new Uri("https://api.spotify.com");
-            });
-            
-            services.AddHttpClient(ApplicationConstants.HttpClientNames.ApiClient, client =>
-            {
-                client.BaseAddress = new Uri("https://localhost:5001");
-            });
+            // HttpClient configuration
+            var retryPolicy = HttpPolicyExtensions
+                .HandleTransientHttpError() // HttpRequestException, 5XX and 408
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
+            var invalidOperationException = Policy
+                .Handle<InvalidOperationException>()
+                .WaitAndRetry(new[]
+                {
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3)
+                });
+            
+            
+            services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>(o => 
+                    o.BaseAddress = new Uri(Configuration["ApiEndpoints:SpotifyEndpoint"]))
+                .AddPolicyHandler(retryPolicy);
+            
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",

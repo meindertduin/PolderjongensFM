@@ -33,15 +33,18 @@ namespace Pjfm.WebClient.Services
         
         public async Task AddListener(ApplicationUser user)
         {
-            ConnectedUsers[user.Id] = user;
+            if (user != null)
+            {
+                ConnectedUsers[user.Id] = user;
             
-            if (_spotifyPlaybackManager.IsCurrentlyPlaying == false)
-            {
-                _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
-            }
-            else
-            {
-                await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
+                if (_spotifyPlaybackManager.IsCurrentlyPlaying == false)
+                {
+                    _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
+                }
+                else
+                {
+                    await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
+                }
             }
         }
 
