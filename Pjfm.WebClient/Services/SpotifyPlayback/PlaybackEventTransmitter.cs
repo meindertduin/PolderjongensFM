@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using pjfm.Hubs;
-using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
