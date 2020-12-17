@@ -36,6 +36,7 @@ namespace Pjfm.WebClient.Services
         {
             _recentlyPlayed = new List<TrackDto>();
             _priorityQueue = new Queue<TrackDto>();
+            _secondaryQueue = new Queue<TrackRequestDto>();
             _fillerQueue = new Queue<TrackDto>();
         }
 

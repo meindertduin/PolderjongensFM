@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Identity;
+using Pjfm.WebClient.Services;
 using Serilog;
 using Serilog.Events;
 
@@ -44,6 +45,10 @@ namespace pjfm
                 userManager.AddClaimAsync(mod,
                     new Claim(ApplicationIdentityConstants.Claims.Role, 
                         ApplicationIdentityConstants.Roles.Mod));
+
+
+                var playbackController = scope.ServiceProvider.GetRequiredService<IPlaybackController>();
+                playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
             }
 
             try
