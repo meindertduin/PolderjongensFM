@@ -13,9 +13,9 @@ namespace Pjfm.WebClient.Pages.Account
     {
         [BindProperty] public RegisterForm Form { get; set; }
         
-        public void OnGet(string returnUrl)
+        public void OnGet()
         {
-            Form = new RegisterForm(){ReturnUrl = returnUrl};
+            Form = new RegisterForm(){ReturnUrl = "https://localhost:8085/"};
         }
         
         public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, 
@@ -26,14 +26,14 @@ namespace Pjfm.WebClient.Pages.Account
                 return Page();
             }
 
-            var newUser = new ApplicationUser(Form.Username){Email = Form.Email};
+            var newUser = new ApplicationUser(Form.Email){Email = Form.Email, DisplayName = Form.Username};
             var userCreateRequest = await userManager.CreateAsync(newUser, Form.Password);
 
             if (userCreateRequest.Succeeded)
             {
                 var loginResult = await mediator.Send(new LoginCommand()
                 {
-                    EmailAddress = Form.Username,
+                    EmailAddress = Form.Email,
                     Password = Form.Password,
                 });
 
@@ -51,6 +51,7 @@ namespace Pjfm.WebClient.Pages.Account
     public class RegisterForm
     {
         public string ReturnUrl { get; set; }
+        
         [Required(ErrorMessage = "Gebruikersnaam is verplicht")]
         public string Username { get; set; }
 
@@ -66,6 +67,5 @@ namespace Pjfm.WebClient.Pages.Account
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Wachtwoorden zijn niet hetzelfde")]
         public string ConfirmPassword { get; set; }
-
     }
 }

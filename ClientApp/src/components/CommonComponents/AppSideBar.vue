@@ -44,7 +44,7 @@
             <v-list-item-title>Inloggen</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link @click="navigate('/register')">
+        <v-list-item link @click="redirect('https://localhost:5001/Account/Register')">
           <v-list-item-action>
             <v-icon>mdi-logout-variant</v-icon>
           </v-list-item-action>
@@ -139,6 +139,10 @@ export default class AppSideBar extends Vue{
 
   private signInOidcClient(){
     this.$store.dispatch('oidcStore/authenticateOidc');
+  }
+
+  private redirect(uri: string){
+    window.location.href = uri;
   }
 
   private signOutOidcClient(){

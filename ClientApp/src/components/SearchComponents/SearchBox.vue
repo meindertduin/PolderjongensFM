@@ -122,6 +122,11 @@ export default class SearchBox extends Vue {
     return this.$store.getters['profileModule/isPlaylistDialogActive'];
   }
 
+
+  get userProfile(){
+    return this.$store.getters['profileModule/userProfile'];
+  }
+
   search(force) {
     console.log('search');
     if (!force && this.query.length < 3) return;
@@ -148,6 +153,10 @@ export default class SearchBox extends Vue {
   }
 
   async fetchPlaylists(){
+    this.playlists.push({ id: "1", name: `${this.userProfile.displayName}'s Top 50 (vier weken)`})
+    this.playlists.push({ id: "2", name: `${this.userProfile.displayName}'s Top 50 (zes maanden)`})
+    this.playlists.push({ id: "3", name: `${this.userProfile.displayName}'s Top 50 (all-time)`})
+    
     this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
       playlistResponse.data.items.forEach((playlist) => {
         this.playlists.push({ id: playlist.id, name: playlist.name})

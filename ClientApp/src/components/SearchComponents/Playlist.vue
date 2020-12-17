@@ -43,7 +43,6 @@ export default class Playlist extends Vue {
   @Prop({type: Object, required: true})
   readonly playlistName !: string
 
-  
   get computedHeaders(){
     return this.headers.filter((header) => {
       return header.value != 'id'
@@ -57,11 +56,11 @@ export default class Playlist extends Vue {
     { text: 'Album', value: 'album' },
     { text: 'Hidden', value: 'id' },
   ];
+  
   private tracks = [];
 
   created(){
-    this.tracks = [];
-    this.populateTracks()
+    this.populateTracks();
   }
   
   private togglePlaylistDialog(){
@@ -78,6 +77,22 @@ export default class Playlist extends Vue {
   }
   
   private populateTracks() {
+    switch(this.playlistId){
+      case "1":
+        this.getTopTracksPlaylist(1);
+        break;
+      case "2":
+        this.getTopTracksPlaylist(2);
+        break;
+      case "3":
+        this.getTopTracksPlaylist(3);
+        break;
+      default:
+        this.getPlaylist();
+    }
+  }
+
+  private getPlaylist(){
     this.$axios.get(`https://localhost:5001/api/playlist/tracks?playlistId=${this.playlistId}`).then((results: AxiosResponse) => {
       results.data.results.forEach((trackResponse) => {
         trackResponse.items.forEach((track) => {
@@ -89,18 +104,42 @@ export default class Playlist extends Vue {
           });
         })
       })
-      
+
       this.loading = false;
     }).catch((error: any) => {
       console.log(error);
     })
   }
 
-  private convertMsToMMSS(ms) : string {
-    let date = new Date(null);
-    date.setMilliseconds(ms);
-
-    return date.toISOString().substr(14, 5);
+  private getTopTracksPlaylist(term: number) {
+    let termString: string = "short_term";
+    
+    switch(term) {
+      case 1:
+        termString = "short_term";
+        break;
+      case 2:
+        termString = "medium_term";
+        break;
+      case 3:
+        termString = "long_term";
+        break;
+    }
+    
+    this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=${termString}`).then((trackResponse: AxiosResponse) => {
+      trackResponse.data.items.forEach((track) => {
+        this.tracks.push({
+          name: track.name,
+          artist: track.artists[0].name,
+          album: track.album.name,
+          id: track.id,
+        });
+        
+        this.loading = false;
+      })
+    }).catch((error: any) => {
+      console.log(error);
+    })
   }
 }
 </script>
