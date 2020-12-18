@@ -16,6 +16,11 @@
                     <img style="max-width: 300px; margin-bottom: 2vh" src="~/images/pjfm.png" />
                 </div>
                 
+                @foreach (var summery in @Model.Form.Summeries)
+                {
+                    <div class="valSpan">@summery</div>
+                }
+                
                 <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
                 <div class="form-group">
                     <a asp-page="/Account/Login" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">Al een account? Klik hier om in te loggen</a>

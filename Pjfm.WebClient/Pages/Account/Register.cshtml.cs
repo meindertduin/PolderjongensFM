@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -14,9 +15,9 @@ namespace Pjfm.WebClient.Pages.Account
     {
         [BindProperty] public RegisterForm Form { get; set; }
         
-        public void OnGet()
+        public void OnGet([FromServices] IConfiguration configuration)
         {
-            Form = new RegisterForm(){ReturnUrl = "https://localhost:8085/"};
+            Form = new RegisterForm(){ReturnUrl = configuration["AppUrls:ClientBaseUrl"], Summeries = new List<string>()};
         }
         
         public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, 
@@ -46,6 +47,34 @@ namespace Pjfm.WebClient.Pages.Account
             
                 return Redirect(configuration["AppUrls:ClientBaseUrl"]);
             }
+
+            Form.Summeries ??= new List<string>();
+            
+            foreach (var identityError in userCreateRequest.Errors)
+            {
+                switch (identityError.Code)
+                {
+                    case "PasswordTooShort":
+                        Form.Summeries.Add("Wacthwoord is te kort");
+                        break;
+                    case "PasswordRequiresNonAlphanumeric":
+                        Form.Summeries.Add("Wacthwoord heeft een niet alphanumerisch teken nodig");
+                        break;
+                    case "PasswordRequiresDigit":
+                        Form.Summeries.Add("wachtwoort heeft een cijfer nodig");
+                        break;
+                    case "PasswordRequiresLower":
+                        Form.Summeries.Add("Wacthwoord heeft een normale letter nodig");
+                        break;
+                    case "PasswordRequiresUpper":
+                        Form.Summeries.Add("Wacthwoord heeft een hoofdletter nodig");
+                        break;
+                    case "DuplicateUserName":
+                        Form.Summeries.Add("Email is al in gebruik");
+                        break; 
+                }
+            }
+            
             return Page();
         }
     }
@@ -53,20 +82,21 @@ namespace Pjfm.WebClient.Pages.Account
     public class RegisterForm
     {
         public string ReturnUrl { get; set; }
+        public List<string> Summeries { get; set; }
         
-        [Required(ErrorMessage = "Voornaam is verplicht")]
+        [Required(ErrorMessage = "veld is verplicht")]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Email addres is verplicht")]
+        [Required(ErrorMessage = "veld is verplicht")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email address in")]
         public string Email { get; set; }
         
-        [Required (ErrorMessage = "Watchwoord is verplicht")]
+        [Required (ErrorMessage = "veld is verplicht")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
-        [Required]
         [DataType(DataType.Password)]
+        [Required (ErrorMessage = "veld is verplicht")]
         [Compare("Password", ErrorMessage = "Wachtwoorden zijn niet hetzelfde")]
         public string ConfirmPassword { get; set; }
     }
