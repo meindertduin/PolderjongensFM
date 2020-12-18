@@ -2,7 +2,6 @@
   <div>
       <v-card>
         <v-card-title class="text-center">
-          <v-btn class="align-content-end" @click="togglePlaylistDialog">X</v-btn>
         </v-card-title>
               <v-text-field
                   v-model="search"
@@ -20,6 +19,9 @@
             :loading="loading"
             loading-text="Laden..."
         ></v-data-table>
+        <div class="text-center">
+          <v-btn class="ma-4" @click="togglePlaylistDialog">Afsluiten</v-btn>
+        </div>
       </v-card>
   </div>
 </template>

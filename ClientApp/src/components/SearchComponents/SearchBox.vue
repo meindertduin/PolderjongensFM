@@ -7,17 +7,35 @@
           <v-tabs
               v-model="tab"
               fixed-tabs
-              background-color="primary"
               dark
           >
             <v-tab>
-              Zoeken
+              Mijn Spotify
             </v-tab>
             <v-tab>
-              Mijn Spotify
+              Zoeken
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="tab">
+            <!-- refactor to seperate components -->
+            <v-tab-item>
+              <v-card flat>
+                <div v-if="!loading">
+                  <v-expansion-panels accordion class="mb-5">
+                    <v-expansion-panel
+                        v-for="(playlist, i) in this.playlists"
+                        :key="i"
+                    >
+                      <v-expansion-panel-header @click="togglePlaylistDialog(playlist.id, playlist.name)">{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </div>
+                <div class="text-center" v-if="loading">
+                  <v-progress-circular class="ma-4" :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
+                </div>
+              </v-card>
+            </v-tab-item>
+            <!--  -->
             <!-- refactor to seperate components -->
             <v-tab-item>
               <v-card flat>
@@ -38,22 +56,6 @@
                     </v-list-item-group>
                   </v-list>
                 </v-card-text>
-              </v-card>
-            </v-tab-item>
-            <!--  -->
-            <!-- refactor to seperate components -->
-            <v-tab-item>
-              <v-card flat>
-                  <div v-if="!loading">
-                  <v-expansion-panels accordion class="mb-5">
-                      <v-expansion-panel
-                          v-for="(playlist, i) in this.playlists"
-                          :key="i"
-                      >
-                        <v-expansion-panel-header @click="togglePlaylistDialog(playlist.id, playlist.name)">{{ i + 1 }}. {{ playlist.name }}</v-expansion-panel-header>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                  </div>
               </v-card>
             </v-tab-item>
             <!--  -->
@@ -99,8 +101,6 @@ export default class SearchBox extends Vue {
   private tab = null;
   
   created() {
-    this.loading = true;
-    
     this.fetchPlaylists().then(() => {
       this.loading = false;
     })
@@ -163,7 +163,7 @@ export default class SearchBox extends Vue {
     })
   }
 
-  async fetchPlaylists(){
+  private fetchPlaylists(){
     this.playlists.push({ id: "1", name: `${this.userProfile.displayName}'s Top 50 (vier weken)`})
     this.playlists.push({ id: "2", name: `${this.userProfile.displayName}'s Top 50 (zes maanden)`})
     this.playlists.push({ id: "3", name: `${this.userProfile.displayName}'s Top 50 (all-time)`})
@@ -172,6 +172,7 @@ export default class SearchBox extends Vue {
       playlistResponse.data.items.forEach((playlist) => {
         this.playlists.push({ id: playlist.id, name: playlist.name})
       })
+      this.loading = false;
     }).catch((error: any) => {
       console.log(error);
     })
