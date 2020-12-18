@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Auth.Querys;
 using Pjfm.Application.Identity;
 
@@ -19,7 +20,8 @@ namespace Pjfm.WebClient.Pages.Account
         }
         
         public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, 
-            [FromServices] SignInManager<ApplicationUser> signInManager, [FromServices] IMediator mediator)
+            [FromServices] SignInManager<ApplicationUser> signInManager, [FromServices] IMediator mediator,
+            [FromServices] IConfiguration configuration)
         {
             if (ModelState.IsValid == false)
             {
@@ -37,12 +39,12 @@ namespace Pjfm.WebClient.Pages.Account
                     Password = Form.Password,
                 });
 
-                if (loginResult.Error)
+                if (Form.ReturnUrl != null)
                 {
-                    return Page();
+                    return Redirect(Form.ReturnUrl);
                 }
-                
-                return Redirect(Form.ReturnUrl);
+            
+                return Redirect(configuration["AppUrls:ClientBaseUrl"]);
             }
             return Page();
         }
@@ -52,7 +54,7 @@ namespace Pjfm.WebClient.Pages.Account
     {
         public string ReturnUrl { get; set; }
         
-        [Required(ErrorMessage = "Gebruikersnaam is verplicht")]
+        [Required(ErrorMessage = "Voornaam is verplicht")]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Email addres is verplicht")]

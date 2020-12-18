@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
 using System.Threading.Tasks;
-using AutoMapper.Configuration;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Auth.Querys;
-using Pjfm.Application.Spotify.Commands;
 
 namespace Pjfm.WebClient.Pages.Account
 {
@@ -20,7 +17,7 @@ namespace Pjfm.WebClient.Pages.Account
             Form = new LoginForm() {ReturnUrl = returnUrl};
         }
         
-        public async Task<IActionResult> OnPost([FromServices] IMediator mediator)
+        public async Task<IActionResult> OnPost([FromServices] IMediator mediator, [FromServices] IConfiguration configuration)
         {
             if (ModelState.IsValid == false)
             {
@@ -37,8 +34,13 @@ namespace Pjfm.WebClient.Pages.Account
             {
                 return Page();
             }
+
+            if (Form.ReturnUrl != null)
+            {
+                return Redirect(Form.ReturnUrl);
+            }
             
-            return Redirect(Form.ReturnUrl);
+            return Redirect(configuration["AppUrls:ClientBaseUrl"]);
 
         }
     }
