@@ -1,5 +1,8 @@
 ﻿<template>
     <div>
+        <v-alert type="error" v-if="error">
+          {{ errorMessage }}
+        </v-alert>
         <SongInformation/>
         <Queue/>
     </div>
@@ -26,6 +29,14 @@
 
       get radioConnection(){
         return this.$store.getters['playbackModule/radioConnection'];
+      }
+
+      get error(){
+        return this.$store.getters['errorModule/showError'];
+      }
+
+      get errorMessage(){
+        return this.$store.getters['errorModule/errorMessage'];
       }
         
       navigate(uri : string) : void{

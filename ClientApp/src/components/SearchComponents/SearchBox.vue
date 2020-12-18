@@ -148,7 +148,8 @@ export default class SearchBox extends Vue {
     this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
       this.$router.push('/');
     }).catch((error: any) => {
-      console.log(error);
+      this.$store.commit('errorModule/ERROR_ON');
+      this.$store.commit('errorModule/SET_ERROR_MESSAGE', error.response.data.message);
     })
   }
 
