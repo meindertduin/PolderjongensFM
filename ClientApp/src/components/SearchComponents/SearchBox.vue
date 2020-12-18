@@ -1,5 +1,8 @@
 ﻿<template>
   <div>
+        <v-alert type="info" colored-border border="left" color="orange">
+          Je kan momenteel  {{ maxRequestsPerUser }} verzoekjes tegelijk in de wachtrij hebben.
+        </v-alert>
         <v-card>
           <v-tabs
               v-model="tab"
@@ -120,6 +123,10 @@ export default class SearchBox extends Vue {
 
   get playlistDialogActive():boolean{
     return this.$store.getters['profileModule/isPlaylistDialogActive'];
+  }
+
+  get maxRequestsPerUser():number{
+    return this.$store.getters['playbackModule/getMaxRequestsPerUser'];
   }
 
 
