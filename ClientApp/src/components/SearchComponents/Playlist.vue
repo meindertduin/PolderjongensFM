@@ -29,7 +29,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import {Prop} from "vue-property-decorator";
 import {AxiosResponse} from "axios";
-import {trackDto} from "@/common/types";
+import {alertInfo, trackDto, userPlaybackSettings} from "@/common/types";
 
 @Component({
   name: 'Playlist',
@@ -70,9 +70,13 @@ export default class Playlist extends Vue {
   private requestSong(track){
     this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
       this.togglePlaylistDialog();
+      let alert : alertInfo = { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` }
+      this.$store.commit('alertModule/SET_ALERT', alert);
       this.$router.push('/');
     }).catch((error: any) => {
-      console.log(error);
+      let alert : alertInfo = { type: "error", message: error.response.data.message }
+      this.$store.commit('alertModule/SET_ALERT', alert);
+      this.$router.push('/');
     })
   }
   

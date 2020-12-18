@@ -58,6 +58,11 @@ export interface userPlaybackInfo {
     currentPlayingTrack: trackDto,
 }
 
+export interface alertInfo {
+    type: string,
+    message: string,
+}
+
 export interface djPlaybackInfo {
     currentPlayingTrack: trackDto,
     startingTime: string,

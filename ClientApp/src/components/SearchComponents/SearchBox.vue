@@ -1,5 +1,8 @@
 ﻿<template>
   <div>
+        <v-alert type="info" colored-border border="left" color="orange">
+          Je kan momenteel  {{ maxRequestsPerUser }} verzoekjes tegelijk in de wachtrij hebben.
+        </v-alert>
         <v-card>
           <v-tabs
               v-model="tab"
@@ -70,7 +73,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import JQuery from 'jquery'
-import {trackDto} from "@/common/types";
+import {alertInfo, trackDto} from "@/common/types";
 import {AxiosResponse} from "axios";
 import {Watch} from "vue-property-decorator";
 import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
@@ -122,6 +125,10 @@ export default class SearchBox extends Vue {
     return this.$store.getters['profileModule/isPlaylistDialogActive'];
   }
 
+  get maxRequestsPerUser():number{
+    return this.$store.getters['playbackModule/getMaxRequestsPerUser'];
+  }
+
 
   get userProfile(){
     return this.$store.getters['profileModule/userProfile'];
@@ -146,10 +153,13 @@ export default class SearchBox extends Vue {
 
   requestSong(track: trackDto) {
     this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
+      let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
+      this.$store.commit('alertModule/SET_ALERT', alert);
       this.$router.push('/');
     }).catch((error: any) => {
-      this.$store.commit('errorModule/ERROR_ON');
-      this.$store.commit('errorModule/SET_ERROR_MESSAGE', error.response.data.message);
+      let alert : alertInfo = { type: "error", message: error.response.data.message }
+      this.$store.commit('alertModule/SET_ALERT', alert);
+      this.$router.push('/');
     })
   }
 
