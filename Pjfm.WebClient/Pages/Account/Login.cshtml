@@ -14,6 +14,11 @@
                     <img style="max-width: 300px; margin-bottom: 2vh" src="~/images/pjfm.png" />
                 </div>
                 
+                @foreach (var summery in @Model.Form.Summeries)
+                {
+                    <div class="valSpan">@summery</div>
+                }
+                
                 <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
                 <div class="form-group">
                     <a asp-page="/Account/Register" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">Geen account, klik hier om je aan te melden</a>
@@ -25,16 +30,15 @@
                     <input type="email" class="form-control" id="emailForm" placeholder="Uw e-mailaddress *" asp-for="Form.EmailAddress"/>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="passwordForm">Voornaam</label>
+                    <label class="form-label" for="passwordForm">Watchwoord</label>
                     <span class="valSpan" asp-validation-for="Form.Password"></span>
-                    <input type="text" class="form-control" id="passwordForm" placeholder="Uw watchwoord *" asp-for="Form.Password"/>
+                    <input type="password" class="form-control" id="passwordForm" placeholder="Uw watchwoord *" asp-for="Form.Password"/>
                 </div>
                 <div class="form-group">
                     <div class="row justify-content-center">
                         <input type="submit" class="btnSubmit" value="Login"/>
                     </div>
                 </div>
-                
             </form>
         </div>
     </div>

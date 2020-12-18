@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace Pjfm.WebClient.Pages.Account
         
         public void OnGet(string returnUrl)
         {
-            Form = new LoginForm() {ReturnUrl = returnUrl};
+            Form = new LoginForm() {ReturnUrl = returnUrl, Summeries = new List<string>()};
         }
         
         public async Task<IActionResult> OnPost([FromServices] IMediator mediator, [FromServices] IConfiguration configuration)
@@ -32,6 +33,8 @@ namespace Pjfm.WebClient.Pages.Account
 
             if (loginResult.Error)
             {
+                Form.Summeries ??= new List<string>();
+                Form.Summeries.Add("Email of wachtwoord is onjuist");
                 return Page();
             }
 
@@ -48,6 +51,8 @@ namespace Pjfm.WebClient.Pages.Account
     public class LoginForm
     {
         public string ReturnUrl { get; set; }
+        public List<string> Summeries { get; set; }
+
         [Required(ErrorMessage = "Verplicht veld")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email in")]
         public string EmailAddress { get; set; }
