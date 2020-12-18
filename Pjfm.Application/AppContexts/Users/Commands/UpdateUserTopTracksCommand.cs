@@ -77,14 +77,11 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 for (int i = 0; i < updatedTopTracks.Count; i++)
                 {
-                    foreach (var termTopTrack in termTopTracks)
-                    {
-                        termTopTrack.Artists = updatedTopTracks[i].Artists;
-                        termTopTrack.Term = updatedTopTracks[i].Term;
-                        termTopTrack.Title = updatedTopTracks[i].Title;
-                        termTopTrack.TimeAdded = updatedTopTracks[i].TimeAdded;
-                        termTopTrack.SongDurationMs = updatedTopTracks[i].SongDurationMs;
-                    }
+                    termTopTracks[i].Artists = updatedTopTracks[i].Artists;
+                    termTopTracks[i].Term = updatedTopTracks[i].Term;
+                    termTopTracks[i].Title = updatedTopTracks[i].Title;
+                    termTopTracks[i].TimeAdded = updatedTopTracks[i].TimeAdded;
+                    termTopTracks[i].SongDurationMs = updatedTopTracks[i].SongDurationMs;
                 }
             }
             

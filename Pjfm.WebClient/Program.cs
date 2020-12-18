@@ -27,6 +27,7 @@ namespace pjfm
             
             var host = CreateWebHostBuilder(args).Build();
             
+            
             try
             {
                 Log.Information("Starting web host");
