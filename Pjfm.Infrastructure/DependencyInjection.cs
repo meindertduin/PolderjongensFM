@@ -1,8 +1,14 @@
-﻿using IdentityServer4;
+﻿using System;
+using System.Linq;
+using IdentityServer4;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +17,8 @@ using Pjfm.Application.Services;
 using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace Pjfm.Infrastructure
 {
@@ -25,10 +33,17 @@ namespace Pjfm.Infrastructure
             
             services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
             services.AddTransient<IRetrieveStrategy, SpotifyTopTracksRetrieveStrategy>();
+
+            var connectionString = configuration["ConnectionStrings:ApplicationDb"];
             
             services.AddDbContext<AppDbContext>(config =>
             {
-                config.UseInMemoryDatabase("DevIdentity");
+                config.UseMySql(connectionString, 
+                    builder =>
+                    {
+                        builder.MigrationsAssembly("Pjfm.WebClient");
+                        builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                    });
             });
             
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -44,10 +59,10 @@ namespace Pjfm.Infrastructure
                     }
                     else
                     {
-                        options.Password.RequireDigit = true;
+                        options.Password.RequireDigit = false;
                         options.Password.RequiredLength = 8;
-                        options.Password.RequireUppercase = true;
-                        options.Password.RequireLowercase = true;
+                        options.Password.RequireUppercase = false;
+                        options.Password.RequireLowercase = false;
                         options.Password.RequireNonAlphanumeric = false;
                     }
                 })
@@ -61,11 +76,19 @@ namespace Pjfm.Infrastructure
             {
                 identityServiceBuilder.AddConfigurationStore(options =>
                     {
-                        options.ConfigureDbContext = builder => builder.UseInMemoryDatabase("DevIdentity");
+                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        {
+                            builder.MigrationsAssembly("Pjfm.WebClient");
+                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                        });
                     })
                     .AddOperationalStore(options =>
                     {
-                        options.ConfigureDbContext = builder => builder.UseInMemoryDatabase("DevIdentity");
+                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        {
+                            builder.MigrationsAssembly("Pjfm.WebClient");
+                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                        });
                     })
                     .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
                     .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
@@ -73,7 +96,7 @@ namespace Pjfm.Infrastructure
                 
                 identityServiceBuilder.AddDeveloperSigningCredential();
             }
-
+            
             services.AddLocalApiAuthentication();
 
             services.ConfigureApplicationCookie(config =>
