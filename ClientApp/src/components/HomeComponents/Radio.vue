@@ -1,8 +1,6 @@
 ﻿<template>
     <div>
-        <v-alert type="error" v-if="error">
-          {{ errorMessage }}
-        </v-alert>
+        <Alert :key="alertId"/>
         <SongInformation/>
         <Queue/>
     </div>
@@ -14,25 +12,28 @@
     import SongInformation from "@/components/HomeComponents/RadioComponents/SongInformation.vue";
     import Queue from "@/components/HomeComponents/RadioComponents/Queue.vue";
     import {HubConnectionBuilder, TransferFormat, LogLevel, HubConnection} from "@microsoft/signalr";
+    import {Watch} from "vue-property-decorator";
+    import Alert from "@/components/CommonComponents/Alert.vue";
 
     @Component({
         name: 'Radio',
         components: {
             SongInformation,
-            Queue
+            Queue,
+            Alert
         },
     })
     export default class Radio extends Vue {
-        get oidcAuthenticated(){
-            return this.$store.getters['oidcStore/oidcIsAuthenticated'];
-        }
+      get alertId(){
+        return this.$store.getters['alertModule/alertId'];
+      }
+      
+      get oidcAuthenticated(){
+          return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+      }
 
       get radioConnection(){
         return this.$store.getters['playbackModule/radioConnection'];
-      }
-
-      get error(){
-        return this.$store.getters['errorModule/showError'];
       }
 
       get errorMessage(){

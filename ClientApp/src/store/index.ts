@@ -6,6 +6,7 @@ import ProfileModule from "@/store/profileModule";
 import UserSettingsModule from "@/store/userSettingsModule";
 import ModModule from "@/store/modModule";
 import PlaybackModule from "@/store/playbackModule";
+import AlertModule from "@/store/alertModule";
 
 Vue.use(Vuex)
 
@@ -28,5 +29,6 @@ export default new Vuex.Store({
       userSettingsModule: UserSettingsModule,
       modModule: ModModule,
       playbackModule: PlaybackModule,
+      alertModule: AlertModule
   }
 })

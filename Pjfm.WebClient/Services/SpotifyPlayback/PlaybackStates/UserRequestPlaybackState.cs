@@ -42,7 +42,7 @@ namespace Pjfm.WebClient.Services
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
             }
             
-            return Response.Fail($"U heeft al het maximum van {_maxRequestsPerUserAmount} voerzoekjes opgegeven, probeer het later opnieuw", false); }
+            return Response.Fail($"Je zit op het limiet van {_maxRequestsPerUserAmount} verzoekjes per gebruiker. Probeer het later opnieuw.", false); }
 
         public List<TrackDto> GetSecondaryTracks()
         {
