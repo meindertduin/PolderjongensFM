@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Interfaces;
 using Pjfm.WebClient.Services;
+using Serilog;
 
 namespace pjfm.Controllers
 {
@@ -78,7 +80,14 @@ namespace pjfm.Controllers
                 var removed = _playbackListenerManager.TryRemoveTimedListener(user.Id);
                 if (removed)
                 {
-                    await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken);
+                    try
+                    {
+                        await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                    }
                 }
             }
             

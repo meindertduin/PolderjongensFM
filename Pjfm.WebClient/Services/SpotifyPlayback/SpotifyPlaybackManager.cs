@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
@@ -86,7 +88,7 @@ namespace Pjfm.WebClient.Services
         private async void TimerDone(object stateInfo)
         {
             _trackTimerAutoEvent.Set();
-            
+
             if (_trackTimer != null)
             {
                 var nextTrackDuration = await PlayNextTrack();
@@ -136,18 +138,25 @@ namespace Pjfm.WebClient.Services
             try
             {
                 var nextTrack = await _playbackQueue.GetNextQueuedTrack();
-            
-                CurrentPlayingTrack = nextTrack;
-                CurrentTrackStartTime = DateTime.Now;
+                if (nextTrack != null)
+                {
+                    CurrentPlayingTrack = nextTrack;
+                    CurrentTrackStartTime = DateTime.Now;
 
-                await PlayTrackForAll(nextTrack);
-                NotifyObserversPlayingStatus(_isCurrentlyPlaying);
-            
-                return nextTrack.SongDurationMs;
+                    await PlayTrackForAll(nextTrack);
+                    NotifyObserversPlayingStatus(_isCurrentlyPlaying);
+
+                    if (nextTrack.SongDurationMs > 0)
+                    {
+                        return nextTrack.SongDurationMs;
+                    }
+                }
+
+                throw new InvalidDataException(nameof(nextTrack));
             }
             catch (Exception e)
             {
-                Log.Error("fillertracks could not be loaded due to an error");
+                Log.Error(e.Message);
                 await HandlePlaybackErrorShutdown("Playback is afgesloten, kon geen volgend nummer verkrijgen.");
                 return 0;
             }

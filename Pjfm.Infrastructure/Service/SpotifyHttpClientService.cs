@@ -29,6 +29,7 @@ namespace Pjfm.Application.Services
             _serviceProvider = serviceProvider;
             _retryPolicy = Policy
                 .Handle<InvalidOperationException>()
+                .Or<HttpRequestException>()
                 .WaitAndRetry(
                     MaxRequestRetries, 
                     retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), 
