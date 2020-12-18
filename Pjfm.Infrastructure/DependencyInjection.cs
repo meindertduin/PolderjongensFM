@@ -59,10 +59,10 @@ namespace Pjfm.Infrastructure
                     }
                     else
                     {
-                        options.Password.RequireDigit = true;
+                        options.Password.RequireDigit = false;
                         options.Password.RequiredLength = 8;
-                        options.Password.RequireUppercase = true;
-                        options.Password.RequireLowercase = true;
+                        options.Password.RequireUppercase = false;
+                        options.Password.RequireLowercase = false;
                         options.Password.RequireNonAlphanumeric = false;
                     }
                 })
