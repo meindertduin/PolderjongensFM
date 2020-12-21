@@ -65,6 +65,7 @@ namespace Pjfm.Application.Spotify.Commands
                         if (resultContent != null)
                         {
                             user.SpotifyAccessToken = resultContent.AccessToken;
+                            await _appDbContext.SaveChangesAsync(cancellationToken);
                             return Response.Ok("Accesstoken successfully retireved", resultContent.AccessToken);
                         }
                     }
