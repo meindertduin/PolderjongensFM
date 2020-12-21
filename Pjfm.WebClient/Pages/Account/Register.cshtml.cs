@@ -39,13 +39,14 @@ namespace Pjfm.WebClient.Pages.Account
                     EmailAddress = Form.Email,
                     Password = Form.Password,
                 });
+                
+                var authorizationUrl = "https://accounts.spotify.com/authorize" + 
+                    "?client_id=ebc49acde46148eda6128d944c067b5d" + 
+                    "&response_type=code" +
+                    $@"&redirect_uri={configuration["AppUrls:ApiBase"]}/api/spotify/account/callback" + 
+                    "&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative";
 
-                if (Form.ReturnUrl != null)
-                {
-                    return Redirect(Form.ReturnUrl);
-                }
-            
-                return Redirect(configuration["AppUrls:ClientBaseUrl"]);
+                return Redirect(authorizationUrl);
             }
 
             Form.Summeries ??= new List<string>();

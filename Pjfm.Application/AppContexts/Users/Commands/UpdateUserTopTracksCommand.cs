@@ -15,6 +15,7 @@ using Pjfm.Domain.Converters;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
+using Serilog;
 
 namespace Pjfm.Application.Spotify.Commands
 {
@@ -28,6 +29,7 @@ namespace Pjfm.Application.Spotify.Commands
         private readonly IAppDbContext _ctx;
         private readonly IRetrieveStrategy _retrieveStrategy;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
+        private const int TopTracksRetrievalCount = 150;
 
         public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, IRetrieveStrategy retrieveStrategy, 
             ISpotifyBrowserService spotifyBrowserService)
@@ -43,7 +45,7 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 return Response.Fail<string>("User has no refresh token");
             }
-
+            
             List<TopTrack> updatedTopTracks = new List<TopTrack>();
             
             for (int i = 0; i < 3; i++)
@@ -73,10 +75,11 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
             }
-            else
+            else if(updatedTopTracks.Count == TopTracksRetrievalCount)
             {
                 for (int i = 0; i < updatedTopTracks.Count; i++)
                 {
+                    termTopTracks[i].SpotifyTrackId = updatedTopTracks[i].SpotifyTrackId;
                     termTopTracks[i].Artists = updatedTopTracks[i].Artists;
                     termTopTracks[i].Term = updatedTopTracks[i].Term;
                     termTopTracks[i].Title = updatedTopTracks[i].Title;
@@ -84,10 +87,15 @@ namespace Pjfm.Application.Spotify.Commands
                     termTopTracks[i].SongDurationMs = updatedTopTracks[i].SongDurationMs;
                 }
             }
+            else
+            {
+                _ctx.TopTracks.RemoveRange(termTopTracks);
+                Log.Error($@"Error while trying to update users toptracks of user with userId: {request.User.Id}. As a result the toptracks of user are deleted and have to be re-updated.");
+            }
             
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            return Response.Ok("succeeded", "topt racks have been saved to the database");
+            return Response.Ok("}succeeded", "topt racks have been saved to the database");
         }
     }
 }
