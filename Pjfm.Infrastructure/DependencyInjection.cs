@@ -17,6 +17,7 @@ using Pjfm.Application.Services;
 using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
+using pjfm.Services;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 
@@ -72,6 +73,8 @@ namespace Pjfm.Infrastructure
             var identityServiceBuilder = services.AddIdentityServer();
             identityServiceBuilder.AddAspNetIdentity<ApplicationUser>();
 
+            identityServiceBuilder.AddProfileService<ProfileService>();
+            
             if (webHostEnvironment.IsDevelopment())
             {
                 identityServiceBuilder.AddConfigurationStore(options =>
@@ -94,7 +97,8 @@ namespace Pjfm.Infrastructure
                     .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
                     .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
                 
-                identityServiceBuilder.AddDeveloperSigningCredential();
+                identityServiceBuilder
+                    .AddDeveloperSigningCredential();
             }
             
             services.AddLocalApiAuthentication();
