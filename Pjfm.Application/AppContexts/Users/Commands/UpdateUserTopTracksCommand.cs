@@ -77,6 +77,7 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 for (int i = 0; i < updatedTopTracks.Count; i++)
                 {
+                    termTopTracks[i].SpotifyTrackId = updatedTopTracks[i].SpotifyTrackId;
                     termTopTracks[i].Artists = updatedTopTracks[i].Artists;
                     termTopTracks[i].Term = updatedTopTracks[i].Term;
                     termTopTracks[i].Title = updatedTopTracks[i].Title;
