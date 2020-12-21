@@ -10,6 +10,8 @@ namespace Pjfm.Application.Services
         Task<HttpResponseMessage> GetUserTopTracks(string userId, string accessToken, int term);
         Task<HttpResponseMessage> Search(string userId, string accessToken, SearchRequestDto searchRequestInfo);
         Task<HttpResponseMessage> GetTrackInfo(string userId, string accessToken, string trackId);
+        
+        Task<HttpResponseMessage> Me(string userId, string accessToken);
 
         Task<HttpResponseMessage> GetUserPlaylists(string userId, string accessToken,
             PlaylistRequestDto playlistRequest);

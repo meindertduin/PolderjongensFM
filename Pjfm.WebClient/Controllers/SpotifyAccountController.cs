@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Configuration;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Services;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
 
@@ -22,13 +23,16 @@ namespace pjfm.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAppDbContext _ctx;
+        private readonly ISpotifyBrowserService _spotifyBrowserService;
 
-        public SpotifyAccountController(IMediator mediator, 
+        public SpotifyAccountController(IMediator mediator,
+            ISpotifyBrowserService spotifyBrowserService,
             IConfiguration configuration, 
             UserManager<ApplicationUser> userManager,
             IAppDbContext ctx)
         {
             _mediator = mediator;
+            _spotifyBrowserService = spotifyBrowserService;
             _configuration = configuration;
             _userManager = userManager;
             _ctx = ctx;
@@ -92,6 +96,19 @@ namespace pjfm.Controllers
             }
 
             return BadRequest();
+        }
+        
+        [HttpGet("me")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        public async Task<IActionResult> Me()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var topTracksResult = await _spotifyBrowserService.Me(user.Id, user.SpotifyAccessToken);
+
+            var content = await topTracksResult.Content.ReadAsStringAsync();
+            
+            return Ok(content);
         }
     }
 }

@@ -60,6 +60,19 @@ namespace Pjfm.Application.Services
             return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
         }
 
+        public Task<HttpResponseMessage> Me(string userId, string accessToken)
+        {
+            var request = new HttpRequestMessage();
+            
+            request.Method = HttpMethod.Get;
+            
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/me");
+            
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+        }
+
         public Task<HttpResponseMessage> GetUserPlaylists(string userId, string accessToken, PlaylistRequestDto playlistRequest)
         {
             var request = new HttpRequestMessage();
@@ -100,7 +113,7 @@ namespace Pjfm.Application.Services
 
             return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
         }
-        
+
         // Overload with pagination support
         public Task<HttpResponseMessage> CustomRequest(string userId, string accessToken, Uri nextUri)
         {
