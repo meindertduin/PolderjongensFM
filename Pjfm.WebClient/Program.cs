@@ -26,17 +26,6 @@ namespace pjfm
                 .CreateLogger();
             
             var host = CreateWebHostBuilder(args).Build();
-
-            using (var scope = host.Services.CreateScope())
-            {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-                var me = userManager.FindByNameAsync("meindert@mail.com").GetAwaiter().GetResult();
-                userManager.AddClaimAsync(me,
-                    new Claim(ApplicationIdentityConstants.Claims.Role, 
-                        ApplicationIdentityConstants.Roles.Mod));
-
-            }
             
             
             try

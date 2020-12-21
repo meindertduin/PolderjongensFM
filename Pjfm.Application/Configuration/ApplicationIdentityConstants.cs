@@ -11,11 +11,13 @@
         public struct Claims
         {
             public const string Role = nameof(Role);
+            public const string SpAuth = nameof(SpAuth);
         }
 
         public struct Roles
         {
             public const string Mod = nameof(Mod);
+            public const string Auth = nameof(Auth);
         }
     }
 }
