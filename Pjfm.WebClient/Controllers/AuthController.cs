@@ -47,7 +47,7 @@ namespace pjfm.Controllers
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> GetUserProfile()
         {
-            var response = await _mediator.Send(new UserProfileQuery()
+            var response = await _mediator.Send(new IdentityProfileQuery()
             {
                 UserClaimPrincipal = HttpContext.User,
             });

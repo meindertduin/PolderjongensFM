@@ -1,4 +1,5 @@
-﻿
+﻿import {vuexOidcUtils} from "vuex-oidc";
+import parseJwt = vuexOidcUtils.parseJwt;
 
 
 export default (store:any, vuexNamespace:any) => {
@@ -6,12 +7,24 @@ export default (store:any, vuexNamespace:any) => {
         store.dispatch((vuexNamespace ? vuexNamespace + '/' : '') + 'oidcCheckAccess', to)
             .then((hasAccess:boolean) => {
                 if (hasAccess) {
-                    const isSpotifyAuthenticated = store.getters["profileModule/isSpotifyAuthenticated"];
-                    if (isSpotifyAuthenticated){
-                        next()
-                    } else{
-                        window.location.href = "https://localhost:5001/api/spotify/account/authenticate"
+                    if (to.meta.requiresSpotAuth){
+                        if (store.getters["profileModule/userProfile"] !== null){
+                            console.log(store.getters["profileModule/isSpotifyAuthenticated"])
+
+                            if (store.getters["profileModule/isSpotifyAuthenticated"]){
+                                next()
+                            }
+                            else{
+                                window.location.href = "https://localhost:5001/api/spotify/account/authenticate"
+                                //window.location.href = "https://localhost:5001"
+                            }
+                        }
+                        else {
+                            window.location.href = "https://localhost:8085";
+                        }
                     }
+                    
+                    next()
                 }
             })
     }

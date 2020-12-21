@@ -76,3 +76,9 @@ export interface userPlaybackSettings {
     isPlaying: boolean,
     maxRequestsPerUser: number,
 }
+
+export interface identityProfile {
+    userProfile: applicationUser,
+    isMod: boolean,
+    isSpotifyAuthenticated: boolean
+}

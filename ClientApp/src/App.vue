@@ -94,7 +94,6 @@ export default class App extends Vue{
   
   @Watch('accessToken')
   setAxiosInterceptor(newValue:any, oldValue:any){
-    console.log(parseJwt(newValue));
       this.$axios.interceptors.request.use(
               (config:any) => {
                 config.headers.common["Authorization"] = `Bearer ${newValue}`;
@@ -102,8 +101,6 @@ export default class App extends Vue{
                 return config;
             },        
       )
-
-    this.$store.commit("profileModule/SET_USER_CLAIMS", parseJwt(newValue));
     this.$store.dispatch('profileModule/getUserProfile');
   }
   

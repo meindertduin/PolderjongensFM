@@ -17,7 +17,7 @@ const routes: Array<RouteConfig> = [
     name: 'App',
     component: AppView,
     meta: {
-      isPublic: false,
+      isPublic: true,
     }
   },
   {
@@ -26,6 +26,7 @@ const routes: Array<RouteConfig> = [
     component: Search,
     meta: {
       isPublic: false,
+      requiresSpotAuth: true,
     }
   },
   {
@@ -38,7 +39,7 @@ const routes: Array<RouteConfig> = [
     name: 'OidcCallback',
     component: OidcCallback,
     meta: {
-      isPublic: false,
+      isPublic: true,
     }
   },
   {
@@ -46,7 +47,7 @@ const routes: Array<RouteConfig> = [
     name: 'oidcCallbackError',
     component: OidcCallbackError,
     meta: {
-      isPublic: false,
+      isPublic: true,
     }
   },
 ]

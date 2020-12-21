@@ -1,28 +1,24 @@
 ﻿import axios from '@/plugins/axios';
 
 import { GetterTree, MutationTree, ActionTree } from "vuex"
-import {applicationUser} from "@/common/types";
+import {applicationUser, identityProfile} from "@/common/types";
 
 class State {
-    public userProfile: applicationUser | null = null;
+    public userProfile: identityProfile | null = null;
     public playlistDialog : boolean = false
     public isMod : boolean = false;
     public isSpotifyAuthenticated: boolean = false;
 }
 
 const mutations = <MutationTree<State>>{
-    SET_USER_PROFILE: (state, profile:applicationUser) => state.userProfile = profile,
-    SET_USER_CLAIMS: (state, claims) => {
-        if(claims.Role === "Mod") state.isMod = true;
-        if (claims.SpStatus === "Auth") state.isSpotifyAuthenticated = true;
-    },
+    SET_USER_PROFILE: (state, profile:identityProfile) => state.userProfile = profile,
     TOGGLE_PLAYLIST_DIALOG: state => state.playlistDialog = !state.playlistDialog,
 }
 
 const getters = <GetterTree<State, any>>{
-    userProfile: (state) => state.userProfile,
-    isMod: state => state.isMod,
-    isSpotifyAuthenticated: state => state.isSpotifyAuthenticated,
+    userProfile: (state) => state.userProfile? state.userProfile.userProfile : null,
+    isMod: state => state.userProfile? state.userProfile.isMod: false,
+    isSpotifyAuthenticated: state => state.userProfile? state.userProfile.isSpotifyAuthenticated: false,
     isPlaylistDialogActive: state => state.playlistDialog,
 }
 
@@ -37,6 +33,7 @@ const actions = <ActionTree<State, any>>{
                 }
             })
             .then(({data}) => {
+                console.log(data);
                 context.commit('SET_USER_PROFILE', data.data)
             })
             .catch(err => console.log(err));
