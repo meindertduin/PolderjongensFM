@@ -93,6 +93,13 @@ export default class AppSideBar extends Vue{
   
   private sideBarOpen:boolean = false;
   
+  @Watch("sideBarOpen")
+  onSideBarOpenChange(newValue:boolean){
+    if (!newValue){
+      this.$store.commit("userSettingsModule/SET_SIDE_BAR", false);
+    }
+  }
+  
   get oidcAuthenticated():any|null{
     return this.$store.getters['oidcStore/oidcIsAuthenticated'];
   }

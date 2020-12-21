@@ -1,7 +1,6 @@
 ﻿import { GetterTree, MutationTree, ActionTree } from "vuex"
 import {defaultSettings} from "@/common/objects";
 import {userSettings} from "@/common/types"
-import get = Reflect.get;
 
 class State {
     public sideBarOpen:boolean = false;
@@ -9,6 +8,7 @@ class State {
 
 const mutations = <MutationTree<State>>{
     TOGGLE_SIDE_BAR: state => state.sideBarOpen = ! state.sideBarOpen,
+    SET_SIDE_BAR: (state, isOpen:boolean) => state.sideBarOpen = isOpen, 
 }
 
 const getters = <GetterTree<State, any>>{
