@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Pjfm.Application.Configuration;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
@@ -13,7 +15,7 @@ using Pjfm.Domain.Interfaces;
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/spotify/account")]
+        [Route("api/spotify/account")]
     public class SpotifyAccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -30,6 +32,19 @@ namespace pjfm.Controllers
             _configuration = configuration;
             _userManager = userManager;
             _ctx = ctx;
+        }
+
+        [HttpGet("authenticate")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        public IActionResult InitializeAuthentication()
+        {
+            var authorizationUrl = "https://accounts.spotify.com/authorize" + 
+                                   "?client_id=ebc49acde46148eda6128d944c067b5d" + 
+                                   "&response_type=code" +
+                                   $@"&redirect_uri={_configuration["AppUrls:ApiBaseUrl"]}/api/spotify/account/callback" + 
+                                   "&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative";
+
+            return Redirect(authorizationUrl);
         }
         
         
@@ -65,6 +80,13 @@ namespace pjfm.Controllers
             
                 if (setTopTracksResult.Error == false)
                 {
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+                    if (userClaims.Any(x => x.Type == SpotifyIdentityConstants.Claims.SpStatus && x.Value == SpotifyIdentityConstants.Roles.Auth) == false)
+                    {
+                        await _userManager.AddClaimAsync(user,
+                            new Claim(SpotifyIdentityConstants.Claims.SpStatus, SpotifyIdentityConstants.Roles.Auth));
+                    }
+                    
                     return Redirect("https://localhost:8085");
                 }
             }

@@ -7,17 +7,22 @@ class State {
     public userProfile: applicationUser | null = null;
     public playlistDialog : boolean = false
     public isMod : boolean = false;
+    public isSpotifyAuthenticated: boolean = false;
 }
 
 const mutations = <MutationTree<State>>{
     SET_USER_PROFILE: (state, profile:applicationUser) => state.userProfile = profile,
-    SET_USER_MOD_STATE: (state, value:boolean) => state.isMod = value,
+    SET_USER_CLAIMS: (state, claims) => {
+        if(claims.Role === "Mod") state.isMod = true;
+        if (claims.SpStatus === "Auth") state.isSpotifyAuthenticated = true;
+    },
     TOGGLE_PLAYLIST_DIALOG: state => state.playlistDialog = !state.playlistDialog,
 }
 
 const getters = <GetterTree<State, any>>{
     userProfile: (state) => state.userProfile,
     isMod: state => state.isMod,
+    isSpotifyAuthenticated: state => state.isSpotifyAuthenticated,
     isPlaylistDialogActive: state => state.playlistDialog,
 }
 
@@ -36,20 +41,6 @@ const actions = <ActionTree<State, any>>{
             })
             .catch(err => console.log(err));
     },
-    loadModState(context){
-        axios.get('api/auth/mod',
-            {
-                baseURL: process.env.VUE_APP_API_BASE_URL,
-                withCredentials: true,
-                headers: {
-                    authorization: `Bearer ${context.rootState.oidcStore.access_token}`
-                }
-            })
-            .then((response) => {
-                context.commit('SET_USER_MOD_STATE', response.data);
-            })
-            .catch((err) => console.log(err));
-    }
 }
 
 const ProfileModule = {
