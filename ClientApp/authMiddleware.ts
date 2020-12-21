@@ -1,6 +1,3 @@
-﻿import {vuexOidcUtils} from "vuex-oidc";
-import parseJwt = vuexOidcUtils.parseJwt;
-
 
 export default (store:any, vuexNamespace:any) => {
     return (to, from, next) => {

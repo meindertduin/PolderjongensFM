@@ -6,7 +6,7 @@
     >
         <span class="overline grey--text">Not Included</span><br>
         <div class="text-center">
-            <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
+          <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>
         </div>
         <v-list dense v-if="selectableUsers.length > 0 && !loading">
             <v-list-item-group>
