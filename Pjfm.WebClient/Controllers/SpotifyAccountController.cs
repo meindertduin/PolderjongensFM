@@ -15,7 +15,7 @@ using Pjfm.Domain.Interfaces;
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/spotify/account")]
+        [Route("api/spotify/account")]
     public class SpotifyAccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -34,7 +34,7 @@ namespace pjfm.Controllers
             _ctx = ctx;
         }
 
-        [HttpGet]
+        [HttpGet("authenticate")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public IActionResult InitializeAuthentication()
         {

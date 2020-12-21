@@ -24,6 +24,8 @@ import ModServerMessageHandler from "@/components/ModComponents/ModServerMessage
 import AppSideBar from "@/components/CommonComponents/AppSideBar.vue";
 import AppBar from "@/components/CommonComponents/AppBar.vue";
 import AppBottomBar from "@/components/CommonComponents/AppBottomBar.vue";
+import {vuexOidcUtils} from "vuex-oidc";
+import parseJwt = vuexOidcUtils.parseJwt;
 
 @Component({
   name: 'App',
@@ -92,6 +94,7 @@ export default class App extends Vue{
   
   @Watch('accessToken')
   setAxiosInterceptor(newValue:any, oldValue:any){
+    console.log(parseJwt(newValue));
       this.$axios.interceptors.request.use(
               (config:any) => {
                 config.headers.common["Authorization"] = `Bearer ${newValue}`;
@@ -99,10 +102,11 @@ export default class App extends Vue{
                 return config;
             },        
       )
-      this.$store.dispatch('profileModule/loadModState');
 
-    this.$store.dispatch('profileModule/loadModState');
+    this.$store.commit("profileModule/SET_USER_CLAIMS", parseJwt(newValue));
     this.$store.dispatch('profileModule/getUserProfile');
   }
+  
+  
 }
 </script>
