@@ -63,14 +63,17 @@ namespace pjfm.Hubs
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-            
-            await _playbackListenerManager.AddListener(user);
 
-            if (minutes != 0)
+            if (user.SpotifyAuthenticated)
             {
-                _playbackListenerManager.TrySetTimedListener(user.Id, minutes, Context.ConnectionId);
-                await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
-                await Clients.Caller.SendAsync("IsConnected", true);
+                await _playbackListenerManager.AddListener(user);
+
+                if (minutes != 0)
+                {
+                    _playbackListenerManager.TrySetTimedListener(user.Id, minutes, Context.ConnectionId);
+                    await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
+                    await Clients.Caller.SendAsync("IsConnected", true);
+                }
             }
         }
 

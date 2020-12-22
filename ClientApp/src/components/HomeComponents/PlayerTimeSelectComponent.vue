@@ -19,7 +19,7 @@
                   ></span>
         </v-col>
         <v-col class="text-right">
-          <v-btn color="orange darken-1" dark depressed fab @click="connectWithPlayer">
+          <v-btn color="orange darken-1" dark depressed fab @click="initializePlayerConnection">
             <v-icon large>
               mdi-play
             </v-icon>
@@ -83,23 +83,43 @@ export default class PlayerTimeSelectComponent extends Vue {
       return `${hours} uur`
   }
   
+  get loggedInUserProfile(){
+    return this.$store.getters["profileModule/userProfile"];
+  }
+  
   getSelectedMinutes():number{
     return Math.floor(Math.pow(this.sliderUnit / 40, 2));
   }
   
-  connectWithPlayer(){
+  
+  initializePlayerConnection(){
     const minutes = this.getSelectedMinutes();
     if (minutes <= 0) return;
     
+    // checks before connecting if user is spotify authenticated
+    if (this.loggedInUserProfile !== null){
+      const userSpotifyAuthenticated: boolean = this.$store.getters["profileModule/isSpotifyAuthenticated"];
+      if (userSpotifyAuthenticated){
+        // connects with player when user is authenticated
+        this.connectWithPlayer(minutes);
+      }
+      else{
+        // redirects to authenticate user spotify
+        window.location.href = "https://localhost:5001/api/spotify/account/authenticate"
+      }
+    }
+  }
+  
+  connectWithPlayer(minutes: number){
     this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", minutes)
         .then(() => {
           this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);
           console.log("connection started with player")
         })
         .catch((err) => console.log(err))
-      .finally(() => {
-        this.togglePlayerTimerOverlay();
-      });
+        .finally(() => {
+          this.togglePlayerTimerOverlay();
+        });
   }
   
   increment(){
