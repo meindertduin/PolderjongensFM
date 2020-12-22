@@ -43,6 +43,7 @@ namespace Pjfm.Application.Auth.Querys
                 {
                     UserProfile = new UserProfileViewModel()
                     {
+                        Id = user.Id,
                         DisplayName = user.DisplayName,
                         Email = user.Email,
                     },

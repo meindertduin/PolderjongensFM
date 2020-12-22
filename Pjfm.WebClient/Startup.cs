@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using AutoMapper;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -9,7 +7,6 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SpaServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,23 +14,18 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pjfm.Application;
 using Pjfm.Application.Common;
-using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
-using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Persistence;
-using Pjfm.Infrastructure.Service;
 using pjfm.Models;
 using pjfm.Services;
 using Pjfm.WebClient.Services;
 using Polly;
 using Polly.Extensions.Http;
-using Polly.Retry;
 using Serilog;
-using VueCliMiddleware;
 
 namespace pjfm
 {

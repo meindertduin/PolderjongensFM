@@ -20,6 +20,7 @@ const getters = <GetterTree<State, any>>{
     isMod: state => state.userProfile? state.userProfile.isMod: false,
     isSpotifyAuthenticated: state => state.userProfile? state.userProfile.isSpotifyAuthenticated: false,
     isPlaylistDialogActive: state => state.playlistDialog,
+    userId: state => state.userProfile? state.userProfile.userProfile.id : null,
 }
 
 const actions = <ActionTree<State, any>>{
