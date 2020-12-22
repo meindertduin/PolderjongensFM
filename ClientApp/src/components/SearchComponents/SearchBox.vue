@@ -1,7 +1,7 @@
 ﻿<template>
   <div>
-        <v-alert type="info" colored-border border="left" color="orange">
-          Je kan momenteel  {{ maxRequestsPerUser }} verzoekjes tegelijk in de wachtrij hebben.
+        <v-alert v-if="userIsMod === false" type="info" colored-border border="left" color="orange">
+          Je hebt momenteel {{userRequestedAmount}} / {{ maxRequestsPerUser }} van het maximaal aantal verzoekjes in de wachtrij staan.
         </v-alert>
         <v-card>
           <v-tabs
@@ -121,6 +121,10 @@ export default class SearchBox extends Vue {
     this.activePlaylistName = playlistName;
   }
 
+  get userIsMod():boolean{
+    return this.$store.getters["profileModule/isMod"]
+  }
+  
   get playlistDialogActive():boolean{
     return this.$store.getters['profileModule/isPlaylistDialogActive'];
   }
@@ -129,6 +133,9 @@ export default class SearchBox extends Vue {
     return this.$store.getters['playbackModule/getMaxRequestsPerUser'];
   }
 
+  get userRequestedAmount():number{
+    return this.$store.getters['profileModule/userRequestedAmount'];
+  }
 
   get userProfile(){
     return this.$store.getters['profileModule/userProfile'];

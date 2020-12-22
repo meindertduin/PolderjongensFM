@@ -26,7 +26,7 @@ class State {
     
     public playbackState: playbackState | null = null;
     public maxRequestsPerUser: number | null = null;
-    
+
 }
 
 const mutations = <MutationTree<State>>{
@@ -61,6 +61,8 @@ const mutations = <MutationTree<State>>{
         
         state.subscribeEndDate = subscribeEndDate;
     },
+
+
 }
 
 const getters = <GetterTree<State, any>>{
@@ -81,10 +83,11 @@ const getters = <GetterTree<State, any>>{
     // playback settings
     getPlaybackState: state => state.playbackState,
     getMaxRequestsPerUser: state => state.maxRequestsPerUser,
+
 }
 
 const actions = <ActionTree<State, any>>{
-    
+
 }
 
 const PlaybackModule = {

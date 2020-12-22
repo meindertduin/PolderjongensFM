@@ -1,7 +1,6 @@
 ﻿export interface applicationUser {
     id: string,
     displayName: string,
-    email: string,
     member: boolean,
 }
 
@@ -22,7 +21,7 @@ export interface trackDto{
     term: number,
     trackType: number,
     songDurationMs: number,
-    applicationUserId: string,
+    user: applicationUser,
 }
 
 export interface playbackSettings {

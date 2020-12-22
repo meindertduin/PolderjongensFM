@@ -1,18 +1,21 @@
 ﻿import axios from '@/plugins/axios';
 
 import { GetterTree, MutationTree, ActionTree } from "vuex"
-import {applicationUser, identityProfile} from "@/common/types";
+import {applicationUser, identityProfile, trackDto} from "@/common/types";
 
 class State {
     public userProfile: identityProfile | null = null;
     public playlistDialog : boolean = false
     public isMod : boolean = false;
     public isSpotifyAuthenticated: boolean = false;
+
+    public userRequestedTracksAmount: number = 0;
 }
 
 const mutations = <MutationTree<State>>{
     SET_USER_PROFILE: (state, profile:identityProfile) => state.userProfile = profile,
     TOGGLE_PLAYLIST_DIALOG: state => state.playlistDialog = !state.playlistDialog,
+    SET_USER_REQUESTED_AMOUNT: (state, amount:number) => state.userRequestedTracksAmount = amount,
 }
 
 const getters = <GetterTree<State, any>>{
@@ -21,6 +24,7 @@ const getters = <GetterTree<State, any>>{
     isSpotifyAuthenticated: state => state.userProfile? state.userProfile.isSpotifyAuthenticated: false,
     isPlaylistDialogActive: state => state.playlistDialog,
     userId: state => state.userProfile? state.userProfile.userProfile.id : null,
+    userRequestedAmount: state => state.userRequestedTracksAmount,
 }
 
 const actions = <ActionTree<State, any>>{
@@ -34,11 +38,26 @@ const actions = <ActionTree<State, any>>{
                 }
             })
             .then(({data}) => {
-                console.log(data);
-                context.commit('SET_USER_PROFILE', data.data)
+                const profile:identityProfile = data.data;
+                context.commit('SET_USER_PROFILE', profile)
+                context.dispatch("tryCalculateRequestedAmount")
+                    .catch((err) => console.log(err));
             })
             .catch(err => console.log(err));
     },
+    tryCalculateRequestedAmount(context):void{
+        const secondaryTracks: Array<trackDto> = context.rootGetters["playbackModule/getSecondaryQueuedTracks"];
+        const userId = context.getters["userId"]
+
+        if (secondaryTracks.length > 0 && userId !== null){
+            const userRequestedAmount = secondaryTracks
+                .filter(track => {
+                    return track.user.id === userId;
+                })
+                .length;
+            context.commit("SET_USER_REQUESTED_AMOUNT", userRequestedAmount);
+        }
+    }
 }
 
 const ProfileModule = {
