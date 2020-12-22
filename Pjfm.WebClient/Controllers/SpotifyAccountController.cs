@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,16 +9,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using Pjfm.Application.Configuration;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
+using pjfm.Models;
 
 namespace pjfm.Controllers
 {
     [ApiController]
-        [Route("api/spotify/account")]
+    [Route("api/spotify/account")]
     public class SpotifyAccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -25,6 +29,11 @@ namespace pjfm.Controllers
         private readonly IAppDbContext _ctx;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
 
+        private const int StateStringLength = 30;
+
+        private static ConcurrentDictionary<string, CachedAuthenticationState> _cachedStates =
+            new ConcurrentDictionary<string, CachedAuthenticationState>();
+        
         public SpotifyAccountController(IMediator mediator,
             ISpotifyBrowserService spotifyBrowserService,
             IConfiguration configuration, 
@@ -40,11 +49,40 @@ namespace pjfm.Controllers
 
         [HttpGet("authenticate")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public IActionResult InitializeAuthentication()
+        public async Task<IActionResult> InitializeAuthentication()
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+            {
+                return Forbid();
+            }
+            
+            var state = GenerateStateString();
+
+            if (_cachedStates.ContainsKey(user.Id))
+            {
+                var removeResult=  _cachedStates.TryRemove(user.Id, out var cachedAuthenticationState);
+                if (removeResult == false)
+                {
+                    return StatusCode(500);
+                }
+            }
+
+            var addResult = _cachedStates.TryAdd(user.Id, new CachedAuthenticationState()
+            {
+                State = state,
+                TimeCached = DateTime.Now,
+            });
+
+            if (addResult == false)
+            {
+                return StatusCode(500);
+            }
+            
             var authorizationUrl = "https://accounts.spotify.com/authorize" + 
                                    "?client_id=ebc49acde46148eda6128d944c067b5d" + 
                                    "&response_type=code" +
+                                   $"&state={state}" + 
                                    $@"&redirect_uri={_configuration["AppUrls:ApiBaseUrl"]}/api/spotify/account/callback" + 
                                    "&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative";
 
@@ -61,7 +99,19 @@ namespace pjfm.Controllers
 
             if (user == null || trackedUserProfile == null)
             {
-                Forbid();
+                return Forbid();
+            }
+
+            var removeResult=  _cachedStates.TryRemove(user.Id, out var cachedAuthenticationState);
+            if (removeResult == false)
+            {
+                return Forbid();
+            }
+
+            if (state != cachedAuthenticationState.State || 
+                DateTime.Now - cachedAuthenticationState.TimeCached > TimeSpan.FromSeconds(60))
+            {
+                return Forbid();
             }
 
             var result = await _mediator.Send(new AccessTokensRequestCommand()
@@ -97,6 +147,11 @@ namespace pjfm.Controllers
 
             return BadRequest();
         }
+
+        private void EmptyUnUsedCachedStates()
+        {
+            
+        }
         
         [HttpGet("me")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
@@ -109,6 +164,15 @@ namespace pjfm.Controllers
             var content = await topTracksResult.Content.ReadAsStringAsync();
             
             return Ok(content);
+        }
+
+        private string GenerateStateString()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var rand = new Random();
+
+            return new String(Enumerable.Repeat(chars, StateStringLength)
+                .Select(s => s[rand.Next(s.Length)]).ToArray());
         }
     }
 }
