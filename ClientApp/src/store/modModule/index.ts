@@ -23,7 +23,9 @@ const mutations = <MutationTree<State>>{
     SET_INCLUDED_USERS: (state, users: Array<applicationUser>) => state.includedUsers = users,
     ADD_INCLUDED_USER: (state, user: applicationUser) => state.includedUsers.push(user),
     REMOVE_INCLUDED_USER: (state, user:applicationUser) => state.includedUsers = state.includedUsers.filter(x => x.id !== user.id),
-    SET_LOADED_USERS: (state, users: Array<applicationUser>) => state.loadedUsers = users,
+    SET_LOADED_USERS: (state, users: Array<applicationUser>) => {
+        state.loadedUsers = users
+    },
     
     SET_PLAYBACK_SETTINGS: (state, settings: playbackSettings) => {
         state.includedUsers = settings.includedUsers;
@@ -60,14 +62,14 @@ const actions = <ActionTree<State, any>>{
             .catch((err) => console.log(err));
     },
     loadUsers(context){
-        return axios.get('api/user/members',{
+        return axios.get('api/user/list',{
             baseURL: process.env.VUE_APP_API_BASE_URL,
             withCredentials: true,
             headers: {
                 authorization: `Bearer ${context.rootState.oidcStore.access_token}`
             }
         })
-            .then(({data}:{data:Array<applicationUser>}) => {
+            .then(({data}:{data:any}) => {
                 context.commit('SET_LOADED_USERS', data);
             })
             .catch((err) => console.log(err))

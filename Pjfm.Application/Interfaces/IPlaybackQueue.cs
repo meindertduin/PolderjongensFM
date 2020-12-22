@@ -13,7 +13,7 @@ namespace Pjfm.WebClient.Services
         TopTrackTermFilter CurrentTermFilter { get; protected set; }
         List<ApplicationUserDto> IncludedUsers { get; }
         void SetTermFilter(TopTrackTermFilter termFilter);
-        Task SetIncludedUsers();
+        Task SetUsers();
         void AddUsersToIncludedUsers(ApplicationUserDto user);
         bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user);
         public void AddPriorityTrack(TrackDto track);

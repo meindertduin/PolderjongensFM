@@ -44,6 +44,7 @@ export default class ModServerMessageHandler extends Vue{
       this.currentMessage = message;
     })
     this.djHubSocketConnection?.on("PlaybackSettings", (settings: playbackSettings) => {
+      console.log(settings)
       this.$store.commit("modModule/SET_PLAYBACK_SETTINGS", settings);
     })
     this.djHubSocketConnection?.on("ReceiveDjPlaybackInfo", (playbackInfo: djPlaybackInfo) => {

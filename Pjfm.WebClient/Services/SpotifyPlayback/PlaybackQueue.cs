@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Spotify.Queries;
 using pjfm.Models;
@@ -45,17 +46,17 @@ namespace Pjfm.WebClient.Services
             get => _currentTermFilter;
             set => _currentTermFilter = value;
         }
-
-        public async Task SetIncludedUsers()
+        
+        public async Task SetUsers()
         {
             using var scope = _serviceProvider.CreateScope();
             
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            var result = await mediator.Send(new GetAllPjMembersQuery());
-
-            if (result.Error == false)
+            var membersResult = await mediator.Send(new GetAllPjMembersQuery());
+            
+            if (membersResult.Error == false)
             {
-                IncludedUsers = result.Data;
+                IncludedUsers = membersResult.Data;
             }
         }
         

@@ -53,7 +53,7 @@ namespace Pjfm.WebClient.Services
         public async Task StartPlayingTracks()
         {
             _isCurrentlyPlaying = true;
-            await _playbackQueue.SetIncludedUsers();
+            await _playbackQueue.SetUsers();
             
             var nextTrackDuration = await PlayNextTrack();
             if (nextTrackDuration > 0)
