@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -68,6 +69,16 @@ namespace Pjfm.Application.Spotify.Commands
                             await _appDbContext.SaveChangesAsync(cancellationToken);
                             return Response.Ok("Accesstoken successfully retireved", resultContent.AccessToken);
                         }
+                    }
+
+                    // refresh token is invalid due to being withdrawn
+                    if (result.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        user.SpotifyAuthenticated = false;
+                        var userTopTracks = _appDbContext.TopTracks.Where(track => track.ApplicationUserId == user.Id);
+                        _appDbContext.TopTracks.RemoveRange(userTopTracks);
+
+                        await _appDbContext.SaveChangesAsync(cancellationToken);
                     }
                 }
 

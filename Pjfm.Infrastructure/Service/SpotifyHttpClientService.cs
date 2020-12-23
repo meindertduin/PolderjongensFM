@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Spotify.Commands;
-using Pjfm.Application.Spotify.Queries;
-using Pjfm.Application.Test.Queries;
 using Pjfm.Domain.Interfaces;
 using Polly;
 using Polly.Retry;
