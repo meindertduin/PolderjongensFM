@@ -16,8 +16,7 @@ namespace Pjfm.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddMediatR(typeof(LogoutCommand).Assembly);
-           
-
+            
             return services;
         }
     }

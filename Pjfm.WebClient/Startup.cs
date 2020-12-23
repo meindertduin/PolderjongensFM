@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,34 +75,28 @@ namespace pjfm
             var retryPolicy = HttpPolicyExtensions
                 .HandleTransientHttpError() // HttpRequestException, 5XX and 408
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
-
-            var invalidOperationException = Policy
-                .Handle<InvalidOperationException>()
-                .WaitAndRetry(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3)
-                });
             
             
             services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>(o => 
                     o.BaseAddress = new Uri(Configuration["ApiEndpoints:SpotifyEndpoint"]))
                 .AddPolicyHandler(retryPolicy);
-            
-            
-            services.AddCors(options =>
+
+
+            if (WebHostEnvironment.IsDevelopment())
             {
-                options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
-                        builder
-                            .AllowCredentials()
-                            .WithOrigins("https://localhost:8085")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
+                services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowAllOrigins",
+                        builder =>
+                        {
+                            builder
+                                .AllowCredentials()
+                                .WithOrigins("https://localhost:8085")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        });
+                });
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -119,6 +114,17 @@ namespace pjfm
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
                 app.UseHttpsRedirection();
+
+                var forwardOptions = new ForwardedHeadersOptions()
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                    RequireHeaderSymmetry = false,
+                };
+                
+                forwardOptions.KnownNetworks.Clear();
+                forwardOptions.KnownProxies.Clear();
+                
+                app.UseForwardedHeaders(forwardOptions);
             }
 
             app.UseSerilogRequestLogging();
@@ -152,7 +158,6 @@ namespace pjfm
                     pattern: "{controller}/{action=Index}/{id?}");
 
                 endpoints.MapRazorPages();
-                
             });
         }
         

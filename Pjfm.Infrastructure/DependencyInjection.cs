@@ -75,31 +75,31 @@ namespace Pjfm.Infrastructure
 
             identityServiceBuilder.AddProfileService<ProfileService>();
             
-            if (webHostEnvironment.IsDevelopment())
-            {
-                identityServiceBuilder.AddConfigurationStore(options =>
+            identityServiceBuilder.AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
                     {
-                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
-                        {
-                            builder.MigrationsAssembly("Pjfm.WebClient");
-                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
-                        });
-                    })
-                    .AddOperationalStore(options =>
+                        builder.MigrationsAssembly("Pjfm.WebClient");
+                        builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                    });
+                })
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
                     {
-                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
-                        {
-                            builder.MigrationsAssembly("Pjfm.WebClient");
-                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
-                        });
-                    })
-                    .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
-                    .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
-                    .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
+                        builder.MigrationsAssembly("Pjfm.WebClient");
+                        builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                    });
+                })
+                .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
+                .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
+                .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
                 
-                identityServiceBuilder
-                    .AddDeveloperSigningCredential();
-            }
+            
+            // Todo: add production signing credentials 
+            
+            identityServiceBuilder
+                .AddDeveloperSigningCredential();
             
             services.AddLocalApiAuthentication();
 
