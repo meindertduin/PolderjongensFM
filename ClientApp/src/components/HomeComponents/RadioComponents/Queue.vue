@@ -85,7 +85,7 @@
                       </v-list-item-content>
                       <v-list-item-icon>
                         <v-chip
-                            :color="item.chipColor"
+                            :class="item.chipClass"
                             outlined
                         >
                           <v-icon left>{{item.icon}}</v-icon>
@@ -112,7 +112,7 @@ interface queueTrack {
   user: string,
   icon: string,
   queueNum: number,
-  chipColor: string,
+  chipClass: string,
 }
 
 @Component({
@@ -171,9 +171,9 @@ export default class Queue extends Vue {
           this.playbackInfo.priorityQueuedTracks.forEach((track) => {
               this.queue.push({
                   track: track,
-                  user: track.user.displayName,
+                  user: 'DJ',
                   queueNum: 0,
-                  chipColor: "orange",
+                  chipClass: "purple purple--text text--lighten-2",
                   icon: 'mdi-account-music',
               })
           })
@@ -183,7 +183,7 @@ export default class Queue extends Vue {
                   track: track,
                   user: track.user.displayName,
                   queueNum: 1,
-                  chipColor: "orange",
+                  chipClass: "orange orange--text",
                   icon: 'mdi-account',
               })
           })
@@ -193,7 +193,7 @@ export default class Queue extends Vue {
                   track: track,
                   user: 'AutoDJ',
                   queueNum: 2,
-                  chipColor: "grey",
+                  chipClass: "grey grey--text",
                   icon: 'mdi-robot',
               })
           })
