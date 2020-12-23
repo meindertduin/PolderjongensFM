@@ -12,14 +12,17 @@
                   hide-details
               ></v-text-field>
         <v-data-table
+            v-model="selectedTracks"
+            :footer-props="{ itemsPerPageOptions: [10]}"
+            show-select
             :headers="computedHeaders"
             :items="tracks"
             :search="search"
-            @click:row="requestSong"
             :loading="loading"
             loading-text="Laden..."
         ></v-data-table>
         <div class="text-center">
+          <v-btn class="ma-4" @click="requestSelectedSongs">Aanvragen</v-btn>
           <v-btn class="ma-4" @click="togglePlaylistDialog">Afsluiten</v-btn>
         </div>
       </v-card>
@@ -29,7 +32,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import {Prop} from "vue-property-decorator";
+import {Prop, Watch} from "vue-property-decorator";
 import {AxiosResponse} from "axios";
 import {alertInfo, trackDto, userPlaybackSettings} from "@/common/types";
 
@@ -38,6 +41,29 @@ import {alertInfo, trackDto, userPlaybackSettings} from "@/common/types";
 })
 export default class Playlist extends Vue {
   private loading = true;
+  private selectedTracks = [];
+
+
+  @Watch("selectedTracks")
+  private onSelectedTracksChange(newValue, oldValue){
+      if (newValue.length > this.maxSelectedAmount) {
+        this.$nextTick(() => {
+          this.selectedTracks = oldValue;
+        })
+      }
+  }
+
+  get maxRequestsPerUser():number{
+    return this.$store.getters['playbackModule/getMaxRequestsPerUser'];
+  }
+
+  get userRequestedAmount():number{
+    return this.$store.getters['profileModule/userRequestedAmount'];
+  }
+  
+  get maxSelectedAmount(){
+    return this.maxRequestsPerUser - this.userRequestedAmount;
+  }
   
   @Prop({type: Object, required: true}) 
   readonly playlistId !: string
@@ -69,17 +95,24 @@ export default class Playlist extends Vue {
     this.$store.commit('profileModule/TOGGLE_PLAYLIST_DIALOG');
   }
 
-  private requestSong(track){
+  private async requestSong(track){
+    let alert : alertInfo | null = null;
+    
     this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
-      this.togglePlaylistDialog();
-      let alert : alertInfo = { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` }
-      this.$store.commit('alertModule/SET_ALERT', alert);
-      this.$router.push('/');
+      this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
     }).catch((error: any) => {
-      let alert : alertInfo = { type: "error", message: error.response.data.message }
-      this.$store.commit('alertModule/SET_ALERT', alert);
-      this.$router.push('/');
+      this.$store.commit('alertModule/SET_ALERT', { type: "error", message: error.response.data.message }); 
     })
+  }
+  
+  // TODO: Cleanup
+  private requestSelectedSongs(){
+    this.selectedTracks.forEach((track) => {
+       this.requestSong(track);
+    })
+    
+    this.togglePlaylistDialog();
+    this.$router.push('/');
   }
   
   private populateTracks() {

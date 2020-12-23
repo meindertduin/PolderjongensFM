@@ -7,7 +7,7 @@
           <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
             <PlayerTimeSelectComponent />
           </v-dialog>
-        </v-row>
+        </v-row>s
       </template>
       <v-btn v-if="!playbackConnected" @click="togglePlayerTimerOverlay" block>
         <span>Start</span>

@@ -5,10 +5,7 @@
               class="pa-2" 
               outlined 
               round
-          >             
-              <v-row class="mb-3">
-                <v-chip class="mt-2 ml-4" :color="modeChipColor">{{playbackStateString}}</v-chip>
-              </v-row>
+          >
               <div class="random-queue" v-if="playbackState === 2">
                 <div v-if="queue.filter(x => x.queueNum === 0).length > 0">
                   <span class="overline grey--text">Prioriteit tracks</span><br>
@@ -74,18 +71,27 @@
             
             
               <div v-else class="normal-queue">
-                <span class="overline grey--text">Wachtrij</span><br>
-                <v-list dense>
+                <span class="overline grey--text">Wachtrij - {{playbackStateString}}</span><br>
+                <v-list>
                   <v-list-item-group>
                     <v-list-item
                         v-for="(item, i) in queue.slice(0, 10)"
                         :key="i"
                     >
                       <v-list-item-content>
-                        <v-list-item-title :style="`color: ${queueTracksColors[item.queueNum]};`">
-                          {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.user}}</span>
+                        <v-list-item-title>
+                            {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}}
                         </v-list-item-title>
                       </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-chip
+                            :color="item.chipColor"
+                            outlined
+                        >
+                          <v-icon left>{{item.icon}}</v-icon>
+                          {{item.user}}
+                        </v-chip>
+                      </v-list-item-icon>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -104,89 +110,97 @@ import {playbackState, trackDto, userPlaybackInfo} from "@/common/types";
 interface queueTrack {
   track: trackDto,
   user: string,
+  icon: string,
   queueNum: number,
+  chipColor: string,
 }
 
 @Component({
-        name: 'Queue',
-    })
-    export default class Queue extends Vue {
-      private queue: Array<queueTrack> = [];
-      
-      private modeColors = [
-          "purple",
-          "primary",
-          "red",
-      ]
-      
-      private queueTracksColors = [
-          "yellow",
-          "orange",
-          "orangered"
-      ]
-      
-      private modeChipColor :string = this.modeColors[0]    
+  name: 'Queue',
+})
+export default class Queue extends Vue {
+  private queue: Array<queueTrack> = [];
   
-      created(){
-        this.updateRadio();
-      }
+  private modeColors = [
+      "purple",
+      "primary",
+      "red",
+  ]
+  
+  private queueTracksColors = [
+      "yellow",
+      "orange",
+      "orangered"
+  ]
+  
+  private modeChipColor :string = this.modeColors[0]    
 
-      get playbackInfo():userPlaybackInfo{
-          return this.$store.getters['playbackModule/getPlaybackInfo'];
-      }
-      
-      
-      get playbackState():playbackState | null{
-        return this.$store.getters['playbackModule/getPlaybackState'];
-      }
-      
-      get playbackStateString():string{
-        const state:playbackState | null = this.playbackState;
-        if (state === null) return "Dj-Modues";
-        switch (state){
-          case 0:
-            this.modeChipColor = this.modeColors[0]
-            return "Dj mode";
-          case 1:
-            this.modeChipColor = this.modeColors[1]
-            return "Verzoekjes mode"
-          case 2:
-            this.modeChipColor = this.modeColors[2]
-            return "Random-verzoekjes mode"
-        }
-      } 
-      
-      @Watch('playbackInfo')
-      updateRadio(){
-          if (this.playbackInfo){
-              this.queue = [];
-              this.playbackInfo.priorityQueuedTracks.forEach((track) => {
-                  this.queue.push({
-                      track: track,
-                      user: 'DJ',
-                      queueNum: 0,
-                  })
-              })
-            
-              this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
-                  this.queue.push({
-                      track: track,
-                      user: track.user.displayName,
-                      queueNum: 1,
-                  })
-              })
+  created(){
+    this.updateRadio();
+  }
 
-              this.playbackInfo.fillerQueuedTracks.forEach((track) => {
-                  this.queue.push({
-                      track: track,
-                      user: 'AutoDJ',
-                      queueNum: 2,
-                  })
+  get playbackInfo():userPlaybackInfo{
+      return this.$store.getters['playbackModule/getPlaybackInfo'];
+  }
+  
+  
+  get playbackState():playbackState | null{
+    return this.$store.getters['playbackModule/getPlaybackState'];
+  }
+  
+  get playbackStateString():string{
+    const state:playbackState | null = this.playbackState;
+    if (state === null) return "Playback mode";
+    switch (state){
+      case 0:
+        this.modeChipColor = this.modeColors[0]
+        return "DJ Only";
+      case 1:
+        this.modeChipColor = this.modeColors[1]
+        return "Verzoekjes aan"
+      case 2:
+        this.modeChipColor = this.modeColors[2]
+        return "Random verzoekjes aan"
+    }
+  } 
+  
+  @Watch('playbackInfo')
+  updateRadio(){
+      if (this.playbackInfo){
+          this.queue = [];
+          this.playbackInfo.priorityQueuedTracks.forEach((track) => {
+              this.queue.push({
+                  track: track,
+                  user: track.user.displayName,
+                  queueNum: 0,
+                  chipColor: "orange",
+                  icon: 'mdi-account-music',
               })
+          })
+        
+          this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
+              this.queue.push({
+                  track: track,
+                  user: track.user.displayName,
+                  queueNum: 1,
+                  chipColor: "orange",
+                  icon: 'mdi-account',
+              })
+          })
 
-              console.log(this.queue);
-          }
+          this.playbackInfo.fillerQueuedTracks.forEach((track) => {
+              this.queue.push({
+                  track: track,
+                  user: 'AutoDJ',
+                  queueNum: 2,
+                  chipColor: "grey",
+                  icon: 'mdi-robot',
+              })
+          })
+
+          console.log(this.queue);
       }
+  }
     }
 </script>
 <style scoped>
