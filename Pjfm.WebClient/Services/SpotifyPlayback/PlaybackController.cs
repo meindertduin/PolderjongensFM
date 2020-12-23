@@ -9,6 +9,7 @@ using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using pjfm.Models;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
+using Serilog;
 
 namespace Pjfm.WebClient.Services
 {
@@ -86,7 +87,10 @@ namespace Pjfm.WebClient.Services
 
         public void SetMaxRequestsPerUserAmount(int amount)
         {
-            IPlaybackController.CurrentPlaybackState.SetMaxRequestsPerUser(amount);
+            if (IPlaybackController.CurrentPlaybackState != null)
+            {
+                IPlaybackController.CurrentPlaybackState.SetMaxRequestsPerUser(amount);
+            }
         }
         
         public void TurnOn(PlaybackControllerCommands command)
@@ -144,7 +148,12 @@ namespace Pjfm.WebClient.Services
         }
         public List<TrackDto> GetSecondaryQueueTracks()
         {
-            return IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
+            if (IPlaybackController.CurrentPlaybackState != null)
+            {
+                return IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
+            }
+            
+            return new List<TrackDto>();
         }
         public List<TrackDto> GetFillerQueueTracks()
         {
