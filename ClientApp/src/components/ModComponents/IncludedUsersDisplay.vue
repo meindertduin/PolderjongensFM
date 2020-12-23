@@ -3,6 +3,7 @@
           class="pa-2"
           outlined
           round
+          style="margin-bottom: 90px"
       >
         <span class="overline grey--text">Included</span><br>
         <v-list dense>
@@ -46,22 +47,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .included-users-container{
-        max-height: 600px;
-        flex-wrap: wrap;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-    
-    .included-user-field{
-        display: flex;
-        flex-direction: row;
-        margin: 4px;
-    }
-    
-    .users-settings-card{
-        max-height: 700px;
-    }
-</style>

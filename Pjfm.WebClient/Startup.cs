@@ -70,17 +70,7 @@ namespace pjfm
             services.AddSignalR();
             
             services.AddRazorPages();
-
-            // HttpClient configuration
-            var retryPolicy = HttpPolicyExtensions
-                .HandleTransientHttpError() // HttpRequestException, 5XX and 408
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
             
-            
-            services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>(o => 
-                    o.BaseAddress = new Uri(Configuration["ApiEndpoints:SpotifyEndpoint"]))
-                .AddPolicyHandler(retryPolicy);
-
 
             if (WebHostEnvironment.IsDevelopment())
             {

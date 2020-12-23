@@ -29,6 +29,7 @@ namespace Pjfm.Infrastructure
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>();
+            
             services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
             services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
             
