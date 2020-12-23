@@ -15,6 +15,7 @@ class State {
 const mutations = <MutationTree<State>>{
     SET_USER_PROFILE: (state, profile:identityProfile) => state.userProfile = profile,
     TOGGLE_PLAYLIST_DIALOG: state => state.playlistDialog = !state.playlistDialog,
+    SET_PLAYLIST_DIALOG: (state, active:boolean) => state.playlistDialog = active,
     SET_USER_REQUESTED_AMOUNT: (state, amount:number) => state.userRequestedTracksAmount = amount,
 }
 
