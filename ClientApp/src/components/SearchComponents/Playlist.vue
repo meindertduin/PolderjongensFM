@@ -22,8 +22,8 @@
             loading-text="Laden..."
         ></v-data-table>
         <div class="text-center">
-          <v-btn class="ma-4" @click="requestSelectedSongs">Aanvragen</v-btn>
-          <v-btn class="ma-4" @click="togglePlaylistDialog">Afsluiten</v-btn>
+          <v-btn outlined color="orange" class="ma-4" @click="requestSelectedSongs">Aanvragen</v-btn>
+          <v-btn outlined color="red" class="ma-4" @click="togglePlaylistDialog">Afsluiten</v-btn>
         </div>
       </v-card>
   </div>
