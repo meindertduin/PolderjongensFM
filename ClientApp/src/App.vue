@@ -102,7 +102,5 @@ export default class App extends Vue{
       )
     this.$store.dispatch('profileModule/getUserProfile');
   }
-  
-  
 }
 </script>

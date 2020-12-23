@@ -37,7 +37,7 @@ namespace Pjfm.WebClient.Services
         {
             if (_tracksBuffer
                 .Select(t => t.User.Id)
-                .Count(t => t == user.Id) <= _maxRequestsPerUserAmount)
+                .Count(t => t == user.Id) < _maxRequestsPerUserAmount)
             {
                 _tracksBuffer.Add(new TrackRequestDto()
                 {
