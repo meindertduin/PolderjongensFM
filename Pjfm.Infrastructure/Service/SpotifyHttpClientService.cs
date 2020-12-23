@@ -53,8 +53,11 @@ namespace Pjfm.Application.Services
                         UserId = userId,
                     });
 
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResult.Data);
-                    return await SendAuthenticatedRequest(requestMessage, userId);
+                    if (refreshResult.Error == false)
+                    {
+                        requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResult.Data);
+                        return await SendAuthenticatedRequest(requestMessage, userId);
+                    }
                 }
                 
                 return result;
