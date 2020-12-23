@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Spotify.Commands;
-using Pjfm.Application.Spotify.Queries;
-using Pjfm.Application.Test.Queries;
 using Pjfm.Domain.Interfaces;
 using Polly;
 using Polly.Retry;
@@ -55,8 +53,11 @@ namespace Pjfm.Application.Services
                         UserId = userId,
                     });
 
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResult.Data);
-                    return await SendAuthenticatedRequest(requestMessage, userId);
+                    if (refreshResult.Error == false)
+                    {
+                        requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResult.Data);
+                        return await SendAuthenticatedRequest(requestMessage, userId);
+                    }
                 }
                 
                 return result;

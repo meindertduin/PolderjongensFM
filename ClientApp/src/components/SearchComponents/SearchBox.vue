@@ -45,6 +45,7 @@
                   <v-list dense>
                     <v-list-item-group
                         color="primary"
+                        v-model="selectedSearchTrackItem"
                     >
                       <v-list-item
                           v-for="(result, i) in searchResults"
@@ -92,6 +93,18 @@ window.$ = JQuery
 export default class SearchBox extends Vue {
   private query = '';
   private searchResults = [];
+  
+  get searchResultsLength(){
+    return this.searchResults.length;
+  }
+  
+  @Watch("searchResultsLength")
+  onSearchResultsChange(newValue:any){
+    console.log("reset")
+    this.selectedSearchTrackItem = 0
+  }
+  
+  
   private activePlaylistId: string | null = null
   private activePlaylistName: string | null = null
   
@@ -100,12 +113,33 @@ export default class SearchBox extends Vue {
   private loading = true;
   private tab = null;
   
+  private selectedSearchTrackItem :number = 0;
+  
   created() {
     this.fetchPlaylists().then(() => {
       this.loading = false;
     })
+    
+    window.addEventListener('keydown', this.registerKeyDownEvents);
   }
 
+  beforeDestroy(){
+    window.removeEventListener('keydown', this.registerKeyDownEvents);
+  }
+  
+  private registerKeyDownEvents(e:any){
+    if (e.key == 'ArrowUp' && this.selectedSearchTrackItem > 0){
+      this.selectedSearchTrackItem -=1
+    }
+    if (e.key == 'ArrowDown' && this.searchResults.length > this.selectedSearchTrackItem){
+      this.selectedSearchTrackItem += 1;
+    }
+    if (e.key == 'Enter' && this.searchResults.length > 0) {
+      console.log("requesting song")
+      this.requestSong(this.searchResults[this.selectedSearchTrackItem])
+    }
+  }
+  
   searchBarKeyUp(e) {
     clearTimeout($.data(this, 'timer'));
 
@@ -142,7 +176,6 @@ export default class SearchBox extends Vue {
   }
 
   search(force) {
-    console.log('search');
     if (!force && this.query.length < 3) return;
     this.loading = true;
     this.items = []
@@ -170,12 +203,12 @@ export default class SearchBox extends Vue {
     })
   }
 
-  private fetchPlaylists(){
+  private fetchPlaylists():Promise<void>{
     this.playlists.push({ id: "1", name: `${this.userProfile.displayName}'s Top 50 (vier weken)`})
     this.playlists.push({ id: "2", name: `${this.userProfile.displayName}'s Top 50 (zes maanden)`})
     this.playlists.push({ id: "3", name: `${this.userProfile.displayName}'s Top 50 (all-time)`})
     
-    this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
+    return this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
       playlistResponse.data.items.forEach((playlist) => {
         this.playlists.push({ id: playlist.id, name: playlist.name})
       })

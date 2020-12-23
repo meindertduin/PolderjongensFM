@@ -24,7 +24,6 @@ import ModServerMessageHandler from "@/components/ModComponents/ModServerMessage
 import AppSideBar from "@/components/CommonComponents/AppSideBar.vue";
 import AppBar from "@/components/CommonComponents/AppBar.vue";
 import AppBottomBar from "@/components/CommonComponents/AppBottomBar.vue";
-import {vuexOidcUtils} from "vuex-oidc";
 
 @Component({
   name: 'App',

@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Pjfm.Application.Configuration;
+using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Common;
@@ -25,12 +30,15 @@ namespace Pjfm.Application.Spotify.Commands
         private readonly IHttpClientFactory _clientFactory;
         private readonly IAppDbContext _appDbContext;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccessTokenRefreshCommandHandler(IHttpClientFactory clientFactory, IAppDbContext appDbContext, IConfiguration configuration)
+        public AccessTokenRefreshCommandHandler(IHttpClientFactory clientFactory, IAppDbContext appDbContext, 
+            IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _clientFactory = clientFactory;
             _appDbContext = appDbContext;
             _configuration = configuration;
+            _userManager = userManager;
         }
         
         public async Task<Response<string>> Handle(AccessTokenRefreshCommand request, CancellationToken cancellationToken)
@@ -68,6 +76,18 @@ namespace Pjfm.Application.Spotify.Commands
                             await _appDbContext.SaveChangesAsync(cancellationToken);
                             return Response.Ok("Accesstoken successfully retireved", resultContent.AccessToken);
                         }
+                    }
+
+                    // refresh token is invalid due to being withdrawn
+                    if (result.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        user.SpotifyAuthenticated = false;
+                        await _userManager.RemoveClaimAsync(user, new Claim(SpotifyIdentityConstants.Claims.SpStatus,
+                            SpotifyIdentityConstants.Roles.Auth));
+                        
+                        var userTopTracks = _appDbContext.TopTracks.Where(track => track.ApplicationUserId == user.Id);
+                        _appDbContext.TopTracks.RemoveRange(userTopTracks);
+                        await _appDbContext.SaveChangesAsync(cancellationToken);
                     }
                 }
 

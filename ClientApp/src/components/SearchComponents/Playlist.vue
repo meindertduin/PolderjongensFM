@@ -89,6 +89,17 @@ export default class Playlist extends Vue {
 
   created(){
     this.populateTracks();
+    window.addEventListener('keydown', this.closePlaylistDialogKeyEvent);
+  }
+  
+  beforeDestroy(){
+    window.removeEventListener('keydown', this.closePlaylistDialogKeyEvent);
+  }
+  
+  private closePlaylistDialogKeyEvent(e:any){
+    if (e.key == 'Escape'){
+      this.$store.commit('profileModule/SET_PLAYLIST_DIALOG', false);
+    }
   }
   
   private togglePlaylistDialog(){
