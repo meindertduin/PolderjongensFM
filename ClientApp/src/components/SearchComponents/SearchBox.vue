@@ -192,15 +192,24 @@ export default class SearchBox extends Vue {
   }
 
   requestSong(track: trackDto) {
-    this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
-      let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
-      this.$store.commit('alertModule/SET_ALERT', alert);
-      this.$router.push('/');
-    }).catch((error: any) => {
-      let alert : alertInfo = { type: "error", message: error.response.data.message }
-      this.$store.commit('alertModule/SET_ALERT', alert);
-      this.$router.push('/');
-    })
+    if (this.checkCertainSongs(track.id)){
+      this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
+        let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
+        this.$store.commit('alertModule/SET_ALERT', alert);
+        this.$router.push('/');
+      }).catch((error: any) => {
+        let alert : alertInfo = { type: "error", message: error.response.data.message }
+        this.$store.commit('alertModule/SET_ALERT', alert);
+        this.$router.push('/');
+      })
+    }
+  }
+  
+  checkCertainSongs(trackId:string):boolean{
+    if ("4uLU6hMCjMI75M1A2tKUQC"){
+      location.href = `${process.env.VUE_APP_API_BASE_URL}/easterEggs/rickRoll/index.html`
+    }
+    return false;
   }
 
   private fetchPlaylists():Promise<void>{

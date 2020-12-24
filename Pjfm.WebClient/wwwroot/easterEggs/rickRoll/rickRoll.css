@@ -1,0 +1,26 @@
+﻿
+.container {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    max-width: 95%;
+}
+
+.header{
+    margin-top: 30px;
+    text-align: center;
+    font-size:larger;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bold;
+}
+
+video {
+    max-width: 100%;
+}
+
+body {
+    background-image: url("rick_ashtley.jpg");
+}
