@@ -206,10 +206,11 @@ export default class SearchBox extends Vue {
   }
   
   checkCertainSongs(trackId:string):boolean{
-    if ("4uLU6hMCjMI75M1A2tKUQC"){
+    if (trackId === "4uLU6hMCjMI75M1A2tKUQC"){
       location.href = `${process.env.VUE_APP_API_BASE_URL}/easterEggs/rickRoll/index.html`
+      return false;
     }
-    return false;
+    return true;
   }
 
   private fetchPlaylists():Promise<void>{
