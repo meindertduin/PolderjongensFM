@@ -1,100 +1,19 @@
 <template>
     <v-row>
       <v-col>
-          <v-card 
-              class="pa-2" 
-              outlined 
-              round
-          >
-              <div class="random-queue" v-if="playbackState === 2">
+          <v-card class="pa-2" outlined round>
+              <div v-if="playbackState === 2">
                 <div v-if="queue.filter(x => x.queueNum === 0).length > 0">
-                  <span class="overline grey--text">Prioriteit tracks</span><br>
-                  <v-list dense>
-                    <v-list-item-group>
-                      <v-list-item
-                          v-for="(item, i) in queue.filter(x => x.queueNum === 0).slice(0, 10)"
-                          :key="i"
-                      >
-                        <v-list-item-content>
-                          <v-list-item-title style="color: yellow">
-                            {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.user}}</span>
-                          </v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
+                  <QueueTracksList :span-title="`Watchrij ${playbackStateString}`" :tracks="queue.filter(track => track.queueNum === 0).slice(0, 10)"  
+                                   empty-message="null"/>
                 </div>
-                
-                <div>
-                  <span class="overline grey--text">Verzoekjes-pool</span><br>
-                  <v-list dense>
-                    <v-list-item-group class="random-secondary-list">
-                      <v-list-item
-                          v-for="(item, i) in queue.filter(x => x.queueNum === 1)"
-                          :key="i"
-                      >
-                        <v-list-item-content>
-                          <v-list-item-title style="color: orange">
-                            {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.user}}</span>
-                          </v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                      <v-list-item v-if="queue.filter(x => x.queueNum === 1).length <= 0">
-                        <v-list-item-content>
-                          <v-list-item-title style="color: orange">
-                            De verzoekjes pool is op dit moment leeg... doe snel een verzoekje om hem te vullen!
-                          </v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </div>
-                <div>
-                  <span class="overline grey--text">Filler watchtrij</span><br>
-                  <v-list dense>
-                    <v-list-item-group>
-                      <v-list-item
-                          v-for="(item, i) in queue.slice(0, 3)"
-                          :key="i"
-                      >
-                        <v-list-item-content>
-                          <v-list-item-title style="color: orangered">
-                            {{item.track.artists[0]}} - {{item.track.title}} <span class="grey--text float-right">{{item.user}}</span>
-                          </v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </div>
+                <QueueTracksList :span-title="`Filler wachtrij`" :tracks="queue.filter(track => track.queueNum === 2).slice(0, 3)" 
+                                 :empty-message="'De verzoekjes pool is op dit moment leeg... doe snel een verzoekje om hem te vullen!'" />
+                <QueueTracksList :span-title="`Filler wachtrij`" :tracks="queue.filter(track => track.queueNum === 2).slice(0, 3)" 
+                                 :empty-message="null" />
               </div>
-            
-            
-            
-              <div v-else class="normal-queue">
-                <span class="overline grey--text">Wachtrij - {{playbackStateString}}</span><br>
-                <v-list>
-                  <v-list-item-group>
-                    <v-list-item
-                        v-for="(item, i) in queue.slice(0, 10)"
-                        :key="i"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                            {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}}
-                        </v-list-item-title>
-                      </v-list-item-content>
-                      <v-list-item-icon>
-                        <v-chip
-                            :class="item.chipClass"
-                            outlined
-                        >
-                          <v-icon left>{{item.icon}}</v-icon>
-                          {{item.user}}
-                        </v-chip>
-                      </v-list-item-icon>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
+              <div v-else>
+                <QueueTracksList :span-title="`Wachtrij - ${playbackStateString}}`" :tracks="queue.slice(0, 10)" :empty-message="null" />
               </div>
           </v-card>
       </v-col>
@@ -106,6 +25,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import {Watch} from "vue-property-decorator";
 import {playbackState, trackDto, userPlaybackInfo} from "@/common/types";
+import QueueTracksList from "@/components/HomeComponents/RadioComponents/QueueTracksList.vue";
 
 interface queueTrack {
   track: trackDto,
@@ -117,6 +37,9 @@ interface queueTrack {
 
 @Component({
   name: 'Queue',
+  components: {
+    QueueTracksList
+  }
 })
 export default class Queue extends Vue {
   private queue: Array<queueTrack> = [];
@@ -125,12 +48,6 @@ export default class Queue extends Vue {
       "purple",
       "primary",
       "red",
-  ]
-  
-  private queueTracksColors = [
-      "yellow",
-      "orange",
-      "orangered"
   ]
   
   private modeChipColor :string = this.modeColors[0]    
@@ -162,6 +79,7 @@ export default class Queue extends Vue {
         this.modeChipColor = this.modeColors[2]
         return "Random verzoekjes aan"
     }
+    return "Dj Only";
   } 
   
   @Watch('playbackInfo')
