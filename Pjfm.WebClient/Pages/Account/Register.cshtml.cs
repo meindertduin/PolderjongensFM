@@ -24,6 +24,8 @@ namespace Pjfm.WebClient.Pages.Account
             [FromServices] SignInManager<ApplicationUser> signInManager, [FromServices] IMediator mediator,
             [FromServices] IConfiguration configuration)
         {
+            Form.Summeries = new List<string>();
+            
             if (ModelState.IsValid == false)
             {
                 return Page();
@@ -48,8 +50,6 @@ namespace Pjfm.WebClient.Pages.Account
 
                 return Redirect(authorizationUrl);
             }
-
-            Form.Summeries ??= new List<string>();
             
             foreach (var identityError in userCreateRequest.Errors)
             {
@@ -94,11 +94,11 @@ namespace Pjfm.WebClient.Pages.Account
         
         [Required (ErrorMessage = "veld is verplicht")]
         [DataType(DataType.Password)]
+        [Compare("ConfirmPassword", ErrorMessage = "Wachtwoorden zijn niet hetzelfde")]
         public string Password { get; set; }
         
         [DataType(DataType.Password)]
         [Required (ErrorMessage = "veld is verplicht")]
-        [Compare("Password", ErrorMessage = "Wachtwoorden zijn niet hetzelfde")]
         public string ConfirmPassword { get; set; }
     }
 }

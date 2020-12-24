@@ -20,6 +20,8 @@ namespace Pjfm.WebClient.Pages.Account
         
         public async Task<IActionResult> OnPost([FromServices] IMediator mediator, [FromServices] IConfiguration configuration)
         {
+            Form.Summeries = new List<string>();
+
             if (ModelState.IsValid == false)
             {
                 return Page();
@@ -33,7 +35,6 @@ namespace Pjfm.WebClient.Pages.Account
 
             if (loginResult.Error)
             {
-                Form.Summeries ??= new List<string>();
                 Form.Summeries.Add("Email of wachtwoord is onjuist");
                 return Page();
             }
