@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
 using Polly;
 using Polly.Retry;
-using Serilog;
 
 namespace Pjfm.Application.Services
 {
@@ -17,51 +18,54 @@ namespace Pjfm.Application.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IServiceProvider _serviceProvider;
-        private RetryPolicy _retryPolicy;
-        
+        private AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
+
         private const int MaxRequestRetries = 5;
 
         public SpotifyHttpClientService(HttpClient httpClient, IServiceProvider serviceProvider)
         {
             _httpClient = httpClient;
             _serviceProvider = serviceProvider;
+            
             _retryPolicy = Policy
-                .Handle<InvalidOperationException>()
-                .Or<HttpRequestException>()
-                .WaitAndRetry(
-                    MaxRequestRetries, 
-                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), 
-                    (exception, timeSpan, context) => {
-                        Log.Error(exception.Message);
+                .HandleResult<HttpResponseMessage>(message => message.StatusCode == HttpStatusCode.Unauthorized)
+                .RetryAsync(1, async (result, retryCount, context) =>
+                {
+                    if (context.ContainsKey("refresh_token"))
+                    {
+                        using var scope = serviceProvider.CreateScope();
+                        var mediator = scope.ServiceProvider.GetService<IMediator>();
+
+                        var refreshResponse = await mediator.Send(new AccessTokenRefreshCommand()
+                        {
+                            UserId = context["user_id"] as string,
+                        });
+
+                        if (refreshResponse.Error == false)
+                        {
+                            context["access_token"] = refreshResponse.Data;
+                        }
                     }
-                );
+                });
         }
 
         public async Task<HttpResponseMessage> SendAuthenticatedRequest(HttpRequestMessage requestMessage, string userId)
         {
-            return await _retryPolicy.Execute(async () =>
-            {
-                var result = await _httpClient.SendAsync(requestMessage);
-                
-                if (result.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    using var scope = _serviceProvider.CreateScope();
-                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                
-                    var refreshResult = await mediator.Send(new AccessTokenRefreshCommand()
-                    {
-                        UserId = userId,
-                    });
+            using var scope = _serviceProvider.CreateScope();
+            var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+            
+            var user = await userManager.FindByIdAsync(userId);
 
-                    if (refreshResult.Error == false)
-                    {
-                        requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResult.Data);
-                        return await SendAuthenticatedRequest(requestMessage, userId);
-                    }
-                }
-                
-                return result;
+            return await _retryPolicy.ExecuteAsync(context =>
+            {
+                return _httpClient.SendAsync(requestMessage);
+            }, new Dictionary<string, object>()
+            {
+                {"access_token", user.SpotifyAccessToken},
+                {"refresh_token", user.SpotifyRefreshToken},
+                { "user_id", user.Id },
             });
+
         }
     }
 }

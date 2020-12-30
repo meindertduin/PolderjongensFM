@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Linq;
-using IdentityServer4;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
+using System.Net;
+using System.Net.Http;
+using MediatR;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
+using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
 using pjfm.Services;
+using Polly;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 
@@ -29,7 +28,7 @@ namespace Pjfm.Infrastructure
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             services.AddHttpClient<ISpotifyHttpClientService, SpotifyHttpClientService>();
-            
+
             services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
             services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
             
