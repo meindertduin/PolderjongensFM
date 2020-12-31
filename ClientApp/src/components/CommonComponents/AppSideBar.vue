@@ -88,7 +88,9 @@ import {Watch} from "vue-property-decorator";
 })
 export default class AppSideBar extends Vue{
   get sideBar(): boolean {
-    this.sideBarOpen = this.$store.getters["userSettingsModule/getSidebarOpenState"];
+    const sideBarOpen = this.$store.getters["userSettingsModule/getSidebarOpenState"];
+    this.sideBarOpen = sideBarOpen;
+    return sideBarOpen;
   }
   
   private sideBarOpen:boolean = false;

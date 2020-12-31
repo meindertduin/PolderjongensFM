@@ -27,8 +27,8 @@ import {Watch} from "vue-property-decorator";
         name: 'SongInformation',
     })
     export default class SongInformation extends Vue {
-        private elapsedTime = null;
-        private timer = null;
+        private elapsedTime: number | null = null;
+        private timer: any = null;
         
         get currentTrackDuration(){
             const currentTrackInfo = this.currentTrackInfo;
@@ -68,7 +68,7 @@ import {Watch} from "vue-property-decorator";
           return this.$store.getters['playbackModule/getCurrentTrackStartingTime'];
         }
   
-        get nextTrackInfo():trackDto{
+        get nextTrackInfo():trackDto | null{
           let result = null;
           
           if (this.priorityTracksQueue.length > 0){
@@ -83,12 +83,12 @@ import {Watch} from "vue-property-decorator";
         }
 
         @Watch("currentTrackInfo")
-        onCurrentTrackInfoChange(newValue){
+        onCurrentTrackInfoChange(newValue:any){
           this.updateElapsedTime();
         }
       
         @Watch("nextTrackInfo")
-        onNextTrackInfoChange(newValue){
+        onNextTrackInfoChange(newValue:any){
           this.updateElapsedTime();
         }
         
@@ -100,14 +100,16 @@ import {Watch} from "vue-property-decorator";
               this.elapsedTime = now.getTime() - new Date(this.currentTrackStartingTime).getTime();
               if(this.timer == null){
                   this.timer = setInterval(() => {
-                      this.elapsedTime += 1000;
+                      if (this.elapsedTime){
+                        this.elapsedTime += 1000;
+                      }
                   }, 1000)
               }
           }
         } 
 
-        convertMsToMMSS(ms) : string {
-            let date = new Date(null);
+        convertMsToMMSS(ms:number) : string {
+            let date = new Date();
             date.setMilliseconds(ms);
 
             return date.toISOString().substr(14, 5);

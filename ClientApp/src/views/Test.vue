@@ -19,36 +19,42 @@
     })
     export default class Test extends Vue{
         private getUserMessage(){
+            // @ts-ignore
             this.$axios.get('/api/test/user')
                 .then((response:AxiosResponse<any>) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
 
         private getModMessage(){
+            // @ts-ignore
             this.$axios.get('/api/test/mod')
                 .then((response:AxiosResponse<any>) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
 
         private getUserTopTracks(){
+            // @ts-ignore
             this.$axios.get('/api/test/toptracks')
                 .then((response:AxiosResponse<any>) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
         
         private refreshToken(){
+            // @ts-ignore
             this.$axios.get('/api/test/refreshToken')
                 .then((response:AxiosResponse<any>) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
         
         private playlists(){
+            // @ts-ignore
             this.$axios.get('api/playlist')
                 .then((response:AxiosResponse) => console.log(response.data))
                 .catch((err:any) => console.log(err));
         }
         
         private getPlaylistTracks(){
+            // @ts-ignore
             this.$axios.get('api/playlist/tracks?playlistId=3cEYpjA9oz9GiPac4AsH4n&offset=0')
                 .then((response:AxiosResponse) => console.log(response.data))
                 .catch((err:any) => console.log(err));

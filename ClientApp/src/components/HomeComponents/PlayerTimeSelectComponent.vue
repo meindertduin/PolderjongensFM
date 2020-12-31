@@ -116,7 +116,7 @@ export default class PlayerTimeSelectComponent extends Vue {
           this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);
           console.log("connection started with player")
         })
-        .catch((err) => console.log(err))
+        .catch((err:any) => console.log(err))
         .finally(() => {
           this.togglePlayerTimerOverlay();
         });

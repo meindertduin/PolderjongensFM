@@ -47,7 +47,7 @@ export default class App extends Vue{
     return this.$store.getters['profileModule/isMod'];
   }
   
-  private async setRadioConnection():void {
+  private async setRadioConnection():Promise<void> {
     let radioConnection: HubConnection | null = null;
 
     radioConnection = new HubConnectionBuilder()
@@ -83,6 +83,7 @@ export default class App extends Vue{
   
   private setUserPreferences():void{
     const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
+    // @ts-ignore
     this.$vuetify.theme.dark = userSettings.darkMode;
   }
   
@@ -92,6 +93,7 @@ export default class App extends Vue{
   
   @Watch('accessToken')
   setAxiosInterceptor(newValue:any, oldValue:any){
+      // @ts-ignore
       this.$axios.interceptors.request.use(
               (config:any) => {
                 config.headers.common["Authorization"] = `Bearer ${newValue}`;

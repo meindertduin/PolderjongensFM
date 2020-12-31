@@ -69,7 +69,7 @@ export default class AppBottomBar extends Vue{
 
     this.$store.getters['playbackModule/getRadioConnection']?.invoke("DisconnectWithPlayer")
         .then(() => console.log("Disconnected with player"))
-        .catch((err) => console.log(err));
+        .catch((err:any) => console.log(err));
   }
 }
 </script>

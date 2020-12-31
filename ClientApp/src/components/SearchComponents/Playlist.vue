@@ -45,7 +45,7 @@ export default class Playlist extends Vue {
 
 
   @Watch("selectedTracks")
-  private onSelectedTracksChange(newValue, oldValue){
+  private onSelectedTracksChange(newValue:any, oldValue:any){
       if (newValue.length > this.maxSelectedAmount) {
         this.$nextTick(() => {
           this.selectedTracks = oldValue;
@@ -85,7 +85,7 @@ export default class Playlist extends Vue {
     { text: 'Hidden', value: 'id' },
   ];
   
-  private tracks = [];
+  private tracks: Array<any> = [];
 
   created(){
     this.populateTracks();
@@ -106,9 +106,10 @@ export default class Playlist extends Vue {
     this.$store.commit('profileModule/TOGGLE_PLAYLIST_DIALOG');
   }
 
-  private async requestSong(track){
+  private async requestSong(track:any){
     let alert : alertInfo | null = null;
-    
+
+    // @ts-ignore
     this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
       this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
     }).catch((error: any) => {
@@ -143,9 +144,10 @@ export default class Playlist extends Vue {
   }
 
   private getPlaylist(){
+    // @ts-ignore
     this.$axios.get(`https://localhost:5001/api/playlist/tracks?playlistId=${this.playlistId}`).then((results: AxiosResponse) => {
-      results.data.results.forEach((trackResponse) => {
-        trackResponse.items.forEach((track) => {
+      results.data.results.forEach((trackResponse:any) => {
+        trackResponse.items.forEach((track:any) => {
           this.tracks.push({
             name: track.track.name,
             artist: track.track.artists[0].name,
@@ -176,8 +178,9 @@ export default class Playlist extends Vue {
         break;
     }
     
+    // @ts-ignore
     this.$axios.get(`https://localhost:5001/api/playlist/top-tracks?term=${termString}`).then((trackResponse: AxiosResponse) => {
-      trackResponse.data.items.forEach((track) => {
+      trackResponse.data.items.forEach((track:any) => {
         this.tracks.push({
           name: track.name,
           artist: track.artists[0].name,

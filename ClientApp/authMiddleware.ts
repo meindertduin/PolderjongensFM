@@ -1,6 +1,6 @@
 
 export default (store:any, vuexNamespace:any) => {
-    return (to, from, next) => {
+    return (to:any, from:any, next:any) => {
         store.dispatch((vuexNamespace ? vuexNamespace + '/' : '') + 'oidcCheckAccess', to)
             .then((hasAccess:boolean) => {
                 if (hasAccess) {

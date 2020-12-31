@@ -88,7 +88,9 @@
 
         messageBoxScrollToBottom(){
             let messageBox = this.$el.querySelector("#livechat-messagebox");
-            messageBox.scrollTop = messageBox.scrollHeight;
+            if (messageBox){
+              messageBox.scrollTop = messageBox.scrollHeight;
+            }
         }
         
         sendMessage(message: string){

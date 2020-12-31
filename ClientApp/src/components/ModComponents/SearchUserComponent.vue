@@ -58,6 +58,7 @@
         }
         
         addUser(user: applicationUser){
+            // @ts-ignore          
             this.$axios.post('api/playback/mod/include', user)
                 .then((response:AxiosResponse) => {
                     this.$store.commit('modModule/ADD_INCLUDED_USER', user);

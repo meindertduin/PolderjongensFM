@@ -11,7 +11,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import SearchBox from '@/components/SearchComponents/SearchBox';
+import SearchBox from "@/components/SearchComponents/SearchBox.vue";
 
 @Component({
   name: 'Search',

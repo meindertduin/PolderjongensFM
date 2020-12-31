@@ -82,6 +82,7 @@ import {Watch} from "vue-property-decorator";
 import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
 import Playlist from "@/components/SearchComponents/Playlist.vue";
 
+// @ts-ignore
 window.$ = JQuery
 
 @Component({
@@ -108,7 +109,7 @@ export default class SearchBox extends Vue {
   private activePlaylistId: string | null = null
   private activePlaylistName: string | null = null
   
-  private playlists = [];
+  private playlists: Array<any> = [];
   
   private loading = true;
   private tab = null;
@@ -140,7 +141,7 @@ export default class SearchBox extends Vue {
     }
   }
   
-  searchBarKeyUp(e) {
+  searchBarKeyUp(e:any) {
     clearTimeout($.data(this, 'timer'));
 
     if (e.keyCode == 13)
@@ -175,13 +176,13 @@ export default class SearchBox extends Vue {
     return this.$store.getters['profileModule/userProfile'];
   }
 
-  search(force) {
+  search(force:any) {
     if (!force && this.query.length < 3) return;
     this.loading = true;
-    this.items = []
 
     this.loading = true;
 
+    // @ts-ignore
     this.$axios.post(`https://localhost:5001/api/playback/search`, {
       query: this.query,
       type: 'track'
@@ -193,6 +194,7 @@ export default class SearchBox extends Vue {
 
   requestSong(track: trackDto) {
     if (this.checkCertainSongs(track.id)){
+      // @ts-ignore
       this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
         let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
         this.$store.commit('alertModule/SET_ALERT', alert);
@@ -217,9 +219,10 @@ export default class SearchBox extends Vue {
     this.playlists.push({ id: "1", name: `${this.userProfile.displayName}'s Top 50 (vier weken)`})
     this.playlists.push({ id: "2", name: `${this.userProfile.displayName}'s Top 50 (zes maanden)`})
     this.playlists.push({ id: "3", name: `${this.userProfile.displayName}'s Top 50 (all-time)`})
-    
+
+    // @ts-ignore
     return this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
-      playlistResponse.data.items.forEach((playlist) => {
+      playlistResponse.data.items.forEach((playlist:any) => {
         this.playlists.push({ id: playlist.id, name: playlist.name})
       })
       this.loading = false;

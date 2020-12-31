@@ -25,18 +25,15 @@
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
-    import Radio from "@/components/HomeComponents/Radio";
-    import LiveChat from "@/components/HomeComponents/Livechat";
     import PlaybackSettingsDashboard from "@/components/ModComponents/PlaybackSettingsDashboard.vue";
     import UserIncludeSettingsDashboard from "@/components/ModComponents/UserIncludeSettingsDashboard.vue";
-    import {playbackState, djPlaybackInfo} from "@/common/types";
+    import Radio from "@/components/HomeComponents/Radio.vue";
 
     @Component({
     name: 'AppView',
     components: {
         UserIncludeSettingsDashboard,
         Radio,
-        LiveChat,
         PlaybackSettingsDashboard  
     }
   })
@@ -44,15 +41,7 @@
     get isMod(){
         return this.$store.getters['profileModule/isMod'];
     }
-
-      get playbackState():playbackState{
-          const playbackSettings:djPlaybackInfo = this.$store.getters['playbackModule/getPlaybackInfo'];
-          if (playbackSettings){
-              return playbackSettings.playbackSettings.playbackState;
-          }
-          return playbackState['Dj-mode'];
-      }
-
+      
     navigate(uri : string) : void{
       this.$router.push(uri);
     }

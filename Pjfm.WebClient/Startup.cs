@@ -120,7 +120,7 @@ namespace pjfm
             app.UseSerilogRequestLogging();
             
             app.UseCors("AllowAllOrigins");
-            
+
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -146,7 +146,7 @@ namespace pjfm
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-
+                
                 endpoints.MapRazorPages();
             });
         }

@@ -37,6 +37,7 @@
         private onDarkModeSwitchChanged(newValue:boolean, oldValue:boolean){
             if(typeof newValue !== 'undefined'){
                 console.log(newValue);
+                // @ts-ignore
                 this.$vuetify.theme.dark = newValue;
                 this.$store.dispatch('userSettingsModule/setDarkMode', newValue);
             }
