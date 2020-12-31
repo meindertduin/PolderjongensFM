@@ -120,7 +120,7 @@ namespace pjfm.Controllers
                 RedirectUri = _configuration["Spotify:CallbackUrl"],
             });
 
-            if (result.Error == false && trackedUserProfile != null)
+            if (result.Error == false)
             {
                 trackedUserProfile.SpotifyAuthenticated = true;
                 trackedUserProfile.SpotifyAccessToken = result.Data.AccessToken;
@@ -141,7 +141,7 @@ namespace pjfm.Controllers
                             new Claim(SpotifyIdentityConstants.Claims.SpStatus, SpotifyIdentityConstants.Roles.Auth));
                     }
                     
-                    return Redirect("https://localhost:8085");
+                    return Redirect(_configuration["AppUrls:ClientBaseUrl"]);
                 }
             }
 
