@@ -40,7 +40,6 @@ namespace Pjfm.Infrastructure.Service
         private async Task<dynamic> GetSpotifyTrackInfo(int term, string accessToken, string userId)
         {
             var httpRequest = new HttpRequestMessage {Method = HttpMethod.Get};
-            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             httpRequest.RequestUri = new Uri($"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range={terms[term]}");
             
             var response = await _spotifyHttpClientService.SendAuthenticatedRequest(httpRequest, userId);

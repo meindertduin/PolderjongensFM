@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
+using Pjfm.Domain.ValueObjects;
 using Polly;
 using Polly.Retry;
 
@@ -53,19 +55,21 @@ namespace Pjfm.Application.Services
         {
             using var scope = _serviceProvider.CreateScope();
             var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
-            
+
             var user = await userManager.FindByIdAsync(userId);
 
-            return await _retryPolicy.ExecuteAsync(context =>
+            return await _retryPolicy.ExecuteAsync(async context =>
             {
-                return _httpClient.SendAsync(requestMessage);
+                var message = await requestMessage.CloneAsync();
+                message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context["access_token"] as string);
+                
+                return await _httpClient.SendAsync(message);
             }, new Dictionary<string, object>()
             {
                 {"access_token", user.SpotifyAccessToken},
                 {"refresh_token", user.SpotifyRefreshToken},
                 { "user_id", user.Id },
             });
-
         }
     }
 }

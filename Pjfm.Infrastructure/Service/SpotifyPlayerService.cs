@@ -26,7 +26,6 @@ namespace Pjfm.Application.Services
             var requestMessage = new HttpRequestMessage();
             
             requestMessage.Method = HttpMethod.Put;
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             if (string.IsNullOrEmpty(deviceId))
             {
@@ -56,7 +55,6 @@ namespace Pjfm.Application.Services
             var requestMessage = new HttpRequestMessage();
             
             requestMessage.Method = HttpMethod.Post;
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var requestUri = $"https://api.spotify.com/v1/me/player/queue?uri=spotify:track:{trackId}";
             
             if (string.IsNullOrEmpty(deviceId) == false)
@@ -74,7 +72,6 @@ namespace Pjfm.Application.Services
             var requestMessage = new HttpRequestMessage();
             
             requestMessage.Method = HttpMethod.Post;
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var requestUri = $"https://api.spotify.com/v1/me/player/next";
 
             if (string.IsNullOrEmpty(deviceId) == false)
@@ -89,7 +86,6 @@ namespace Pjfm.Application.Services
         {
             var requestMessage = new HttpRequestMessage();
             requestMessage.Method = HttpMethod.Put;
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var requestUri = $"https://api.spotify.com/v1/me/player/pause";
 
