@@ -16,7 +16,6 @@ using Microsoft.OpenApi.Models;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
-using Pjfm.Application.Services;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
@@ -24,8 +23,6 @@ using Pjfm.Infrastructure.Persistence;
 using pjfm.Models;
 using pjfm.Services;
 using Pjfm.WebClient.Services;
-using Polly;
-using Polly.Extensions.Http;
 using Serilog;
 
 namespace pjfm
@@ -91,8 +88,6 @@ namespace pjfm
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            InitializeDatabase(app);
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

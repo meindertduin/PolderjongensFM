@@ -14,6 +14,5 @@ module.exports = {
     port: 8085,
     host: '0.0.0.0',
     public: "https://localhost:8085",
-    outputDir: path.resolve(__dirname, "../Pjfm.WebClient/wwwroot/spa"),
   }
 }

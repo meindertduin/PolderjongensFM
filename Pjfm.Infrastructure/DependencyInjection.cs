@@ -74,28 +74,34 @@ namespace Pjfm.Infrastructure
             identityServiceBuilder.AddAspNetIdentity<ApplicationUser>();
 
             identityServiceBuilder.AddProfileService<ProfileService>();
-            
-            identityServiceBuilder.AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+
+            if (webHostEnvironment.IsProduction())
+            {
+                identityServiceBuilder.AddConfigurationStore(options =>
                     {
-                        builder.MigrationsAssembly("Pjfm.WebClient");
-                        builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
-                    });
-                })
-                .AddOperationalStore(options =>
-                {
-                    options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        {
+                            builder.MigrationsAssembly("Pjfm.WebClient");
+                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                        });
+                    })
+                    .AddOperationalStore(options =>
                     {
-                        builder.MigrationsAssembly("Pjfm.WebClient");
-                        builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        {
+                            builder.MigrationsAssembly("Pjfm.WebClient");
+                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
+                        });
                     });
-                })
-                .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
-                .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
-                .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
-                
-            
+            }
+            else
+            {
+                identityServiceBuilder
+                    .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
+                    .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
+                    .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
+            }
+
             // Todo: add production signing credentials 
             
             identityServiceBuilder
