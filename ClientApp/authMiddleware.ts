@@ -12,12 +12,12 @@ export default (store:any, vuexNamespace:any) => {
                                 next()
                             }
                             else{
-                                window.location.href = "https://localhost:5001/api/spotify/account/authenticate"
-                                //window.location.href = "https://localhost:5001"
+                                window.location.href = process.env.VUE_APP_API_BASE_URL + "/api/spotify/account/authenticate"
                             }
                         }
                         else {
-                            window.location.href = "https://localhost:8085";
+                            if (process.env.VUE_APP_BASE_URL)
+                                window.location.href = process.env.VUE_APP_BASE_URL;
                         }
                     }
                     

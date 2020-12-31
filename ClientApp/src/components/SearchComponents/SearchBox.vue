@@ -183,7 +183,7 @@ export default class SearchBox extends Vue {
     this.loading = true;
 
     // @ts-ignore
-    this.$axios.post(`https://localhost:5001/api/playback/search`, {
+    this.$axios.post(process.env.VUE_APP_API_BASE_URL + `/api/playback/search`, {
       query: this.query,
       type: 'track'
     }).then((response: AxiosResponse) => {
@@ -195,7 +195,7 @@ export default class SearchBox extends Vue {
   requestSong(track: trackDto) {
     if (this.checkCertainSongs(track.id)){
       // @ts-ignore
-      this.$axios.put(`https://localhost:5001/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
+      this.$axios.put(process.env.VUE_APP_API_BASE_URL + `/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
         let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
         this.$store.commit('alertModule/SET_ALERT', alert);
         this.$router.push('/');
@@ -221,7 +221,7 @@ export default class SearchBox extends Vue {
     this.playlists.push({ id: "3", name: `${this.userProfile.displayName}'s Top 50 (all-time)`})
 
     // @ts-ignore
-    return this.$axios.get(`https://localhost:5001/api/playlist`).then((playlistResponse: AxiosResponse) => {
+    return this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playlist`).then((playlistResponse: AxiosResponse) => {
       playlistResponse.data.items.forEach((playlist:any) => {
         this.playlists.push({ id: playlist.id, name: playlist.name})
       })

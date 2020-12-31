@@ -51,7 +51,7 @@ export default class App extends Vue{
     let radioConnection: HubConnection | null = null;
 
     radioConnection = new HubConnectionBuilder()
-        .withUrl("https://localhost:5001/radio")
+        .withUrl(process.env.VUE_APP_BASE_URL + "/radio")
         .build();
 
     radioConnection.start()

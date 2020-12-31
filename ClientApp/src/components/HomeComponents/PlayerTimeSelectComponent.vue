@@ -105,7 +105,8 @@ export default class PlayerTimeSelectComponent extends Vue {
       }
       else{
         // redirects to authenticate user spotify
-        window.location.href = "https://localhost:5001/api/spotify/account/authenticate"
+        
+        window.location.href = process.env.VUE_APP_API_BASE_URL + "/api/spotify/account/authenticate"
       }
     }
   }
