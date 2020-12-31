@@ -81,7 +81,7 @@ namespace pjfm
                         {
                             builder
                                 .AllowCredentials()
-                                .WithOrigins("https://localhost:8085")
+                                .WithOrigins(Configuration["AppUrls:ClientBaseUrl"])
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
                         });
