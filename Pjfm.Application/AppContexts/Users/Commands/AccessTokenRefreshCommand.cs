@@ -58,7 +58,7 @@ namespace Pjfm.Application.Spotify.Commands
                         new KeyValuePair<string, string>("refresh_token", user.SpotifyRefreshToken), 
                     });
 
-                    var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent);
+                    var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent, cancellationToken);
 
                     if (result.IsSuccessStatusCode)
                     {

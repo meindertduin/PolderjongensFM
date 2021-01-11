@@ -38,9 +38,7 @@ namespace Pjfm.Application.Spotify.Queries
         }
         
         public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request, CancellationToken cancellationToken)
-        {
-            var random = new Random();
-            
+        {            
             var randomTopTracks = _ctx.TopTracks
                 .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.SpotifyTrackId) == false)
                 .Where(x => request.TopTrackTermFilter.Select(t => t).Contains(x.Term))
@@ -64,7 +62,9 @@ namespace Pjfm.Application.Spotify.Queries
             // Temporary
             Shuffle(randomTopTracks);
 
-            return Response.Ok("successfully queried result", randomTopTracks.Take(request.RequestedAmount).ToList());
+            
+            return await Task.FromResult(Response.Ok("successfully queried result",
+                randomTopTracks.Take(request.RequestedAmount).ToList()));
         }
         
         private static void Shuffle<T>(IList<T> list)

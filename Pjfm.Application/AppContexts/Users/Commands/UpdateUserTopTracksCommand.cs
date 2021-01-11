@@ -13,7 +13,6 @@ using Pjfm.Application.Services;
 using Pjfm.Domain.Common;
 using Pjfm.Domain.Converters;
 using Pjfm.Domain.Entities;
-using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
 using Serilog;
 
@@ -27,15 +26,12 @@ namespace Pjfm.Application.Spotify.Commands
     public class UpdateUserTopTracksCommandHandler : IHandlerWrapper<UpdateUserTopTracksCommand, string>
     {
         private readonly IAppDbContext _ctx;
-        private readonly IRetrieveStrategy _retrieveStrategy;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
         private const int TopTracksRetrievalCount = 150;
 
-        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, IRetrieveStrategy retrieveStrategy, 
-            ISpotifyBrowserService spotifyBrowserService)
+        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, ISpotifyBrowserService spotifyBrowserService)
         {
             _ctx = ctx;
-            _retrieveStrategy = retrieveStrategy;
             _spotifyBrowserService = spotifyBrowserService;
         }
         
@@ -45,8 +41,10 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 return Response.Fail<string>("User has no refresh token");
             }
-            
-            List<TopTrack> updatedTopTracks = new List<TopTrack>();
+
+            try
+            {
+                 List<TopTrack> updatedTopTracks = new List<TopTrack>();
             
             for (int i = 0; i < 3; i++)
             {
@@ -96,6 +94,12 @@ namespace Pjfm.Application.Spotify.Commands
             await _ctx.SaveChangesAsync(cancellationToken);
 
             return Response.Ok("}succeeded", "topt racks have been saved to the database");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return Response.Fail(e.Message, String.Empty);
+            }
         }
     }
 }

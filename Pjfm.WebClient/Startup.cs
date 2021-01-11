@@ -160,7 +160,7 @@ namespace pjfm
                     {
                         context.Clients.Add(client.ToEntity());
                     }
-                    context.SaveChanges();
+                    context.SaveChangesAsync();
                 }
 
                 if (!context.IdentityResources.Any())
@@ -169,7 +169,7 @@ namespace pjfm
                     {
                         context.IdentityResources.Add(resource.ToEntity());
                     }
-                    context.SaveChanges();
+                    context.SaveChangesAsync();
                 }
 
                 if (!context.ApiScopes.Any())
@@ -178,7 +178,7 @@ namespace pjfm
                     {
                         context.ApiScopes.Add(resource.ToEntity());
                     }
-                    context.SaveChanges();
+                    context.SaveChangesAsync();
                 }
             }
         }

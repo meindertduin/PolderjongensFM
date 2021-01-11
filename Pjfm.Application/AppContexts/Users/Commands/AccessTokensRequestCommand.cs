@@ -46,7 +46,7 @@ namespace Pjfm.Application.Spotify.Commands
 
             try
             {
-                var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent);
+                var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent, cancellationToken);
 
                 var contentString = await result.Content.ReadAsStringAsync();
                 
@@ -60,7 +60,7 @@ namespace Pjfm.Application.Spotify.Commands
             }
             catch (Exception e)
             {
-                return Response.Fail<AccessTokensRequestResult>("something went wrong retrieving access tokens");
+                return Response.Fail<AccessTokensRequestResult>($"something went wrong retrieving access tokens {e.Message}");
             }
         }
     }

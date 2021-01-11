@@ -138,7 +138,7 @@ namespace pjfm.Controllers
 
             if (trackResponse.IsSuccessStatusCode)
             {
-                var requestedTrack = await SerializeTrackOfResponse(await trackResponse.Content.ReadAsStringAsync());
+                var requestedTrack = SerializeTrackOfResponse(await trackResponse.Content.ReadAsStringAsync());
 
                 if (requestedTrack == null)
                 {
@@ -256,7 +256,7 @@ namespace pjfm.Controllers
             return Accepted();
         }
         
-        private async Task<TrackDto> SerializeTrackOfResponse(string trackResponseContent)
+        private TrackDto SerializeTrackOfResponse(string trackResponseContent)
         {
             var trackSerializer = new SpotifyTrackSerializer();
             var trackDto = trackSerializer.ConvertSingle(trackResponseContent);

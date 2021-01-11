@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Spotify.Commands;
-using Pjfm.Domain.Interfaces;
 using Serilog;
 
 namespace pjfm.Services
@@ -38,26 +35,9 @@ namespace pjfm.Services
             Log.Information("Updating top tracks of users");
 
             using var scope = _serviceProvider.CreateScope();
-            var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                
-            var users = appDbContext.ApplicationUsers
-                .Where(user => String.IsNullOrEmpty(user.SpotifyRefreshToken) == false)
-                .ToArray();
 
-            List<Task> updateTasks = new List<Task>();
-            
-            foreach (var user in users)
-            {
-                var updateTask = mediator.Send(new UpdateUserTopTracksCommand()
-                {
-                    User = user,
-                });
-                
-                updateTasks.Add(updateTask);
-            }
-
-            await Task.WhenAll(updateTasks);
+            await mediator.Send(new UpdateAllUsersRefreshTokenCommand());
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
