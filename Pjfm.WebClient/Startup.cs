@@ -72,21 +72,18 @@ namespace pjfm
             services.AddRazorPages();
             
 
-            if (WebHostEnvironment.IsDevelopment())
+            services.AddCors(options =>
             {
-                services.AddCors(options =>
-                {
-                    options.AddPolicy("AllowAllOrigins",
-                        builder =>
-                        {
-                            builder
-                                .AllowCredentials()
-                                .WithOrigins(Configuration["AppUrls:ClientBaseUrl"])
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                        });
-                });
-            }
+                options.AddPolicy("AllowOrigins",
+                    builder =>
+                    {
+                        builder
+                            .AllowCredentials()
+                            .WithOrigins(Configuration["AppUrls:ClientBaseUrl"])
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -117,13 +114,13 @@ namespace pjfm
 
             app.UseSerilogRequestLogging();
             
-            app.UseCors("AllowAllOrigins");
+            app.UseCors("AllowOrigins");
             
             var webSocketOptions = new WebSocketOptions()
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(10),
             };
-            webSocketOptions.AllowedOrigins.Add(Configuration["AppUrls:ClientBaseUrl"]);
+            webSocketOptions.AllowedOrigins.Add();
 
             app.UseWebSockets(webSocketOptions);
             app.UseStaticFiles();
