@@ -109,7 +109,7 @@ import {Watch} from "vue-property-decorator";
         } 
 
         convertMsToMMSS(ms:number) : string {
-            let date = new Date();
+            let date = new Date(0);
             date.setMilliseconds(ms);
 
             return date.toISOString().substr(14, 5);
