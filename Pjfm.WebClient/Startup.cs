@@ -1,13 +1,16 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -115,7 +118,14 @@ namespace pjfm
             app.UseSerilogRequestLogging();
             
             app.UseCors("AllowAllOrigins");
+            
+            var webSocketOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(10),
+            };
+            webSocketOptions.AllowedOrigins.Add(Configuration["AppUrls:ClientBaseUrl"]);
 
+            app.UseWebSockets(webSocketOptions);
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -145,7 +155,7 @@ namespace pjfm
                 endpoints.MapRazorPages();
             });
         }
-        
+
         private static void InitializeDatabase(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
