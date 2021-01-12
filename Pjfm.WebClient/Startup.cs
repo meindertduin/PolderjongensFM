@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -15,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Pjfm.Application;
 using Pjfm.Application.Common;
@@ -71,6 +73,12 @@ namespace pjfm
             
             services.AddRazorPages();
             
+            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
+            {
+                AllowAll = true
+            };
+            
+            services.AddSingleton<ICorsPolicyService>(cors);
 
             services.AddCors(options =>
             {
