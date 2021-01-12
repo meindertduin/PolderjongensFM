@@ -116,13 +116,6 @@ namespace pjfm
             
             app.UseCors("AllowOrigins");
             
-            var webSocketOptions = new WebSocketOptions()
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(10),
-            };
-            webSocketOptions.AllowedOrigins.Add();
-
-            app.UseWebSockets(webSocketOptions);
             app.UseStaticFiles();
 
             app.UseRouting();
