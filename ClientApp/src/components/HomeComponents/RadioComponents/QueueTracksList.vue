@@ -44,9 +44,9 @@ import {trackDto} from "@/common/types";
   name: 'QueueTracksList',
 })
 export default class QueueTracksList extends Vue {
-  @Prop({type: Object, required: true}) readonly tracks !: Array<trackDto>;
-  @Prop({type: Object, required: true}) readonly spanTitle !: string;
-  @Prop({type: Object, required: true}) readonly emptyMessage !: string | null;
+  @Prop({type: Array, required: true}) readonly tracks !: Array<trackDto>;
+  @Prop({type: String, required: true}) readonly spanTitle !: string;
+  @Prop() readonly emptyMessage !: string | null;
 }
 </script>
 

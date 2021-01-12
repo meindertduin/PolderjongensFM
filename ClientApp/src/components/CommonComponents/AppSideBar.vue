@@ -134,7 +134,7 @@ export default class AppSideBar extends Vue{
   }
 
   private navigate(uri : string){
-    this.$router.push(uri);
+    this.$router.push(uri).catch(() => {});
   }
   
   private songRequestIsAvailable(): boolean {
