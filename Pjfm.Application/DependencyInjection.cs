@@ -1,13 +1,6 @@
-﻿using System;
-using System.Reflection;
-using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Auth.Querys;
-using Pjfm.Application.Common;
-using Pjfm.Application.Services;
-using Pjfm.Application.Spotify.Queries;
-using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Application
 {

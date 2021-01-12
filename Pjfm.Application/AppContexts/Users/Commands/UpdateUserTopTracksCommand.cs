@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pjfm.Application.Identity;
@@ -20,24 +22,28 @@ namespace Pjfm.Application.Spotify.Commands
 {
     public class UpdateUserTopTracksCommand : IRequestWrapper<string>
     {
-        public ApplicationUser User { get; set; }
+        public string UserId { get; set; }
     }
 
     public class UpdateUserTopTracksCommandHandler : IHandlerWrapper<UpdateUserTopTracksCommand, string>
     {
         private readonly IAppDbContext _ctx;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private const int TopTracksRetrievalCount = 150;
 
-        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, ISpotifyBrowserService spotifyBrowserService)
+        public UpdateUserTopTracksCommandHandler(IAppDbContext ctx, ISpotifyBrowserService spotifyBrowserService, UserManager<ApplicationUser> userManager)
         {
             _ctx = ctx;
             _spotifyBrowserService = spotifyBrowserService;
+            _userManager = userManager;
         }
         
         public async Task<Response<string>> Handle(UpdateUserTopTracksCommand request, CancellationToken cancellationToken)
         {
-            if (String.IsNullOrEmpty(request.User.SpotifyRefreshToken))
+            var user = _ctx.ApplicationUsers.AsNoTracking().FirstOrDefault(x => x.Id == request.UserId);
+            
+            if (user != null && String.IsNullOrEmpty(user.SpotifyRefreshToken))
             {
                 return Response.Fail<string>("User has no refresh token");
             }
@@ -49,7 +55,7 @@ namespace Pjfm.Application.Spotify.Commands
             for (int i = 0; i < 3; i++)
             {
                 var newTopTracksResult =
-                    await _spotifyBrowserService.GetUserTopTracks(request.User.Id, request.User.SpotifyAccessToken, i);
+                    await _spotifyBrowserService.GetUserTopTracks(user.Id, user.SpotifyAccessToken, i);
 
                 if (newTopTracksResult.IsSuccessStatusCode)
                 {
@@ -60,12 +66,12 @@ namespace Pjfm.Application.Spotify.Commands
                     });
 
                     var topTracksMapper = new TopTracksMapper();
-                    updatedTopTracks.AddRange(topTracksMapper.MapTopTrackItems(objectResult, i, request.User.Id));
+                    updatedTopTracks.AddRange(topTracksMapper.MapTopTrackItems(objectResult, i, user.Id));
                 }
             }
             
             var termTopTracks = _ctx.ApplicationUsers
-                .Where(u => u.Id == request.User.Id)
+                .Where(u => u.Id == user.Id)
                 .SelectMany(x => x.TopTracks)
                 .ToArray();
 
@@ -88,7 +94,7 @@ namespace Pjfm.Application.Spotify.Commands
             else
             {
                 _ctx.TopTracks.RemoveRange(termTopTracks);
-                Log.Error($@"Error while trying to update users toptracks of user with userId: {request.User.Id}. As a result the toptracks of user are deleted and have to be re-updated.");
+                Log.Error($@"Error while trying to update users toptracks of user with userId: {user.Id}. As a result the toptracks of user are deleted and have to be re-updated.");
             }
             
             await _ctx.SaveChangesAsync(cancellationToken);

@@ -129,9 +129,9 @@ namespace pjfm.Controllers
 
                 var setTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
                 {
-                    User = user,
+                    UserId = user.Id,
                 });
-            
+                
                 if (setTopTracksResult.Error == false)
                 {
                     var userClaims = await _userManager.GetClaimsAsync(user);

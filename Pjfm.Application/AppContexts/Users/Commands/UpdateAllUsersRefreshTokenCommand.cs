@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Interfaces;
@@ -29,15 +30,17 @@ namespace Pjfm.Application.Spotify.Commands
         public async Task<Response<string>> Handle(UpdateAllUsersRefreshTokenCommand request, CancellationToken cancellationToken)
         {
             
-            var users = _appDbContext.ApplicationUsers
+            var userIds = _appDbContext.ApplicationUsers
+                .AsNoTracking()
                 .Where(user => String.IsNullOrEmpty(user.SpotifyRefreshToken) == false)
+                .Select(x => x.Id)
                 .ToArray();
             
-            foreach (var user in users)
+            foreach (var userId in userIds)
             {
                 var updateTask = _mediator.Send(new UpdateUserTopTracksCommand()
                 {
-                    User = user,
+                    UserId = userId,
                 }, cancellationToken);
                 await updateTask;
             }

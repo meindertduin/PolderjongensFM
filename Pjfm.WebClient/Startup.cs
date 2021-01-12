@@ -72,13 +72,6 @@ namespace pjfm
             services.AddSignalR();
             
             services.AddRazorPages();
-            
-            var cors = new DefaultCorsPolicyService(new LoggerFactory().CreateLogger<DefaultCorsPolicyService>())
-            {
-                AllowAll = true
-            };
-            
-            services.AddSingleton<ICorsPolicyService>(cors);
 
             services.AddCors(options =>
             {
@@ -168,7 +161,7 @@ namespace pjfm
                     {
                         context.Clients.Add(client.ToEntity());
                     }
-                    context.SaveChangesAsync();
+                    context.SaveChanges();
                 }
 
                 if (!context.IdentityResources.Any())
@@ -177,7 +170,7 @@ namespace pjfm
                     {
                         context.IdentityResources.Add(resource.ToEntity());
                     }
-                    context.SaveChangesAsync();
+                    context.SaveChanges();
                 }
 
                 if (!context.ApiScopes.Any())
@@ -186,7 +179,7 @@ namespace pjfm
                     {
                         context.ApiScopes.Add(resource.ToEntity());
                     }
-                    context.SaveChangesAsync();
+                    context.SaveChanges();
                 }
             }
         }

@@ -58,6 +58,10 @@ namespace Pjfm.Application.Identity
                         IdentityServerConstants.LocalApi.ScopeName,
                         ApplicationIdentityConstants.Claims.Role,
                     },
+                    AllowedCorsOrigins = new List<string>()
+                    {
+                        "https://localhost:8085",
+                    },
 
                     AlwaysIncludeUserClaimsInIdToken = true,
                     

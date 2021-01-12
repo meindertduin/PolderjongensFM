@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Pjfm.Application.Configuration;
@@ -85,7 +86,10 @@ namespace Pjfm.Application.Spotify.Commands
                         await _userManager.RemoveClaimAsync(user, new Claim(SpotifyIdentityConstants.Claims.SpStatus,
                             SpotifyIdentityConstants.Roles.Auth));
                         
-                        var userTopTracks = _appDbContext.TopTracks.Where(track => track.ApplicationUserId == user.Id);
+                        var userTopTracks = _appDbContext.TopTracks
+                            .AsNoTracking()
+                            .Where(track => track.ApplicationUserId == user.Id);
+                        
                         _appDbContext.TopTracks.RemoveRange(userTopTracks);
                         await _appDbContext.SaveChangesAsync(cancellationToken);
                     }
