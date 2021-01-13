@@ -16,6 +16,8 @@ namespace Pjfm.WebClient.Services
 
         private  int _maxRequestsPerUserAmount = 3;
 
+        private bool _hasNoSecondary = true;
+
         private Random _random = new Random();
 
         public RandomRequestPlaybackState(IPlaybackController playbackController, IPlaybackQueue playbackQueue)
@@ -39,11 +41,24 @@ namespace Pjfm.WebClient.Services
                 .Select(t => t.User.Id)
                 .Count(t => t == user.Id) < _maxRequestsPerUserAmount)
             {
-                _tracksBuffer.Add(new TrackRequestDto()
+                if (_hasNoSecondary)
                 {
-                    Track = track,
-                    User = user,
-                });
+                    _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
+                    {
+                        Track = track,
+                        User = user,
+                    });
+                    
+                    _hasNoSecondary = false;
+                }
+                else
+                {
+                    _tracksBuffer.Add(new TrackRequestDto()
+                    {
+                        Track = track,
+                        User = user,
+                    });
+                }
                 
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
             }
@@ -95,6 +110,10 @@ namespace Pjfm.WebClient.Services
                 var randomIndex = _random.Next(_tracksBuffer.Count);
                 _playbackQueue.AddSecondaryTrack(_tracksBuffer[randomIndex]);
                 _tracksBuffer.RemoveAt(randomIndex);
+            }
+            else
+            {
+                _hasNoSecondary = true;
             }
         }
     }

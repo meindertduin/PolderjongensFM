@@ -150,7 +150,13 @@ namespace Pjfm.WebClient.Services
         {
             if (IPlaybackController.CurrentPlaybackState != null)
             {
-                return IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
+                var secondaryTracks = IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
+                if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
+                {
+                     secondaryTracks.AddRange(_playbackQueue.GetSecondaryQueueTracks());
+                }
+                
+                return secondaryTracks;
             }
             
             return new List<TrackDto>();
