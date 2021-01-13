@@ -67,7 +67,10 @@ namespace pjfm
 
             services.AddControllersWithViews();
 
-            services.AddHostedService<TopTracksUpdaterHostedService>();
+            if (WebHostEnvironment.IsProduction())
+            {
+                services.AddHostedService<TopTracksUpdaterHostedService>();
+            }
 
             services.AddSignalR();
             
