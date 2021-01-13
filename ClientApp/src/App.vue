@@ -75,7 +75,8 @@ export default class App extends Vue{
     });
     
     radioConnection.on("PlaybackSettings", (playbackSettings: userPlaybackSettings) => {
-      this.$store.commit("playbackModule/SET_PLAYBACK_SETTINGS", playbackSettings)
+      this.$store.commit("playbackModule/SET_PLAYBACK_SETTINGS", playbackSettings);
+      this.$store.dispatch("profileModule/tryCalculateRequestedAmount");
     })
     
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);

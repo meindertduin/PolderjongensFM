@@ -10,5 +10,9 @@ module.exports = {
     port: 8085,
     host: '0.0.0.0',
     public: "https://localhost:8085",
+    https: {
+      key: fs.readFileSync(path.relative(__dirname, 'server.key')),
+      cert: fs.readFileSync(path.relative(__dirname, 'server.cert')),
+    },
   }
 }

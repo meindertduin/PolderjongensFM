@@ -49,7 +49,7 @@ const actions = <ActionTree<State, any>>{
     tryCalculateRequestedAmount(context):void{
         const secondaryTracks: Array<trackDto> = context.rootGetters["playbackModule/getSecondaryQueuedTracks"];
         const userId = context.getters["userId"]
-
+        
         if (secondaryTracks.length > 0 && userId !== null){
             const userRequestedAmount = secondaryTracks
                 .filter(track => {
@@ -57,6 +57,9 @@ const actions = <ActionTree<State, any>>{
                 })
                 .length;
             context.commit("SET_USER_REQUESTED_AMOUNT", userRequestedAmount);
+        }
+        else {
+            context.commit("SET_USER_REQUESTED_AMOUNT", 0);
         }
     }
 }
