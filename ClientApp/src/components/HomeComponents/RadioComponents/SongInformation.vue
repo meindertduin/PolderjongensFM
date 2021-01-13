@@ -10,8 +10,14 @@
       <v-col class="d-none d-md-block">
         <v-card class="pa-2" outlined round v-if="nextTrackInfo">
           <span class="overline grey--text">VOLGENDE POKOE</span><br>
-          <span class="subtitle-1">{{ nextTrackInfo.artists[0] }} - {{ nextTrackInfo.title }}</span><br>
-          <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
+          <div v-if="playbackState !== 2 || secondaryTracksQueue.length === 0">
+            <span class="subtitle-1">{{ nextTrackInfo.artists[0] }} - {{ nextTrackInfo.title }}</span><br>
+            <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
+          </div>
+          <div v-else>
+            <span class="subtitle-1">Random van artist unkown </span><br>
+            <span class="subtitle-2 orange--text">00:00 - ??:??</span>
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -29,6 +35,10 @@ import {Watch} from "vue-property-decorator";
     export default class SongInformation extends Vue {
         private elapsedTime: number | null = null;
         private timer: any = null;
+
+        get playbackState():playbackState | null{
+          return this.$store.getters['playbackModule/getPlaybackState'];
+        }
         
         get currentTrackDuration(){
             const currentTrackInfo = this.currentTrackInfo;
