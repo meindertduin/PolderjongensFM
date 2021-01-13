@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -10,6 +11,7 @@ using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Common;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace Pjfm.Application.Spotify.Commands
 {
@@ -48,7 +50,13 @@ namespace Pjfm.Application.Spotify.Commands
             {
                 var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent, cancellationToken);
 
+                if (result.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    Log.Information("getting token from spotify returned badrequest");
+                }
+                
                 var contentString = await result.Content.ReadAsStringAsync();
+                Log.Information(contentString);
                 
                 var resultContent =
                     JsonConvert.DeserializeObject<AccessTokensRequestResult>(contentString, new JsonSerializerSettings()
@@ -60,6 +68,7 @@ namespace Pjfm.Application.Spotify.Commands
             }
             catch (Exception e)
             {
+                Log.Error(e.Message);
                 return Response.Fail<AccessTokensRequestResult>($"something went wrong retrieving access tokens {e.Message}");
             }
         }

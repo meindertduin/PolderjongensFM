@@ -16,6 +16,7 @@ using Pjfm.Application.Services;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Domain.Interfaces;
 using pjfm.Models;
+using Serilog;
 
 namespace pjfm.Controllers
 {
@@ -122,6 +123,7 @@ namespace pjfm.Controllers
 
             if (result.Error == false)
             {
+                Log.Information("access token being updated");
                 trackedUserProfile.SpotifyAuthenticated = true;
                 trackedUserProfile.SpotifyAccessToken = result.Data.AccessToken;
                 trackedUserProfile.SpotifyRefreshToken = result.Data.RefreshToken;
@@ -150,7 +152,7 @@ namespace pjfm.Controllers
 
         private void EmptyUnUsedCachedStates()
         {
-            
+            // Todo fill in this method
         }
         
         [HttpGet("me")]

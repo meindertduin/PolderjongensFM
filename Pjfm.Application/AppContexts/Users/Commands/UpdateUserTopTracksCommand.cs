@@ -41,6 +41,7 @@ namespace Pjfm.Application.Spotify.Commands
         
         public async Task<Response<string>> Handle(UpdateUserTopTracksCommand request, CancellationToken cancellationToken)
         {
+            Log.Information("updating user toptracks");
             var user = _ctx.ApplicationUsers.AsNoTracking().FirstOrDefault(x => x.Id == request.UserId);
             
             if (user != null && String.IsNullOrEmpty(user.SpotifyRefreshToken))
