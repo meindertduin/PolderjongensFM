@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <span class="overline grey--text">Filler watchtrij</span><br>
+    <span class="overline grey--text">{{spanTitle}}</span><br>
     <v-list>
       <v-list-item-group>
         <v-list-item
