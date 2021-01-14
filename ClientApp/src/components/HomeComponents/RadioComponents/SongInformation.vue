@@ -36,7 +36,7 @@ import {Watch} from "vue-property-decorator";
         private elapsedTime: number | null = null;
         private timer: any = null;
 
-        get playbackState():playbackState | null{
+        get playbackState():number | null{
           return this.$store.getters['playbackModule/getPlaybackState'];
         }
         
