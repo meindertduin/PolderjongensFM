@@ -1,0 +1,44 @@
+  
+name: .NET Core Build with Tests
+
+on:
+  push:
+    branches: [ test/main ]
+  pull_request:
+    branches: [ test/main ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      config: 'Release'
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x, 15.x]
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101    
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration $config --no-restore
+    - name: Test PR      
+      run: dotnet test --no-restore --no-build --configuration $config
+      
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      working-directory: ./ClientApp
+      run: npm install
+    - name: Npm Build
+      working-directory: ./ClientApp
+      run: npm run build --if-present
