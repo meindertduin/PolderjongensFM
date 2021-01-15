@@ -12,6 +12,7 @@ using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Enums;
+using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Service;
 using Pjfm.WebClient.Services;
 
@@ -25,18 +26,24 @@ namespace pjfm.Controllers
         private readonly ISpotifyBrowserService _spotifyBrowserService;
         private readonly IPlaybackEventTransmitter _eventTransmitter;
         private readonly IMediator _mediator;
+        private readonly IPlaybackListenerManager _playbackListenerManager;
+        private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public SpotifyWebPlaybackController(IPlaybackController playbackController,
             ISpotifyBrowserService spotifyBrowserService,
             UserManager<ApplicationUser> userManager,
             IPlaybackEventTransmitter eventTransmitter,
-            IMediator mediator)
+            IMediator mediator,
+            IPlaybackListenerManager playbackListenerManager,
+            ISpotifyPlayerService spotifyPlayerService)
         {
             _playbackController = playbackController;
             _spotifyBrowserService = spotifyBrowserService;
             _eventTransmitter = eventTransmitter;
             _mediator = mediator;
+            _playbackListenerManager = playbackListenerManager;
+            _spotifyPlayerService = spotifyPlayerService;
             _userManager = userManager;
         }
 
@@ -56,6 +63,22 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        [HttpPut("forceStop")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public async Task<IActionResult> ForceStopPlaybackUser()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var removeResult = _playbackListenerManager.TryRemoveTimedListener(user.Id);
+            
+            if (removeResult)
+            {
+                await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
+                return Accepted();
+            }
+
+            return NoContent();
+        }
+        
         [HttpPut("mod/setTerm")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult AllTermFilter([FromQuery] TopTrackTermFilter term)

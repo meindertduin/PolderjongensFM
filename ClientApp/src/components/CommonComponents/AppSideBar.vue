@@ -16,7 +16,7 @@
           <v-list-item-title>Radio</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item link v-if="songRequestIsAvailable()" @click="navigate('/search')">
+      <v-list-item link :disabled="songRequestIsAvailable() === false" @click="navigate('/search')">
         <v-list-item-action>
           <v-icon>mdi-playlist-plus</v-icon>
         </v-list-item-action>
@@ -24,12 +24,12 @@
           <v-list-item-title>Verzoekje doen</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item disabled link v-if="!songRequestIsAvailable()">
+      <v-list-item link @click="forceStopPlayback()" v-if="oidcAuthenticated">
         <v-list-item-action>
-          <v-icon>mdi-playlist-plus</v-icon>
+          <v-icon>mdi-stop-circle</v-icon>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title>Verzoekje doen</v-list-item-title>
+          <v-list-item-title>Forceer stop</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-divider></v-divider>
@@ -131,6 +131,12 @@ export default class AppSideBar extends Vue{
     // More checks?
     
     return true;
+  }
+  
+  private forceStopPlayback(){
+    // @ts-ignore
+    this.$axios.put('api/playback/forcestop')
+      .catch(() => {});
   }
 
   private navigate(uri : string){
