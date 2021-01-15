@@ -34,11 +34,14 @@ jobs:
     - name: Test PR      
       run: dotnet test --no-restore --no-build --configuration $config
       
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Set up Node.js
+      uses: actions/setup-node@v1.2.0
       with:
-          node-version: ${{ matrix.node-version }}
-    - run: cd ./ClientApp
-    - run: npm ci
-    - run: npm run build --if-present
+        node-version: '10.x'
+    - name: cd ClientApp
+      run: cd ./ClientApp
+    - name: Install dependencies
+      run: npm install
+    - name: Compile build
+      run: npm run build
 
- 
