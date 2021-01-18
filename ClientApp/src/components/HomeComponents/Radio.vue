@@ -1,6 +1,10 @@
 ﻿<template>
     <div>
-        <Alert :key="alertId"/>
+        <v-row justify="center">
+          <v-col class="col-12 col-sm-11 col-md-10">
+            <Alert :key="alertId"/>
+          </v-col>
+        </v-row>
         <div style="margin: 10px;">
           <SongInformation/>
           <Queue/>

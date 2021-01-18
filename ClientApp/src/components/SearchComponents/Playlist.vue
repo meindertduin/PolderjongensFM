@@ -65,10 +65,10 @@ export default class Playlist extends Vue {
     return this.maxRequestsPerUser - this.userRequestedAmount;
   }
   
-  @Prop({type: Object, required: true}) 
+  @Prop({type: String, required: true}) 
   readonly playlistId !: string
 
-  @Prop({type: Object, required: true})
+  @Prop({type: String, required: true})
   readonly playlistName !: string
 
   get computedHeaders(){

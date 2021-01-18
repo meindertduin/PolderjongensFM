@@ -37,16 +37,19 @@ export default class ModServerMessageHandler extends Vue{
     this.djHubSocketConnection?.on("ServerMessage", (message: hubServerMessage) => {
       this.snackBarOpen = true;
       this.currentMessage = message;
-    });
-    
+    })
     this.djHubSocketConnection?.on("PlaybackSettings", (settings: playbackSettings) => {
       console.log(settings)
       this.$store.commit("modModule/SET_PLAYBACK_SETTINGS", settings);
-    });
-    
+    })
     this.djHubSocketConnection?.on("ReceiveDjPlaybackInfo", (playbackInfo: djPlaybackInfo) => {
       this.$store.commit("modModule/SET_DJ_PLAYBACK_INFO", playbackInfo);
-    });
+    })
+    
+    this.djHubSocketConnection.start()
+      .then(() => {
+        
+      })
   }
 }
 </script>
