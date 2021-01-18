@@ -1,10 +1,6 @@
 ﻿<template>
-      <v-card
-          class="pa-2"
-          outlined
-          round
-          style="margin-bottom: 90px"
-      >
+      <v-card class="pa-2" outlined round
+          style="margin-bottom: 90px">
         <span class="overline grey--text">Included</span><br>
         <v-list dense>
           <v-list-item-group>
@@ -33,10 +29,7 @@
         get includedUsers():Array<applicationUser>{
             return this.$store.getters['modModule/getIncludedUsers'];
         }
-        
-        created(){
-        }
-        
+
         excludeUser(user: applicationUser){
             // @ts-ignore
             this.$axios.post("api/playback/mod/exclude", user)

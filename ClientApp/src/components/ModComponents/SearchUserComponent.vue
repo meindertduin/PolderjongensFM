@@ -1,9 +1,5 @@
 ﻿<template>
-    <v-card
-            class="pa-2"
-            outlined
-            round
-    >
+    <v-card class="pa-2" outlined round>
         <span class="overline grey--text">Not Included</span><br>
         <div class="text-center">
           <v-progress-circular :size="250" color="orange" indeterminate v-if="loading"></v-progress-circular>

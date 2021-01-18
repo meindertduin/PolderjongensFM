@@ -3,20 +3,14 @@
     <span class="overline grey--text">{{spanTitle}}</span><br>
     <v-list>
       <v-list-item-group>
-        <v-list-item
-            v-for="(item, i) in tracks"
-            :key="i"
-        >
+        <v-list-item v-for="(item, i) in tracks" :key="i">
           <v-list-item-content>
             <v-list-item-title>
               {{i + 1}}. {{item.track.title}} - {{item.track.artists[0]}}
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-icon>
-            <v-chip
-                :class="item.chipClass"
-                outlined
-            >
+            <v-chip :class="item.chipClass" outlined>
               <v-icon left>{{item.icon}}</v-icon>
               {{item.user}}
             </v-chip>

@@ -18,7 +18,6 @@
         <v-icon>mdi-pause</v-icon>
       </v-btn>
     </v-bottom-navigation>
-    <!--  -->
     
     <!-- Not Authenticated -->
     <v-bottom-navigation fixed v-else>
