@@ -1,6 +1,6 @@
 <template>
-    <v-row>
-      <v-col>
+    <v-row justify="center">
+      <v-col class="col-12 col-sm-11 col-md-10 col-lg-10">
           <v-card class="pa-2" outlined round>
               <div v-if="playbackState === 2">
                 <div v-if="queue.filter(x => x.queueNum === 0).length > 0">

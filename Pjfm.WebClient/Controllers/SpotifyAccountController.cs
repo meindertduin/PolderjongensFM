@@ -96,9 +96,8 @@ namespace pjfm.Controllers
         public async Task<IActionResult> FinalizeAuthentication(string state, string code)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            var trackedUserProfile = _ctx.ApplicationUsers.FirstOrDefault(a => a.Id == user.Id);
 
-            if (user == null || trackedUserProfile == null)
+            if (user == null)
             {
                 return Forbid();
             }
@@ -124,16 +123,16 @@ namespace pjfm.Controllers
             if (result.Error == false)
             {
                 Log.Information("access token being updated");
-                trackedUserProfile.SpotifyAuthenticated = true;
-                trackedUserProfile.SpotifyAccessToken = result.Data.AccessToken;
-                trackedUserProfile.SpotifyRefreshToken = result.Data.RefreshToken;
-                await _ctx.SaveChangesAsync(CancellationToken.None);
+                user.SpotifyAuthenticated = true;
+                user.SpotifyAccessToken = result.Data.AccessToken;
+                user.SpotifyRefreshToken = result.Data.RefreshToken;
+                await _userManager.UpdateAsync(user);
 
                 var setTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
                 {
                     UserId = user.Id,
                 });
-                
+
                 if (setTopTracksResult.Error == false)
                 {
                     var userClaims = await _userManager.GetClaimsAsync(user);
@@ -142,7 +141,6 @@ namespace pjfm.Controllers
                         await _userManager.AddClaimAsync(user,
                             new Claim(SpotifyIdentityConstants.Claims.SpStatus, SpotifyIdentityConstants.Roles.Auth));
                     }
-                    
                     return Redirect(_configuration["AppUrls:ClientBaseUrl"]);
                 }
             }

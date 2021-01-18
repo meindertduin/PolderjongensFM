@@ -1,8 +1,5 @@
 ﻿<template>
-    <v-card 
-            class="pa-2"
-            outlined
-            round>
+    <v-card class="pa-2" outlined round>
         <v-card-title>
             Mod panel
         </v-card-title>
@@ -161,9 +158,7 @@
           }
         }
       }
-
-      private loadedPlaybackSettings: playbackSettings | null = null;
-        
+       
         async handleConfirmPlaybackSet(){
             this.showConfirmNotification = false;
             try {

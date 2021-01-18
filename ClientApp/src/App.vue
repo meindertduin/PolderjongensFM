@@ -42,7 +42,7 @@ export default class App extends Vue{
     this.setUserPreferences();
     this.setRadioConnection();
   }
-
+  
   get isMod(){
     return this.$store.getters['profileModule/isMod'];
   }

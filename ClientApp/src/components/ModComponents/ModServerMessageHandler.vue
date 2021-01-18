@@ -2,12 +2,7 @@
   <v-snackbar v-if="currentMessage" :color="currentMessage.error? 'red': 'dark'" v-model="snackBarOpen" :timeout="snackBarTimeOut">
     {{currentMessage.message}}
     <template v-slot:action="{ attrs }">
-      <v-btn
-          color="blue"
-          text
-          v-bind="attrs"
-          @click="snackBarOpen = false"
-      >
+      <v-btn color="blue" text v-bind="attrs" @click="snackBarOpen = false">
         Sluiten
       </v-btn>
     </template>
@@ -42,19 +37,16 @@ export default class ModServerMessageHandler extends Vue{
     this.djHubSocketConnection?.on("ServerMessage", (message: hubServerMessage) => {
       this.snackBarOpen = true;
       this.currentMessage = message;
-    })
+    });
+    
     this.djHubSocketConnection?.on("PlaybackSettings", (settings: playbackSettings) => {
       console.log(settings)
       this.$store.commit("modModule/SET_PLAYBACK_SETTINGS", settings);
-    })
+    });
+    
     this.djHubSocketConnection?.on("ReceiveDjPlaybackInfo", (playbackInfo: djPlaybackInfo) => {
       this.$store.commit("modModule/SET_DJ_PLAYBACK_INFO", playbackInfo);
-    })
-    
-    this.djHubSocketConnection.start()
-      .then(() => {
-        
-      })
+    });
   }
 }
 </script>

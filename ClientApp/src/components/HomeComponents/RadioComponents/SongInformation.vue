@@ -1,26 +1,26 @@
 <template>
-    <v-row>
-      <v-col class="d-block">
-          <v-card class="pa-2" outlined round v-if="currentTrackInfo">
-              <span class="overline grey--text">HUIDIGE POKOE</span><br>
-              <span class="subtitle-1">{{ currentTrackInfo.artists[0] }} - {{ currentTrackInfo.title }}</span><br>
-              <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentTrackDuration) }} </span>
-          </v-card>
-      </v-col>
-      <v-col class="d-none d-md-block">
-        <v-card class="pa-2" outlined round v-if="nextTrackInfo">
-          <span class="overline grey--text">VOLGENDE POKOE</span><br>
-          <div v-if="playbackState !== 2 || secondaryTracksQueue.length === 0">
-            <span class="subtitle-1">{{ nextTrackInfo.artists[0] }} - {{ nextTrackInfo.title }}</span><br>
-            <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
-          </div>
-          <div v-else>
-            <span class="subtitle-1">Random van artist unkown </span><br>
-            <span class="subtitle-2 orange--text">00:00 - ??:??</span>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-row justify="center">
+    <v-col class="d-block col-lg-5 col-12 col-sm-11 col-md-10">
+      <v-card class="pa-2" outlined round v-if="currentTrackInfo">
+        <span class="overline grey--text">HUIDIGE POKOE</span><br>
+        <span class="subtitle-1">{{ currentTrackInfo.title }} - {{ currentTrackInfo.artists[0] }}</span><br>
+        <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentTrackDuration) }} </span>
+      </v-card>
+    </v-col>
+    <v-col class="d-none d-md-block col-lg-5 col-12 col-sm-11 col-md-10">
+      <v-card class="pa-2" outlined round v-if="nextTrackInfo">
+        <span class="overline grey--text">VOLGENDE POKOE</span><br>
+        <div v-if="playbackState !== 2 || secondaryTracksQueue.length === 0">
+          <span class="subtitle-1">{{ nextTrackInfo.title }} - {{ nextTrackInfo.artists[0] }}</span><br>
+          <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
+        </div>
+        <div v-else>
+          <span class="subtitle-1">Random van artist unkown </span><br>
+          <span class="subtitle-2 orange--text">00:00 - ??:??</span>
+        </div>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
