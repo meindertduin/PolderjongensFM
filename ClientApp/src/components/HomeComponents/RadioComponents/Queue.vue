@@ -24,16 +24,10 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import {Watch} from "vue-property-decorator";
-import {playbackState, trackDto, userPlaybackInfo} from "@/common/types";
+import {playbackState, queueTrack, trackDto, userPlaybackInfo} from "@/common/types";
 import QueueTracksList from "@/components/HomeComponents/RadioComponents/QueueTracksList.vue";
 
-interface queueTrack {
-  track: trackDto,
-  user: string,
-  icon: string,
-  queueNum: number,
-  chipClass: string,
-}
+
 
 @Component({
   name: 'Queue',
@@ -115,10 +109,10 @@ export default class Queue extends Vue {
                   icon: 'mdi-robot',
               })
           })
-
           console.log(this.queue);
       }
-  }
+    }
+  
     }
 </script>
 <style scoped>

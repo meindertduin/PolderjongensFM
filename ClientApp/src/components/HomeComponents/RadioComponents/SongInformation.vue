@@ -4,7 +4,14 @@
       <v-card class="pa-2" outlined round v-if="currentTrackInfo">
         <span class="overline grey--text">HUIDIGE POKOE</span><br>
         <span class="subtitle-1">{{ currentTrackInfo.title }} - {{ currentTrackInfo.artists[0] }}</span><br>
-        <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentTrackDuration) }} </span>
+        <v-card-actions>
+          <span class="subtitle-2 orange--text">{{ convertMsToMMSS(elapsedTime) }} - {{ convertMsToMMSS(currentTrackDuration) }} </span>
+          <v-spacer></v-spacer>
+          <v-chip :class="getUserChipData(currentTrackInfo).chipClass" outlined>
+            <v-icon left>{{getUserChipData(currentTrackInfo).icon}}</v-icon>
+            {{ getUserChipData(currentTrackInfo).user }}
+          </v-chip>
+        </v-card-actions>
       </v-card>
     </v-col>
     <v-col class="d-none d-md-block col-lg-5 col-12 col-sm-11 col-md-10">
@@ -12,11 +19,25 @@
         <span class="overline grey--text">VOLGENDE POKOE</span><br>
         <div v-if="playbackState !== 2 || secondaryTracksQueue.length === 0">
           <span class="subtitle-1">{{ nextTrackInfo.title }} - {{ nextTrackInfo.artists[0] }}</span><br>
-          <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
+          <v-card-actions>
+            <span class="subtitle-2 orange--text">00:00 - {{ convertMsToMMSS(nextTrackDuration) }}</span>
+            <v-spacer></v-spacer>
+            <v-chip :class="getUserChipData(nextTrackInfo).chipClass" outlined>
+              <v-icon left>{{getUserChipData(nextTrackInfo).icon}}</v-icon>
+              {{ getUserChipData(nextTrackInfo).user }}
+            </v-chip>
+          </v-card-actions>
         </div>
         <div v-else>
           <span class="subtitle-1">Random van artist unkown </span><br>
-          <span class="subtitle-2 orange--text">00:00 - ??:??</span>
+          <v-card-actions>
+            <span class="subtitle-2 orange--text">00:00 - ??:??</span>
+            <v-spacer></v-spacer>
+            <v-chip :class="getUserChipData(nextTrackInfo).chipClass" outlined>
+              <v-icon left>{{getUserChipData(nextTrackInfo).icon}}</v-icon>
+              {{ getUserChipData(nextTrackInfo).user }}
+            </v-chip>
+          </v-card-actions>
         </div>
       </v-card>
     </v-col>
@@ -38,6 +59,30 @@ import {Watch} from "vue-property-decorator";
 
         get playbackState():number | null{
           return this.$store.getters['playbackModule/getPlaybackState'];
+        }
+        
+        getUserChipData(track:trackDto):object{
+          if (track.trackType === 2) {
+            return {
+              user: track.user.displayName,
+              chipClass: "orange orange--text",
+              icon: 'mdi-account',
+            }
+          }
+          if (track.trackType === 1){
+            return {
+              user: 'DJ',
+              chipClass: "purple purple--text text--lighten-2",
+              icon: 'mdi-account-music',
+              }
+          }
+          else{
+            return {
+              user: "AutoDj",
+              chipClass: "grey grey--text",
+              icon: "mdi-robot",
+            }
+          }
         }
         
         get currentTrackDuration(){
