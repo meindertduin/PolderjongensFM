@@ -16,6 +16,7 @@ using Pjfm.Domain.Common;
 using Pjfm.Domain.Converters;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Interfaces;
+using Pjfm.Domain.ValueObjects;
 using Serilog;
 
 namespace Pjfm.Application.Spotify.Commands
@@ -87,7 +88,7 @@ namespace Pjfm.Application.Spotify.Commands
                     termTopTracks[i].SpotifyTrackId = updatedTopTracks[i].SpotifyTrackId;
                     termTopTracks[i].Artists = updatedTopTracks[i].Artists;
                     termTopTracks[i].Term = updatedTopTracks[i].Term;
-                    termTopTracks[i].Title = updatedTopTracks[i].Title;
+                    termTopTracks[i].Title = updatedTopTracks[i].Title.WithMaxLength(100);
                     termTopTracks[i].TimeAdded = updatedTopTracks[i].TimeAdded;
                     termTopTracks[i].SongDurationMs = updatedTopTracks[i].SongDurationMs;
                 }

@@ -23,7 +23,7 @@ namespace Pjfm.Domain.Converters
                 topTracksResult.Add(new TopTrack
                 {
                     SpotifyTrackId = item.id,
-                    Title = item.name,
+                    Title = item.name.WithMaxLength(100),
                     Artists = artistNames.ToArray(),
                     Term = (TopTrackTerm) term,
                     ApplicationUserId = userId,
