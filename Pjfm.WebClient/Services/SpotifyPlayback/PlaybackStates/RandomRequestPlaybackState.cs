@@ -37,10 +37,12 @@ namespace Pjfm.WebClient.Services
 
         public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
+            // if user doesn't exceed max tracks amount add new track as request
             if (_tracksBuffer
                 .Select(t => t.User.Id)
                 .Count(t => t == user.Id) < _maxRequestsPerUserAmount)
             {
+                // add directly to playbackQueue if there are no tracks in the buffer
                 if (_hasNoSecondary)
                 {
                     _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
@@ -51,6 +53,7 @@ namespace Pjfm.WebClient.Services
                     
                     _hasNoSecondary = false;
                 }
+                // add to buffer
                 else
                 {
                     _tracksBuffer.Add(new TrackRequestDto()
@@ -102,11 +105,12 @@ namespace Pjfm.WebClient.Services
         {
             throw new NotImplementedException();
         }
-
+        
         public void OnNext(bool value)
         {
             if (_tracksBuffer.Count > 0)
             {
+                // add a random track from the tracksBuffer to the playbackQueue
                 var randomIndex = _random.Next(_tracksBuffer.Count);
                 _playbackQueue.AddSecondaryTrack(_tracksBuffer[randomIndex]);
                 _tracksBuffer.RemoveAt(randomIndex);

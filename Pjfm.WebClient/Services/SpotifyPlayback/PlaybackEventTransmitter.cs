@@ -31,6 +31,8 @@ namespace Pjfm.WebClient.Services
         public void OnNext(bool value)
         {
             PublishPlayingStatus(value);
+            
+            // if playback is playing
             if (value)
             {
                 PublishUpdatePlaybackInfoEvents();

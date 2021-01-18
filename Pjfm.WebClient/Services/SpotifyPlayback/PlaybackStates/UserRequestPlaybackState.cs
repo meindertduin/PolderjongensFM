@@ -31,6 +31,7 @@ namespace Pjfm.WebClient.Services
 
             var queuedTracks = _playbackQueue.GetSecondaryQueueRequests();
             
+            // add track to playbackQueue if user doesn't exceed max request amount
             if (queuedTracks.Select(q => q.User.Id).Count(q => q == user.Id) < _maxRequestsPerUserAmount)
             {
                 _playbackQueue.AddSecondaryTrack(new TrackRequestDto()

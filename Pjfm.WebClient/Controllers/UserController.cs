@@ -18,6 +18,9 @@ namespace pjfm.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Searches a user based on the provided query
+        /// </summary>
         [HttpGet("search")]
         public async Task<IActionResult> SearchUser([FromQuery] string query)
         {
@@ -29,6 +32,9 @@ namespace pjfm.Controllers
             return Ok(result.Data);    
         }
 
+        /// <summary>
+        /// Gets all ApplicationUsers where the member attribute is true
+        /// </summary>
         [HttpGet("members")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> GetAllMembers()
@@ -37,6 +43,9 @@ namespace pjfm.Controllers
             return Ok(result.Data);
         }
         
+        /// <summary>
+        /// Gets all user profiles
+        /// </summary>
         [HttpGet("list")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> GetAllUserProfiles()

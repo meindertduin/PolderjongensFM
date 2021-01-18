@@ -24,6 +24,7 @@ namespace pjfm.Services
             _timer = new Timer(InitializeTopTracksUpdate, null, TimeSpan.Zero, TimeSpan.FromHours(12));
             return Task.CompletedTask;
 
+            // local function to be able to wrap the Task.Run function
             void InitializeTopTracksUpdate(object state)
             {
                 Task.Run(CheckForUpdate, cancellationToken);
@@ -37,7 +38,8 @@ namespace pjfm.Services
             using var scope = _serviceProvider.CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            await mediator.Send(new UpdateAllUsersRefreshTokenCommand());
+            // refresh all users TopTracks that are spotify authenticated
+            await mediator.Send(new UpdateAllUsersTopTracks());
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

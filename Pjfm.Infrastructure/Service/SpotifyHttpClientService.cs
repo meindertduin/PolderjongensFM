@@ -29,6 +29,7 @@ namespace Pjfm.Application.Services
             _httpClient = httpClient;
             _serviceProvider = serviceProvider;
             
+            // creates a retry policy that will handle refreshing of access-token if expired
             _retryPolicy = Policy
                 .HandleResult<HttpResponseMessage>(message => message.StatusCode == HttpStatusCode.Unauthorized)
                 .RetryAsync(1, async (result, retryCount, context) =>
@@ -58,6 +59,7 @@ namespace Pjfm.Application.Services
 
             var user = await userManager.FindByIdAsync(userId);
 
+            // send the requestMessage through the retry policy that will handle access-token refresh if expired
             return await _retryPolicy.ExecuteAsync(async context =>
             {
                 var message = await requestMessage.CloneAsync();

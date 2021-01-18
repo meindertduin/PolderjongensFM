@@ -4,12 +4,8 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore.Update;
-using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR.Users.Queries;
-using Pjfm.Domain.Entities;
+using Pjfm.Domain.Interfaces;
 using Pjfm.Domain.Interfaces;
 using pjfm.Models;
 using pjfm.Services;
@@ -55,16 +51,18 @@ namespace Pjfm.WebClient.Services
         
         public async Task StartPlayingTracks()
         {
+            // turns playback on if its off
             if (_isCurrentlyPlaying == false)
             {
                 _isCurrentlyPlaying = true;
                 await _playbackQueue.SetUsers();
             
                 var nextTrackDuration = await PlayNextTrack();
+                
+                // sets the timer based on the next track duration
                 if (nextTrackDuration > 0)
                 {
                     CreateTimer();
-            
                     _trackTimer.Change(nextTrackDuration, nextTrackDuration);
                     _trackTimerAutoEvent.WaitOne();
                 }
@@ -76,6 +74,8 @@ namespace Pjfm.WebClient.Services
             await StopPlayback(afterDelay);
             
             _isCurrentlyPlaying = true;
+            
+            // get next track duration and set timer
             var nextTrackDuration = await PlayNextTrack();
             if (nextTrackDuration > 0)
             {
@@ -88,6 +88,8 @@ namespace Pjfm.WebClient.Services
         private void CreateTimer()
         {
             _trackTimerAutoEvent = new AutoResetEvent(false);
+            
+            // create a timer and sets TimerDone as eventHandler when timer is done
             _trackTimer = new Timer(TimerDone, new AutoResetEvent(false), 0, 0);
         }
         
@@ -95,6 +97,7 @@ namespace Pjfm.WebClient.Services
         {
             _trackTimerAutoEvent.Set();
 
+            // set a new timer
             if (_trackTimer != null)
             {
                 var nextTrackDuration = await PlayNextTrack();
@@ -107,6 +110,8 @@ namespace Pjfm.WebClient.Services
         {
             await Task.Delay(afterDelay);
             _isCurrentlyPlaying = false;
+            
+            // reset all tracks in the playbackQueue
             _playbackQueue.Reset();
 
             if (_trackTimer != null)
@@ -130,12 +135,14 @@ namespace Pjfm.WebClient.Services
             
             CreateTimer();
             
+            // reset the timer to the nextTrackDuration
             _trackTimer.Change(nextTrackDuration, nextTrackDuration);
             _trackTimerAutoEvent.WaitOne();
         }
         
         public async Task<int> PlayNextTrack()
         {
+            // gets new batch of filler queue tracks if there were no recentlyPlayedTracks
             if (_playbackQueue.RecentlyPlayedCount() <= 0)
             {
                 await _playbackQueue.AddToFillerQueue(_fillerQueueLength);
@@ -148,7 +155,7 @@ namespace Pjfm.WebClient.Services
                 {
                     CurrentPlayingTrack = nextTrack;
                     CurrentTrackStartTime = DateTime.Now;
-
+                    
                     await PlayTrackForAll(nextTrack);
                     NotifyObserversPlayingStatus(_isCurrentlyPlaying);
 
@@ -170,6 +177,7 @@ namespace Pjfm.WebClient.Services
 
         private async Task HandlePlaybackErrorShutdown(string message)
         {
+            // notify dj of error with the playback
             _djHubMessageService.SendMessageToClient(new HubServerMessage()
             {
                 Message = message,
@@ -183,6 +191,7 @@ namespace Pjfm.WebClient.Services
         {
             var responseTasks = new List<Task<HttpResponseMessage>>();
 
+            // iterate through all connected users and make request to spotify to play track on users client
             foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
             {
                 var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty,
@@ -216,13 +225,14 @@ namespace Pjfm.WebClient.Services
         public async Task SynchWithCurrentPlayer(string userId, string accessToken)
         {
             var synchedRequestData = GetSynchronisedRequestData();
+            // play track on user spotify client
             await _spotifyPlayerService.Play(userId, accessToken, String.Empty, synchedRequestData);
         }
 
         private PlayRequestDto GetSynchronisedRequestData()
         {
             var timeSpan = DateTime.Now - CurrentTrackStartTime;
-
+            
             var requestInfo = new PlayRequestDto()
             {
                 Uris = new[] {$"spotify:track:{CurrentPlayingTrack.Id}"},
@@ -234,6 +244,7 @@ namespace Pjfm.WebClient.Services
         
         public IDisposable Subscribe(IObserver<bool> observer)
         {
+            // subscribe to the event which will fire on every new track being played
             if (_observers.Contains(observer) == false)
             {
                 _observers.Add(observer);
@@ -241,7 +252,7 @@ namespace Pjfm.WebClient.Services
             
             return new UnSubscriber(_observers, observer);
         }
-
+        
         private class UnSubscriber : IDisposable
         {
             private List<IObserver<bool>>_observers;

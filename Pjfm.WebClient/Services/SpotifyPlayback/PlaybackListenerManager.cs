@@ -33,6 +33,7 @@ namespace Pjfm.WebClient.Services
         
         public async Task AddListener(ApplicationUser user)
         {
+            // add user to ConnectedUsers if not null and synch with player
             if (user != null)
             {
                 ConnectedUsers[user.Id] = user;
@@ -67,9 +68,12 @@ namespace Pjfm.WebClient.Services
 
         public bool TrySetTimedListener(string userId, int minutes, string userConnectionId)
         {
+            // handle if user already has timed session
             if (SubscribedListeners.ContainsKey(userId))
             {
                 var removeResult = SubscribedListeners.TryRemove(userId, out TimedListenerModel userPreviousSubscribeSession);
+                
+                // cancel previous timed listener session if already one was active
                 if (removeResult)
                 {
                     userPreviousSubscribeSession.TimedListenerCancellationTokenSource.Cancel();
@@ -80,6 +84,7 @@ namespace Pjfm.WebClient.Services
                 }
             }
             
+            // register stopping token to be able to cancel a timed listen session
             var stoppingTokenSource = new CancellationTokenSource();
 
             var addResult = SubscribedListeners.TryAdd(userId, new TimedListenerModel()
@@ -93,6 +98,8 @@ namespace Pjfm.WebClient.Services
             if (addResult)
             {
                 var stoppingToken = stoppingTokenSource.Token;
+                
+                // run timed event scheduled on the thread pool
                 Task.Run(() => RunTimedEvent(userId, minutes, stoppingToken), stoppingToken);
                 return true;
             }
@@ -103,13 +110,16 @@ namespace Pjfm.WebClient.Services
         public bool TryRemoveTimedListener(string userId)
         {
             var removeResult = SubscribedListeners.TryRemove(userId, out TimedListenerModel subscribedListenerInfo);
+            
             if (removeResult)
             {
                 RemoveListener(userId);
+                // cancel users timed listen session
                 subscribedListenerInfo.TimedListenerCancellationTokenSource.Cancel();
                 
                 try
                 {
+                    // update users playback connected status
                     _radioHubContext.Clients.Client(subscribedListenerInfo.ConnectionId)
                         .SendAsync("IsConnected", false);
                 }
@@ -126,6 +136,7 @@ namespace Pjfm.WebClient.Services
         
         private async Task RunTimedEvent(string userId, int minutes, CancellationToken stopToken)
         {
+            // removes timed listener after specified minutes
             await Task.Delay(minutes * 60_000, stopToken);
             TryRemoveTimedListener(userId);
         }

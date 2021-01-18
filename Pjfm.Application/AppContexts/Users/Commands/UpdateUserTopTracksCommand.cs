@@ -21,6 +21,9 @@ using Serilog;
 
 namespace Pjfm.Application.Spotify.Commands
 {
+    /// <summary>
+    /// used by mediatr to handle updating a user's topTracks with the spotify api
+    /// </summary>
     public class UpdateUserTopTracksCommand : IRequestWrapper<string>
     {
         public string UserId { get; set; }
@@ -45,7 +48,7 @@ namespace Pjfm.Application.Spotify.Commands
             Log.Information("updating user toptracks");
             var user = _ctx.ApplicationUsers.AsNoTracking().FirstOrDefault(x => x.Id == request.UserId);
             
-            if (user != null && String.IsNullOrEmpty(user.SpotifyRefreshToken))
+            if (user == null || String.IsNullOrEmpty(user.SpotifyRefreshToken))
             {
                 return Response.Fail<string>("User has no refresh token");
             }
@@ -53,55 +56,61 @@ namespace Pjfm.Application.Spotify.Commands
             try
             {
                  List<TopTrack> updatedTopTracks = new List<TopTrack>();
-            
-            for (int i = 0; i < 3; i++)
-            {
-                var newTopTracksResult =
-                    await _spotifyBrowserService.GetUserTopTracks(user.Id, user.SpotifyAccessToken, i);
-
-                if (newTopTracksResult.IsSuccessStatusCode)
+                 
+                 // iterate three times to get get tracks of terms short, medium and long
+                for (int i = 0; i < 3; i++)
                 {
-                    var jsonData = await newTopTracksResult.Content.ReadAsStringAsync();
-                    JObject objectResult = JsonConvert.DeserializeObject<dynamic>(jsonData, new JsonSerializerSettings()
+                    // get topTracks of term
+                    var newTopTracksResult =
+                        await _spotifyBrowserService.GetUserTopTracks(user.Id, user.SpotifyAccessToken, i);
+
+                    if (newTopTracksResult.IsSuccessStatusCode)
                     {
-                        ContractResolver = new UnderScorePropertyNamesContractResolver()
-                    });
+                        var jsonData = await newTopTracksResult.Content.ReadAsStringAsync();
+                        JObject objectResult = JsonConvert.DeserializeObject<dynamic>(jsonData, new JsonSerializerSettings()
+                        {
+                            ContractResolver = new UnderScorePropertyNamesContractResolver()
+                        });
 
-                    var topTracksMapper = new TopTracksMapper();
-                    updatedTopTracks.AddRange(topTracksMapper.MapTopTrackItems(objectResult, i, user.Id));
+                        // map json data to topTrack objects and add them to updatedTopTracks
+                        var topTracksMapper = new TopTracksMapper();
+                        updatedTopTracks.AddRange(topTracksMapper.MapTopTrackItems(objectResult, i, user.Id));
+                    }
                 }
-            }
-            
-            var termTopTracks = _ctx.ApplicationUsers
-                .Where(u => u.Id == user.Id)
-                .SelectMany(x => x.TopTracks)
-                .ToArray();
+                
+                var termTopTracks = _ctx.ApplicationUsers
+                    .Where(u => u.Id == user.Id)
+                    .SelectMany(x => x.TopTracks)
+                    .ToArray();
 
-            if (termTopTracks.Length <= 0)
-            {
-                await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
-            }
-            else if(updatedTopTracks.Count == TopTracksRetrievalCount)
-            {
-                for (int i = 0; i < updatedTopTracks.Count; i++)
+                // add updatedTopTracks as range if user has no topTracks yet
+                if (termTopTracks.Length <= 0)
                 {
-                    termTopTracks[i].SpotifyTrackId = updatedTopTracks[i].SpotifyTrackId;
-                    termTopTracks[i].Artists = updatedTopTracks[i].Artists;
-                    termTopTracks[i].Term = updatedTopTracks[i].Term;
-                    termTopTracks[i].Title = updatedTopTracks[i].Title.WithMaxLength(100);
-                    termTopTracks[i].TimeAdded = updatedTopTracks[i].TimeAdded;
-                    termTopTracks[i].SongDurationMs = updatedTopTracks[i].SongDurationMs;
+                    await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
                 }
-            }
-            else
-            {
-                _ctx.TopTracks.RemoveRange(termTopTracks);
-                Log.Error($@"Error while trying to update users toptracks of user with userId: {user.Id}. As a result the toptracks of user are deleted and have to be re-updated.");
-            }
-            
-            await _ctx.SaveChangesAsync(cancellationToken);
+                // iterate over all topTracks to update the values 
+                else if (updatedTopTracks.Count == TopTracksRetrievalCount)
+                {
+                    for (int i = 0; i < updatedTopTracks.Count; i++)
+                    {
+                        termTopTracks[i].SpotifyTrackId = updatedTopTracks[i].SpotifyTrackId;
+                        termTopTracks[i].Artists = updatedTopTracks[i].Artists;
+                        termTopTracks[i].Term = updatedTopTracks[i].Term;
+                        termTopTracks[i].Title = updatedTopTracks[i].Title.WithMaxLength(100);
+                        termTopTracks[i].TimeAdded = updatedTopTracks[i].TimeAdded;
+                        termTopTracks[i].SongDurationMs = updatedTopTracks[i].SongDurationMs;
+                    }
+                }
+                // remove all topTracks of user if amount isn't the retrievalCount
+                else
+                {
+                    _ctx.TopTracks.RemoveRange(termTopTracks);
+                    Log.Error($@"Error while trying to update users toptracks of user with userId: {user.Id}. As a result the toptracks of user are deleted and have to be re-updated.");
+                }
+                
+                await _ctx.SaveChangesAsync(cancellationToken);
 
-            return Response.Ok("}succeeded", "topt racks have been saved to the database");
+                return Response.Ok("}succeeded", "topt racks have been saved to the database");
             }
             catch (Exception e)
             {

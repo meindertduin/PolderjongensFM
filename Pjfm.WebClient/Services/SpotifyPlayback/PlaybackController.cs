@@ -9,7 +9,6 @@ using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using pjfm.Models;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
-using Serilog;
 
 namespace Pjfm.WebClient.Services
 {
@@ -148,6 +147,7 @@ namespace Pjfm.WebClient.Services
         }
         public List<TrackDto> GetSecondaryQueueTracks()
         {
+            // get secondary tracks of playbackState if not null
             if (IPlaybackController.CurrentPlaybackState != null)
             {
                 var secondaryTracks = IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
@@ -167,8 +167,10 @@ namespace Pjfm.WebClient.Services
         }
         public PlaybackSettingsDto GetPlaybackSettings()
         {
-            PlaybackState currentPlaybackState = PlaybackState.RequestPlaybackState;
 
+            PlaybackState currentPlaybackState = PlaybackState.RequestPlaybackState;
+            
+            // get the current playbackState
             if (IPlaybackController.CurrentPlaybackState is DefaultPlaybackState)
                 currentPlaybackState = PlaybackState.DefaultPlaybackState;
             if (IPlaybackController.CurrentPlaybackState is UserRequestPlaybackState)
@@ -176,6 +178,7 @@ namespace Pjfm.WebClient.Services
             if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
                 currentPlaybackState = PlaybackState.RandomRequestPlaybackState;
 
+            // get the maxRequestPerUser amount
             var maxRequestsPerUser = IPlaybackController.CurrentPlaybackState != null
                 ? IPlaybackController.CurrentPlaybackState.GetMaxRequestsPerUser()
                 : 0;
@@ -210,6 +213,7 @@ namespace Pjfm.WebClient.Services
         {
             var playbackSettings = GetPlaybackSettings();
             _djHubContext.Clients.All.SendAsync("PlaybackSettings", playbackSettings);
+            
             _radioHubContext.Clients.All.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
             {
                 PlaybackState = playbackSettings.PlaybackState,

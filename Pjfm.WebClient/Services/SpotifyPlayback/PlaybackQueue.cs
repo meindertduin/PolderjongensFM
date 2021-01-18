@@ -51,9 +51,9 @@ namespace Pjfm.WebClient.Services
         {
             using var scope = _serviceProvider.CreateScope();
             
+            // sets all users that are member to be included
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var membersResult = await mediator.Send(new GetAllPjMembersQuery());
-            
             if (membersResult.Error == false)
             {
                 IncludedUsers = membersResult.Data;
@@ -142,7 +142,8 @@ namespace Pjfm.WebClient.Services
         private List<TrackDto> GetTracksOfQueue(Queue<TrackRequestDto> queue)
         {
             var result = new List<TrackDto>();
-
+            
+            // maps the trackRequestDto in queue to TrackDto
             foreach (var request in queue)
             {
                 var trackDto = new TrackDto();
@@ -158,6 +159,7 @@ namespace Pjfm.WebClient.Services
         
         public async Task<TrackDto> GetNextQueuedTrack()
         {
+            // gets the next queuedTrack based on the hierarchy of queues to pick out off
             TrackDto nextTrack;
             
             if (_priorityQueue.Count > 0)
@@ -184,6 +186,7 @@ namespace Pjfm.WebClient.Services
             
             var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             
+            // gets random tracks of included users
             var result = await _mediator.Send(new GetRandomTopTrackQuery()
             {
                 NotIncludeTracks = _recentlyPlayed,
@@ -192,6 +195,7 @@ namespace Pjfm.WebClient.Services
                 IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
             });
                 
+            // adds queried tracks to the fillerQueue
             foreach (var fillerTrack in result.Data)
             {
                 _fillerQueue.Enqueue(fillerTrack);

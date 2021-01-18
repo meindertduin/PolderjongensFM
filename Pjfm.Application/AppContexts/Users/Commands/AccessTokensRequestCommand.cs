@@ -15,6 +15,10 @@ using Serilog;
 
 namespace Pjfm.Application.Spotify.Commands
 {
+    /// <summary>
+    /// Class used with mediatr to request a new access-token and refresh-token from spotify api
+    /// with the provided code and redirect uri 
+    /// </summary>
     public class AccessTokensRequestCommand : IRequestWrapper<AccessTokensRequestResult>
     {
         public string Code { get; set; }
@@ -34,6 +38,7 @@ namespace Pjfm.Application.Spotify.Commands
         
         public async Task<Response<AccessTokensRequestResult>> Handle(AccessTokensRequestCommand request, CancellationToken cancellationToken)
         {
+            // create request with headers and form content
             var client = _factory.CreateClient();
             var authString = Encoding.ASCII.GetBytes($"{_configuration["Spotify:ClientId"]}:{_configuration["Spotify:ClientSecret"]}");
 

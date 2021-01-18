@@ -24,6 +24,12 @@ namespace pjfm.Controllers
             _spotifyBrowserService = spotifyBrowserService;
         }
         
+        /// <summary>
+        /// Get's all the spotify playlist's of the user from the spotify api and returns them
+        /// </summary>
+        /// <param name="limit">limit of amount of playlists to get</param>
+        /// <param name="offset">offset of playlists of users</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int limit = 50 ,[FromQuery] int offset = 0)
         {
@@ -40,9 +46,14 @@ namespace pjfm.Controllers
             return Ok(content);
         }
 
+        /// <summary>
+        /// Gets the tracks of a playlist
+        /// </summary>
+        /// <param name="playlistId">The playlist id to get the tracks for</param>
+        /// <param name="limit">limit amount of tracks of playlist</param>
+        /// <param name="offset">offset of the amount of tracks to be hauled</param>
         [HttpGet]
         [Route("tracks")]
-        // TODO: schoonmaken
         public async Task<IActionResult> GetPlaylistTopTracks([FromQuery] string playlistId,[FromQuery] int limit = 100 ,[FromQuery] int offset = 0)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -59,7 +70,7 @@ namespace pjfm.Controllers
 
             
             var content = JsonConvert.DeserializeAnonymousType(await firstPlaylistTracksResult.Content.ReadAsStringAsync(), definition);
-            string contentString = null;
+            string contentString;
             
             if(content.next != null){ 
                 contentString = "\"results\": [" + await firstPlaylistTracksResult.Content.ReadAsStringAsync() + ", ";
@@ -83,7 +94,12 @@ namespace pjfm.Controllers
             return Ok("{" + contentString + "]}");
         }
         
-        
+        /// <summary>
+        /// Gets the user topTracks
+        /// </summary>
+        /// <param name="term">The term of what topTracks to retrieve</param>
+        /// <param name="limit">the max amount of tracks to get</param>
+        /// <param name="offset">the offset topTracks</param>
         [HttpGet("top-tracks")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> GetUserTopTracks([FromQuery] string term = "short_term",[FromQuery] int limit = 50 ,[FromQuery] int offset = 0)
