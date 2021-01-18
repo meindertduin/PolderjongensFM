@@ -4,7 +4,7 @@ import {userSettings} from "@/common/types"
 
 class State {
     public sideBarOpen:boolean = false;
-}
+    }
 
 const mutations = <MutationTree<State>>{
     TOGGLE_SIDE_BAR: state => state.sideBarOpen = ! state.sideBarOpen,
@@ -25,7 +25,7 @@ const getters = <GetterTree<State, any>>{
     getDarkModeState: (state ,getters) => {
         const userSettingsObject:userSettings = getters['loadUserSettings'];
         return userSettingsObject.darkMode;
-    }
+    },
 }
 
 const actions = <ActionTree<State, any>>{

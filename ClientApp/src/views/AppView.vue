@@ -1,12 +1,6 @@
 <template>
-  <div>
-    <v-row justify="center">
-      <v-row justify="center">
-        <v-col cols="12" md="10">
-          <Radio />
-        </v-col>
-      </v-row>
-    </v-row>
+  <v-container>
+    <Radio />
     <div v-if="isMod">
       <v-row justify="center">
         <v-col v-if="isMod" md="10">
@@ -19,7 +13,7 @@
         </v-col>
       </v-row>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">

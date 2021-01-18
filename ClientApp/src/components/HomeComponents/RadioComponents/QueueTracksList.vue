@@ -9,7 +9,7 @@
         >
           <v-list-item-content>
             <v-list-item-title>
-              {{i + 1}}. {{item.track.artists[0]}} - {{item.track.title}}
+              {{i + 1}}. {{item.track.title}} - {{item.track.artists[0]}}
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-icon>

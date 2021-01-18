@@ -1,8 +1,10 @@
 ﻿<template>
     <div>
         <Alert :key="alertId"/>
-        <SongInformation/>
-        <Queue/>
+        <div style="margin: 10px;">
+          <SongInformation/>
+          <Queue/>
+        </div>
     </div>
 </template>
 
