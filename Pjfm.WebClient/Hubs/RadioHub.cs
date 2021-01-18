@@ -18,6 +18,8 @@ namespace pjfm.Hubs
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
 
+        private static int _listenerCount = 0;
+
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
             IPlaybackEventTransmitter playbackEventTransmitter, IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService)
         {
@@ -53,11 +55,14 @@ namespace pjfm.Hubs
                 IsPlaying = playbackSettings.IsPlaying,
                 MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
             });
-            
+
+            if (_playbackController.IsPlaying() == false)
+            {
+                _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
+            }
             await base.OnConnectedAsync();
         }
-        
-        
+
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task ConnectWithPlayer(int minutes)
         {

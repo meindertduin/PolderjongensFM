@@ -191,6 +191,11 @@ namespace Pjfm.WebClient.Services
 
             return playbackSettings;
         }
+
+        public bool IsPlaying()
+        {
+            return _spotifyPlaybackManager.IsCurrentlyPlaying;
+        }
         
         public Tuple<TrackDto, DateTime> GetPlayingTrackInfo()
         {

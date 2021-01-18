@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Application.Identity;
+using Pjfm.Domain.Interfaces;
 using Pjfm.WebClient.Services;
 using Serilog;
 using Serilog.Events;
@@ -26,8 +27,7 @@ namespace pjfm
                 .CreateLogger();
             
             var host = CreateWebHostBuilder(args).Build();
-            
-            
+
             try
             {
                 Log.Information("Starting web host");

@@ -27,18 +27,21 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackQueue _playbackQueue;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDjHubMessageService _djHubMessageService;
+        private readonly IPlaybackController _playbackController;
 
         private Timer _trackTimer;
         private AutoResetEvent _trackTimerAutoEvent;
         private bool _isCurrentlyPlaying;
 
         public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, 
-            IPlaybackQueue playbackQueue, IServiceProvider serviceProvider, IDjHubMessageService djHubMessageService)
+            IPlaybackQueue playbackQueue, IServiceProvider serviceProvider, 
+            IDjHubMessageService djHubMessageService)
         {
             _spotifyPlayerService = spotifyPlayerService;
             _playbackQueue = playbackQueue;
             _serviceProvider = serviceProvider;
             _djHubMessageService = djHubMessageService;
+
         }
 
         bool ISpotifyPlaybackManager.IsCurrentlyPlaying
@@ -52,16 +55,19 @@ namespace Pjfm.WebClient.Services
         
         public async Task StartPlayingTracks()
         {
-            _isCurrentlyPlaying = true;
-            await _playbackQueue.SetUsers();
-            
-            var nextTrackDuration = await PlayNextTrack();
-            if (nextTrackDuration > 0)
+            if (_isCurrentlyPlaying == false)
             {
-                CreateTimer();
+                _isCurrentlyPlaying = true;
+                await _playbackQueue.SetUsers();
             
-                _trackTimer.Change(nextTrackDuration, nextTrackDuration);
-                _trackTimerAutoEvent.WaitOne();
+                var nextTrackDuration = await PlayNextTrack();
+                if (nextTrackDuration > 0)
+                {
+                    CreateTimer();
+            
+                    _trackTimer.Change(nextTrackDuration, nextTrackDuration);
+                    _trackTimerAutoEvent.WaitOne();
+                }
             }
         }
 

@@ -37,14 +37,7 @@ namespace Pjfm.WebClient.Services
             {
                 ConnectedUsers[user.Id] = user;
             
-                if (_spotifyPlaybackManager.IsCurrentlyPlaying == false)
-                {
-                    _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
-                }
-                else
-                {
-                    await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
-                }
+                await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
             }
         }
 
