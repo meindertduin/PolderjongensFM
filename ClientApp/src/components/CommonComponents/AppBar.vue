@@ -8,7 +8,7 @@
     <v-spacer></v-spacer>
     {{screenSize}}
     <span class="align-bottom overline grey--text" v-if="userProfile != null && this.$vuetify.breakpoint.width > 600">INGELOGD ALS <span class="orange--text">{{userProfile.displayName}}</span></span>
-    <span v-else class="orange--text">{{userProfile.displayName}}</span>
+    <span v-else-if="userProfile != null" class="orange--text">{{userProfile.displayName}}</span>
     <v-img
         v-if="this.$vuetify.breakpoint.width > 600"
         class="mx-2 float-right"
