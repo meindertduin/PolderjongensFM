@@ -330,16 +330,5 @@ namespace pjfm.Controllers
 
             return trackDto;
         }
-
-        /// <summary>
-        /// Gets the current active playbackSettings of the playback
-        /// </summary>
-        [HttpGet("mod/playbackSettings")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult GetPlaybackSettings()
-        {
-            var settings = _playbackController.GetPlaybackSettings();
-            return Ok(settings);
-        }
     }
 }
