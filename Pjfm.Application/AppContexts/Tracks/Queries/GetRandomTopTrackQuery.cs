@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Pjfm.Application.Common;
+using Dapper;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using Pjfm.Application.AppContexts.Tracks;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
-using Pjfm.Domain.Interfaces;
-using Pjfm.WebClient.Services;
 
 namespace Pjfm.Application.Spotify.Queries
 {
@@ -30,54 +24,72 @@ namespace Pjfm.Application.Spotify.Queries
 
     public class GetRandomTopTrackQueryHandler : IHandlerWrapper<GetRandomTopTrackQuery, List<TrackDto>>
     {
-        private readonly IAppDbContext _ctx;
+        private readonly IConfiguration _configuration;
 
-        public GetRandomTopTrackQueryHandler(IAppDbContext ctx)
+        public GetRandomTopTrackQueryHandler(IConfiguration configuration)
         {
-            _ctx = ctx;
+            _configuration = configuration;
         }
-        
-        public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request, CancellationToken cancellationToken)
-        {            
-            var randomTopTracks = _ctx.TopTracks
-                .Where(x => request.NotIncludeTracks.Select(t => t.Id).Contains(x.SpotifyTrackId) == false)
-                .Where(x => request.TopTrackTermFilter.Select(t => t).Contains(x.Term))
-                .Where(x => request.IncludedUsersId.Length <= 0 || request.IncludedUsersId.Select(t => t).Contains(x.ApplicationUserId))
-                .Select(x => new TrackDto()
+
+        public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request,
+            CancellationToken cancellationToken)
+        {
+            using (var connection = new MySqlConnection(_configuration["ConnectionStrings:ApplicationDb"]))
+            {
+                var result = await connection.QueryAsync<RandomTrackQueryEntity>(
+                    GenerateRandomTracksSqlQuery(request.IncludedUsersId.Length > 0), new
                 {
-                    Id = x.SpotifyTrackId,
-                    Title = x.Title,
-                    Artists = x.Artists,
-                    Term = x.Term,
-                    SongDurationMs = x.SongDurationMs,
-                    User = new ApplicationUserDto()
+                    TrackIds = request.NotIncludeTracks.Count > 0? request.NotIncludeTracks.Select(x => x.Id) : new [] { "" },
+                    Terms = request.TopTrackTermFilter,
+                    RequestedAmount = request.RequestedAmount,
+                    UserIds = request.IncludedUsersId,
+                });
+
+                var tracks = new List<TrackDto>();
+
+                foreach (var queryEntity in result)
+                {
+                    tracks.Add(new TrackDto()
                     {
-                        Id = x.ApplicationUser.Id,
-                        DisplayName = x.ApplicationUser.DisplayName,
-                        Member = x.ApplicationUser.Member,
-                    },
-                })
-                .ToList();
+                        Id = queryEntity.Id,
+                        Artists = queryEntity.Artists.Split(','),
+                        Term = (TopTrackTerm) queryEntity.Term,
+                        Title = queryEntity.Title,
+                        SongDurationMs = queryEntity.SongDurationMs,
+                        User = new ApplicationUserDto()
+                        {
+                            DisplayName = queryEntity.DisplayName,
+                            Id = queryEntity.UserId,
+                            Member = queryEntity.Member,
+                        }
+                    });
+                }
 
-            // Temporary
-            Shuffle(randomTopTracks);
-
-            
-            return await Task.FromResult(Response.Ok("successfully queried result",
-                randomTopTracks.Take(request.RequestedAmount).ToList()));
+                return Response.Ok("queried tracks successfully", tracks);
+            }
         }
         
-        private static void Shuffle<T>(IList<T> list)
+        private string GenerateRandomTracksSqlQuery(bool withIncludedUsers)
         {
-            var random = new Random();
-            int n = list.Count;  
-            while (n > 1) {  
-                n--;  
-                int k = random.Next(n + 1);  
-                T value = list[k];  
-                list[k] = list[n];  
-                list[n] = value;  
-            }  
+            var sqlBuilder = new StringBuilder(
+                "SELECT TopTracks.Title, TopTracks.Artists, TopTracks.Term, TopTracks.SpotifyTrackId As Id, " +
+                "TopTracks.SongDurationMs, AspNetUsers.Id AS UserId, AspNetUsers.DisplayName, AspNetUsers.Member ");
+            
+            sqlBuilder.Append("FROM PJFM.TopTracks ");
+            sqlBuilder.Append("LEFT JOIN PJFM.AspNetUsers ");
+            sqlBuilder.Append("ON TopTracks.ApplicationUserId = AspNetUsers.Id ");
+
+            sqlBuilder.Append("WHERE TopTracks.Id NOT IN @TrackIds ");
+            sqlBuilder.Append("And TopTracks.Term IN @Terms ");
+            
+            if (withIncludedUsers)
+            {
+                sqlBuilder.Append("And TopTracks.ApplicationUserId IN @UserIds ");
+            }
+            
+            sqlBuilder.Append("ORDER BY rand() limit @RequestedAmount;");
+
+            return sqlBuilder.ToString();
         }
     }
 }

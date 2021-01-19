@@ -1,11 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Spotify.Commands;
 using Pjfm.Application.Test.Queries;
+using Pjfm.Domain.Enums;
+using MapperConfiguration = AutoMapper.MapperConfiguration;
 
 namespace pjfm.Controllers
 {
@@ -15,11 +25,13 @@ namespace pjfm.Controllers
     {
         private readonly IMediator _mediator;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public TestController(IMediator mediator, UserManager<ApplicationUser> userManager)
+        public TestController(IMediator mediator, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _mediator = mediator;
             _userManager = userManager;
+            _configuration = configuration;
         }
         
         [HttpGet("user")] 

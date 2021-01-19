@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -19,15 +20,11 @@ namespace Pjfm.Application.Services
     public class SpotifyHttpClientService : ISpotifyHttpClientService
     {
         private readonly HttpClient _httpClient;
-        private readonly IServiceProvider _serviceProvider;
         private AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
-
-        private const int MaxRequestRetries = 5;
-
+        
         public SpotifyHttpClientService(HttpClient httpClient, IServiceProvider serviceProvider)
         {
             _httpClient = httpClient;
-            _serviceProvider = serviceProvider;
             
             // creates a retry policy that will handle refreshing of access-token if expired
             _retryPolicy = Policy
@@ -39,6 +36,9 @@ namespace Pjfm.Application.Services
                         using var scope = serviceProvider.CreateScope();
                         var mediator = scope.ServiceProvider.GetService<IMediator>();
 
+                        var oldMessage = (HttpRequestMessage) context["request_message"];
+                        var newMessage = await oldMessage.CloneAsync();
+
                         var refreshResponse = await mediator.Send(new AccessTokenRefreshCommand()
                         {
                             UserId = context["user_id"] as string,
@@ -46,31 +46,23 @@ namespace Pjfm.Application.Services
 
                         if (refreshResponse.Error == false)
                         {
-                            context["access_token"] = refreshResponse.Data;
+                            newMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResponse.Data);
+                            context["request_message"] = newMessage;
                         }
                     }
                 });
         }
 
-        public async Task<HttpResponseMessage> SendAuthenticatedRequest(HttpRequestMessage requestMessage, string userId)
+        public async Task<HttpResponseMessage> SendAuthenticatedRequest(HttpRequestMessage requestMessage, string userId, string accessToken)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
-
-            var user = await userManager.FindByIdAsync(userId);
-
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             // send the requestMessage through the retry policy that will handle access-token refresh if expired
-            return await _retryPolicy.ExecuteAsync(async context =>
+            return await _retryPolicy.ExecuteAsync(async context => 
+                await _httpClient.SendAsync(context["request_message"] as HttpRequestMessage), 
+                new Dictionary<string, object>()
             {
-                var message = await requestMessage.CloneAsync();
-                message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context["access_token"] as string);
-                
-                return await _httpClient.SendAsync(message);
-            }, new Dictionary<string, object>()
-            {
-                {"access_token", user.SpotifyAccessToken},
-                {"refresh_token", user.SpotifyRefreshToken},
-                { "user_id", user.Id },
+                { "user_id", userId },
+                { "request_message", requestMessage }
             });
         }
     }

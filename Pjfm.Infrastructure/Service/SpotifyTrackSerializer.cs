@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Domain.Common;
-using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
 
 namespace Pjfm.Infrastructure.Service
