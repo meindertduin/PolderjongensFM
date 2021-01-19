@@ -47,6 +47,9 @@ namespace pjfm.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Turns the playback on
+        /// </summary>
         [HttpPut("mod/on")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult TurnOnPlaybackController()
@@ -55,6 +58,9 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        /// <summary>
+        /// Turn the playback off
+        /// </summary>
         [HttpPut("mod/off")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult TurnOffPlaybackController()
@@ -63,6 +69,9 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        /// <summary>
+        /// force a user out of the saved timed listeners and pause users spotify with spotify api
+        /// </summary>
         [HttpPut("forceStop")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> ForceStopPlaybackUser()
@@ -79,6 +88,9 @@ namespace pjfm.Controllers
             return NoContent();
         }
         
+        /// <summary>
+        /// Sets the spotify playback term, changes will require a reset of the playback
+        /// </summary>
         [HttpPut("mod/setTerm")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult AllTermFilter([FromQuery] TopTrackTermFilter term)
@@ -110,6 +122,9 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        /// <summary>
+        /// update the max request amount that users can request, changes won't require a reset of the playback
+        /// </summary>
         [HttpPut("mod/userRequestAmount")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult SetMaxRequestPerUser([FromQuery] int amount)
@@ -123,6 +138,9 @@ namespace pjfm.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// resets the playback
+        /// </summary>
         [HttpPut("mod/reset")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult ResetPlayer()
@@ -131,6 +149,10 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        /// <summary>
+        /// Search topTracks with parameters
+        /// </summary>
+        /// <returns>Response object with topTracks</returns>
         [HttpPost("search")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> SearchTrack([FromBody] SearchRequestDto searchRequest)
@@ -149,6 +171,11 @@ namespace pjfm.Controllers
             return StatusCode((int) result.StatusCode);
         }
 
+        /// <summary>
+        /// request a track with track id to be played in the playback.
+        /// This method will handle a request from a mod differently than
+        /// from a user/
+        /// </summary>
         [HttpPut("request/{trackId}")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> UserRequestTrack(string trackId)
@@ -156,7 +183,7 @@ namespace pjfm.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
                 ApplicationIdentityConstants.Roles.Mod);
-
+            
             var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
 
             if (trackResponse.IsSuccessStatusCode)
@@ -167,7 +194,8 @@ namespace pjfm.Controllers
                 {
                     return BadRequest();
                 }
-
+                
+                // handles request based on mod on if user is a mod
                 var response = MakeRequestWithTrackDto(isMod, requestedTrack, user);
 
                 if (response.Error)
@@ -175,6 +203,7 @@ namespace pjfm.Controllers
                     return Conflict(response);
                 }
 
+                // publish queue state to all users connected to radio hub
                 _eventTransmitter.PublishUpdatePlaybackInfoEvents();
 
                 return Accepted(response);
@@ -200,7 +229,9 @@ namespace pjfm.Controllers
             return response;
         }
 
-
+        /// <summary>
+        /// Skips a track in the playback
+        /// </summary>
         [HttpPut("mod/skip")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult SkipCurrentTrack()
@@ -209,6 +240,9 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        /// <summary>
+        /// Include a user's topTracks into the playback, changes will require a reset to take effect
+        /// </summary>
         [HttpPost("mod/include")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> IncludeUsers(ApplicationUserDto user)
@@ -227,6 +261,9 @@ namespace pjfm.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Exclude a user's topTracks from the playback, changes will require a reset to take effect
+        /// </summary>
         [HttpPost("mod/exclude")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public async Task<IActionResult> RemoveIncludedUser(ApplicationUserDto user)
@@ -250,6 +287,9 @@ namespace pjfm.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Gets all included users in the playback
+        /// </summary>
         [HttpGet("mod/include")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult GetIncludedUsers()
@@ -258,6 +298,10 @@ namespace pjfm.Controllers
             return Ok(result);
         }
         
+        /// <summary>
+        /// Sets the playback state of the playback in which it will play, these changes
+        /// Will be immediately updated and wont require a refresh
+        /// </summary>
         [HttpPut("mod/setPlaybackState")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult SetPlaybackState([FromQuery] PlaybackState playbackState)
@@ -287,6 +331,9 @@ namespace pjfm.Controllers
             return trackDto;
         }
 
+        /// <summary>
+        /// Gets the current active playbackSettings of the playback
+        /// </summary>
         [HttpGet("mod/playbackSettings")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult GetPlaybackSettings()

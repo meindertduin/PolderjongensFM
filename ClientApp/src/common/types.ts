@@ -81,3 +81,11 @@ export interface identityProfile {
     isMod: boolean,
     isSpotifyAuthenticated: boolean
 }
+
+export interface queueTrack {
+    track: trackDto,
+    user: string,
+    icon: string,
+    queueNum: number,
+    chipClass: string,
+}

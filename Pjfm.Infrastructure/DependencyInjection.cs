@@ -29,7 +29,6 @@ namespace Pjfm.Infrastructure
             services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
             
             services.AddTransient<IAppDbContext>(provider => provider.GetService<AppDbContext>());
-            services.AddTransient<IRetrieveStrategy, SpotifyTopTracksRetrieveStrategy>();
 
             var connectionString = configuration["ConnectionStrings:ApplicationDb"];
             

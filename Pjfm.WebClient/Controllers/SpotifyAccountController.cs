@@ -48,6 +48,11 @@ namespace pjfm.Controllers
             _ctx = ctx;
         }
 
+        /// <summary>
+        /// Initializes the spotify authentication to request refresh-token and access-token for use
+        /// spotify api
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("authenticate")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> InitializeAuthentication()
@@ -58,17 +63,18 @@ namespace pjfm.Controllers
                 return Forbid();
             }
             
-            var state = GenerateStateString();
+            var state = GenerateStateString(); // create random state string against CSRF attack
 
+            // check and remove already cached state of user
             if (_cachedStates.ContainsKey(user.Id))
             {
-                var removeResult=  _cachedStates.TryRemove(user.Id, out var cachedAuthenticationState);
+                var removeResult=  _cachedStates.TryRemove(user.Id, out _);
                 if (removeResult == false)
                 {
                     return StatusCode(500);
                 }
             }
-
+            
             var addResult = _cachedStates.TryAdd(user.Id, new CachedAuthenticationState()
             {
                 State = state,
@@ -90,7 +96,12 @@ namespace pjfm.Controllers
             return Redirect(authorizationUrl);
         }
         
-        
+        /// <summary>
+        /// callback after redirect to spotify autentication point
+        /// </summary>
+        /// <param name="state">state to check if it is a authentic request</param>
+        /// <param name="code">code to retrieve access-token and refresh-token from spotify api</param>
+        /// <returns></returns>
         [HttpGet("callback")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> FinalizeAuthentication(string state, string code)
@@ -101,19 +112,22 @@ namespace pjfm.Controllers
             {
                 return Forbid();
             }
-
+            
+            // 401 forbid if no cached state matches for the user
             var removeResult=  _cachedStates.TryRemove(user.Id, out var cachedAuthenticationState);
             if (removeResult == false)
             {
                 return Forbid();
             }
 
+            // forbid if cached state is older than 5 minutes
             if (state != cachedAuthenticationState.State || 
-                DateTime.Now - cachedAuthenticationState.TimeCached > TimeSpan.FromSeconds(60))
+                DateTime.Now - cachedAuthenticationState.TimeCached > TimeSpan.FromSeconds(300))
             {
                 return Forbid();
             }
 
+            // request access-token and refresh-token from spotify-api through mediatr
             var result = await _mediator.Send(new AccessTokensRequestCommand()
             {
                 Code = code,
@@ -128,6 +142,7 @@ namespace pjfm.Controllers
                 user.SpotifyRefreshToken = result.Data.RefreshToken;
                 await _userManager.UpdateAsync(user);
 
+                // get topTracks of user
                 var setTopTracksResult = await _mediator.Send(new UpdateUserTopTracksCommand()
                 {
                     UserId = user.Id,
@@ -135,12 +150,14 @@ namespace pjfm.Controllers
 
                 if (setTopTracksResult.Error == false)
                 {
+                    // add claim to indicate user is spotify authenticated
                     var userClaims = await _userManager.GetClaimsAsync(user);
                     if (userClaims.Any(x => x.Type == SpotifyIdentityConstants.Claims.SpStatus && x.Value == SpotifyIdentityConstants.Roles.Auth) == false)
                     {
                         await _userManager.AddClaimAsync(user,
                             new Claim(SpotifyIdentityConstants.Claims.SpStatus, SpotifyIdentityConstants.Roles.Auth));
                     }
+                    
                     return Redirect(_configuration["AppUrls:ClientBaseUrl"]);
                 }
             }
@@ -153,6 +170,9 @@ namespace pjfm.Controllers
             // Todo fill in this method
         }
         
+        /// <summary>
+        /// get user's spotify account information
+        /// </summary>
         [HttpGet("me")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task<IActionResult> Me()

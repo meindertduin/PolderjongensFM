@@ -34,7 +34,14 @@ namespace Pjfm.Infrastructure.Persistence
                 .Property(t => t.Artists)
                 .HasConversion(
                     v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .HasMaxLength(200);
+
+            builder.Entity<ApplicationUser>().Property(x => x.Id).HasMaxLength(100);
+            builder.Entity<ApplicationUser>().Property(x => x.Email).HasMaxLength(200);
+            builder.Entity<ApplicationUser>().Property(x => x.UserName).HasMaxLength(100);
+            builder.Entity<ApplicationUser>().Property(x => x.NormalizedUserName).HasMaxLength(100);
+            builder.Entity<ApplicationUser>().Property(x => x.PhoneNumber).HasMaxLength(50);
         }
     }
 }

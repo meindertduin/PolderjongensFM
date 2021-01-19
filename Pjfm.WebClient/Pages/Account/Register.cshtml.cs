@@ -82,10 +82,12 @@ namespace Pjfm.WebClient.Pages.Account
         public List<string> Summeries { get; set; }
         
         [Required(ErrorMessage = "veld is verplicht")]
+        [MaxLength(50, ErrorMessage = "gebruikersnaam te lang")]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "veld is verplicht")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email address in")]
+        [MaxLength(200, ErrorMessage = "e-mailaddress te lang")]
         public string Email { get; set; }
         
         [Required (ErrorMessage = "veld is verplicht")]

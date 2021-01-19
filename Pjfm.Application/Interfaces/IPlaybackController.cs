@@ -26,6 +26,7 @@ namespace Pjfm.WebClient.Services
         List<TrackDto> GetFillerQueueTracks();
         Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
         PlaybackSettingsDto GetPlaybackSettings();
+        bool IsPlaying();
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
     }
 }

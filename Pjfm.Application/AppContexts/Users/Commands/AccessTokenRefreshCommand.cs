@@ -21,6 +21,9 @@ using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Application.Spotify.Commands
 {
+    /// <summary>
+    /// used with mediatr to update a users new access token with the users refresh token
+    /// </summary>
     public class AccessTokenRefreshCommand : IRequestWrapper<string>
     {
         public string UserId { get; set; }
@@ -46,6 +49,7 @@ namespace Pjfm.Application.Spotify.Commands
         {
             using (var client = _clientFactory.CreateClient())
             {
+                // adding authorization headers
                 var authString = Encoding.ASCII.GetBytes($"{_configuration["Spotify:ClientId"]}:{_configuration["Spotify:ClientSecret"]}");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authString));
 
@@ -71,6 +75,7 @@ namespace Pjfm.Application.Spotify.Commands
                                 ContractResolver = new UnderScorePropertyNamesContractResolver(),
                             });
 
+                        // add access token to user
                         if (resultContent != null)
                         {
                             user.SpotifyAccessToken = resultContent.AccessToken;

@@ -14,29 +14,37 @@ namespace pjfm.Hubs
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlaybackListenerManager _playbackListenerManager;
-        private readonly IPlaybackEventTransmitter _playbackEventTransmitter;
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
 
+        private static int _listenerCount = 0;
+
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackEventTransmitter playbackEventTransmitter, IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService)
+            IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
-            _playbackEventTransmitter = playbackEventTransmitter;
             _playbackController = playbackController;
             _spotifyPlayerService = spotifyPlayerService;
         }
         
         public override async Task OnConnectedAsync()
         {
+            // turn playback on if its turned off
+            if (_playbackController.IsPlaying() == false)
+            {
+                _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
+            }
+            
+            // send caller updated playback info
             var infoModelFactory = new PlaybackInfoFactory(_playbackController);
             var userInfo = infoModelFactory.CreateUserInfoModel();
-            await Clients.All.SendAsync("ReceivePlaybackInfo", userInfo);
+            await Clients.Caller.SendAsync("ReceivePlaybackInfo", userInfo);
 
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
 
+            // sends the caller the subscribe time and connected state, only if user is authenticated
             if (user != null)
             {
                 await Clients.Caller.SendAsync("IsConnected", _playbackListenerManager.IsUserTimedListener(user.Id));
@@ -44,10 +52,9 @@ namespace pjfm.Hubs
             }
             
             await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackController.GetPlaybackSettings().IsPlaying);
-
-            var playbackSettings = _playbackController.GetPlaybackSettings();
             
-            await Clients.All.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
+            var playbackSettings = _playbackController.GetPlaybackSettings();
+            await Clients.Caller.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
             {
                 PlaybackState = playbackSettings.PlaybackState,
                 IsPlaying = playbackSettings.IsPlaying,
@@ -56,14 +63,14 @@ namespace pjfm.Hubs
             
             await base.OnConnectedAsync();
         }
-        
-        
+
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
         public async Task ConnectWithPlayer(int minutes)
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-
+            
+            // set user as timed user if spotify authenticated and send some playback status info
             if (user.SpotifyAuthenticated)
             {
                 await _playbackListenerManager.AddListener(user);
@@ -82,7 +89,7 @@ namespace pjfm.Hubs
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
-
+            
             _playbackListenerManager.TryRemoveTimedListener(user.Id);
             await Clients.Caller.SendAsync("IsConnected", false);
             await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);

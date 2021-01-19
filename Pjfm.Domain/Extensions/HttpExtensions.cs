@@ -6,6 +6,7 @@ namespace Pjfm.Domain.ValueObjects
 {
     public static class HttpExtensions
     {
+        // easy way for adding a query parameter to a Uri object
         public static Uri AddQuery(this Uri uri, string name, string value)
         {
             var httpValueCollection = HttpUtility.ParseQueryString(uri.Query);
