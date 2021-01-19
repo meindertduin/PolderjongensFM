@@ -114,7 +114,6 @@ export default class PlayerTimeSelectComponent extends Vue {
     this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", minutes)
         .then(() => {
           this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);
-          console.log("connection s tarted with player")
         })
         .catch((err:any) => console.log(err))
         .finally(() => {

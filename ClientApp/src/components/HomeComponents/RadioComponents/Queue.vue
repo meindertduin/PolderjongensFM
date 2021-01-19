@@ -109,7 +109,6 @@ export default class Queue extends Vue {
                   icon: 'mdi-robot',
               })
           })
-          console.log(this.queue);
       }
     }
   

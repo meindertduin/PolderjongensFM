@@ -101,7 +101,6 @@ export default class SearchBox extends Vue {
   
   @Watch("searchResultsLength")
   onSearchResultsChange(newValue:any){
-    console.log("reset")
     this.selectedSearchTrackItem = 0
   }
   
@@ -136,7 +135,6 @@ export default class SearchBox extends Vue {
       this.selectedSearchTrackItem += 1;
     }
     if (e.key == 'Enter' && this.searchResults.length > 0) {
-      console.log("requesting song")
       this.requestSong(this.searchResults[this.selectedSearchTrackItem])
     }
   }
@@ -226,9 +224,7 @@ export default class SearchBox extends Vue {
         this.playlists.push({ id: playlist.id, name: playlist.name})
       })
       this.loading = false;
-    }).catch((error: any) => {
-      console.log(error);
-    })
+    }).catch((error: any) => {});
   }
 }
 </script>
