@@ -19,10 +19,8 @@ namespace Pjfm.WebClient.Services
         private readonly IHubContext<DjHub> _djHubContext;
         private readonly IHubContext<RadioHub> _radioHubContext;
 
-        private readonly ICommand[] _onCommands = new ICommand[20];
-        private readonly ICommand[] _offCommands = new ICommand[20];
         private ICommand _undoCommand;
-        
+
         public PlaybackController(IPlaybackQueue playbackQueue, ISpotifyPlaybackManager spotifyPlaybackManager,
             IHubContext<DjHub> djHubContext, IHubContext<RadioHub> radioHubContext)
         {
@@ -30,47 +28,10 @@ namespace Pjfm.WebClient.Services
             _spotifyPlaybackManager = spotifyPlaybackManager;
             _djHubContext = djHubContext;
             _radioHubContext = radioHubContext;
-            
+
             _undoCommand = new NoCommand();
-
-            _onCommands[0] = new PlaybackOnCommand(this ,_spotifyPlaybackManager, _playbackQueue);
-            _offCommands[0] = new PlaybackOffCommand(_spotifyPlaybackManager);
-
-            _onCommands[1] = new PlaybackModeShortTermCommand(_playbackQueue);
-            _offCommands[1] = new NoCommand();
-            
-            _onCommands[2] = new PlaybackModeMediumTermCommand(_playbackQueue);
-            _offCommands[2] = new NoCommand();
-            
-            _onCommands[3] = new PlaybackModeLongTermCommand(_playbackQueue);
-            _offCommands[3] = new NoCommand();
-            
-            _onCommands[4] = new PlaybackModeShortMediumTermCommand(_playbackQueue);
-            _offCommands[4] = new NoCommand();
-
-            _onCommands[5] = new ResetPlaybackCommand(_spotifyPlaybackManager);
-            _offCommands[5] = new NoCommand();
-
-            _onCommands[6] = new PlaybackModeAllTermCommand(_playbackQueue);
-            _offCommands[6] = new NoCommand();
-            
-            _onCommands[7] = new PlaybackModeMediumLongTermCommand(_playbackQueue);
-            _offCommands[7] = new NoCommand();
-            
-            _onCommands[8] = new PlaybackSkipCommand(_spotifyPlaybackManager);
-            _offCommands[8] = new NoCommand();
-            
-            _onCommands[9] = new DefaultPlaybackStateOnCommand(this, _playbackQueue);
-            _offCommands[9] = new NoCommand();
-            
-            _onCommands[10] = new UserRequestPlaybackStateOnCommand(this, _playbackQueue);
-            _offCommands[10] = new NoCommand();
-            
-            _onCommands[11] = new RandomRequestPlaybackStateOnCommand(this, _playbackQueue);
-            _offCommands[11] = new NoCommand();
-            
         }
-        
+
         public void SetPlaybackState(IPlaybackState state)
         {
             if (IPlaybackController.CurrentPlaybackState != null)
@@ -78,9 +39,9 @@ namespace Pjfm.WebClient.Services
                 var maxRequestsAmount = IPlaybackController.CurrentPlaybackState.GetMaxRequestsPerUser();
                 state.SetMaxRequestsPerUser(maxRequestsAmount);
             }
-            
+
             IPlaybackController.CurrentPlaybackState = state;
-            
+
             NotifyChangePlaybackSettings();
         }
 
@@ -91,21 +52,55 @@ namespace Pjfm.WebClient.Services
                 IPlaybackController.CurrentPlaybackState.SetMaxRequestsPerUser(amount);
             }
         }
-        
+
         public void TurnOn(PlaybackControllerCommands command)
         {
-            _onCommands[(int) command].Execute();
-            _undoCommand = _onCommands[(int) command];
+            var commandHandler = GetOnCommandHandler(command);
+            commandHandler.Execute();
+            _undoCommand = commandHandler;
             NotifyChangePlaybackSettings();
         }
 
         public void TurnOff(PlaybackControllerCommands command)
         {
-            _offCommands[(int) command].Execute();
-            _undoCommand = _offCommands[(int) command];
+            var commandHandler = GetOffCommandHandler(command);
+            commandHandler.Execute();
+            _undoCommand = commandHandler;
             NotifyChangePlaybackSettings();
         }
 
+        private ICommand GetOnCommandHandler(PlaybackControllerCommands command) =>
+            command switch
+            {
+                PlaybackControllerCommands.TrackPlayerOnOff => new PlaybackOnCommand(this, _spotifyPlaybackManager,
+                    _playbackQueue),
+                PlaybackControllerCommands.ShortTermFilterMode => new PlaybackModeShortTermCommand(_playbackQueue),
+                PlaybackControllerCommands.MediumTermFilterMode => new PlaybackModeMediumTermCommand(_playbackQueue),
+                PlaybackControllerCommands.LongTermFilterMode => new PlaybackModeLongTermCommand(_playbackQueue),
+                PlaybackControllerCommands.ShortMediumTermFilterMode => new PlaybackModeShortMediumTermCommand(
+                    _playbackQueue),
+                PlaybackControllerCommands.ResetPlaybackCommand => new ResetPlaybackCommand(_spotifyPlaybackManager),
+                PlaybackControllerCommands.AllTermFilterMode => new PlaybackModeAllTermCommand(_playbackQueue),
+                PlaybackControllerCommands.MediumLongTermFilterMode => new PlaybackModeMediumLongTermCommand(
+                    _playbackQueue),
+                PlaybackControllerCommands.TrackSkip => new PlaybackSkipCommand(_spotifyPlaybackManager),
+                PlaybackControllerCommands.SetDefaultPlaybackState => new DefaultPlaybackStateOnCommand(this,
+                    _playbackQueue),
+                PlaybackControllerCommands.SetUserRequestPlaybackState => new UserRequestPlaybackStateOnCommand(this,
+                    _playbackQueue),
+                PlaybackControllerCommands.SetRandomRequestPlaybackState => new RandomRequestPlaybackStateOnCommand(
+                    this, _playbackQueue),
+                _ => new NoCommand(),
+            };
+        
+        private ICommand GetOffCommandHandler(PlaybackControllerCommands command) =>
+            command switch
+            {
+                PlaybackControllerCommands.TrackPlayerOnOff => new PlaybackOffCommand(_spotifyPlaybackManager),
+                _ => new NoCommand(),
+            };
+
+        
         public void Undo()
         {
             _undoCommand.Execute();
