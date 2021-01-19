@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Interfaces;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
@@ -29,6 +30,7 @@ namespace Pjfm.Infrastructure
             services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
             
             services.AddTransient<IAppDbContext>(provider => provider.GetService<AppDbContext>());
+            services.AddTransient<IAppDbContextFactory, DatabaseFactory>();
 
             var connectionString = configuration["ConnectionStrings:ApplicationDb"];
             

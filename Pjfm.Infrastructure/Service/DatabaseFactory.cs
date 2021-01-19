@@ -3,24 +3,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Interfaces;
-using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace Pjfm.Infrastructure.Service
 {
-    public class AppDbContextFactory : IAppDbContextFactory
+    public class DatabaseFactory : IAppDbContextFactory
     {
         private readonly IConfiguration _configuration;
 
-        public AppDbContextFactory(IConfiguration configuration)
+        public DatabaseFactory(IConfiguration configuration)
         {
             _configuration = configuration;
         }
         
         
-        public DatabaseFacade CreateDbContext()
+        public DatabaseFacade CreateDatabase()
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             

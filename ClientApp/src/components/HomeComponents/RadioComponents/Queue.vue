@@ -13,7 +13,7 @@
                                  :empty-message="null" />
               </div>
               <div v-else>
-                <QueueTracksList :span-title="`Wachtrij - ${playbackStateString}}`" :tracks="queue.slice(0, 10)" :empty-message="null" />
+                <QueueTracksList :span-title="`Wachtrij - ${playbackStateString}`" :tracks="queue.slice(0, 10)" :empty-message="null" />
               </div>
           </v-card>
       </v-col>
