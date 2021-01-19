@@ -55,7 +55,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn color="red" text @click="togglePlayerTimerOverlay" width="100%">
-        Dikke Doei!
+        Annuleren
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -122,11 +122,11 @@ export default class PlayerTimeSelectComponent extends Vue {
   }
   
   increment(){
-    this.sliderUnit++;
+    this.sliderUnit += 10;
   }
 
   decrement(){
-    this.sliderUnit--;
+    this.sliderUnit -= 10;
   }
 
   togglePlayerTimerOverlay(){

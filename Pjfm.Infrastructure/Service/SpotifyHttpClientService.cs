@@ -31,25 +31,23 @@ namespace Pjfm.Application.Services
                 .HandleResult<HttpResponseMessage>(message => message.StatusCode == HttpStatusCode.Unauthorized)
                 .RetryAsync(1, async (result, retryCount, context) =>
                 {
-                    if (context.ContainsKey("refresh_token"))
+                    using var scope = serviceProvider.CreateScope();
+                    var mediator = scope.ServiceProvider.GetService<IMediator>();
+
+                    var oldMessage = context["request_message"] as HttpRequestMessage;
+                    var newMessage = await oldMessage.CloneAsync();
+
+                    var refreshResponse = await mediator.Send(new AccessTokenRefreshCommand()
                     {
-                        using var scope = serviceProvider.CreateScope();
-                        var mediator = scope.ServiceProvider.GetService<IMediator>();
+                        UserId = context["user_id"] as string,
+                    });
 
-                        var oldMessage = (HttpRequestMessage) context["request_message"];
-                        var newMessage = await oldMessage.CloneAsync();
-
-                        var refreshResponse = await mediator.Send(new AccessTokenRefreshCommand()
-                        {
-                            UserId = context["user_id"] as string,
-                        });
-
-                        if (refreshResponse.Error == false)
-                        {
-                            newMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResponse.Data);
-                            context["request_message"] = newMessage;
-                        }
+                    if (refreshResponse.Error == false)
+                    {
+                        newMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResponse.Data);
                     }
+                        
+                    context["request_message"] = newMessage;
                 });
         }
 
@@ -58,7 +56,7 @@ namespace Pjfm.Application.Services
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             // send the requestMessage through the retry policy that will handle access-token refresh if expired
             return await _retryPolicy.ExecuteAsync(async context => 
-                await _httpClient.SendAsync(context["request_message"] as HttpRequestMessage), 
+                    await _httpClient.SendAsync(context["request_message"] as HttpRequestMessage), 
                 new Dictionary<string, object>()
             {
                 { "user_id", userId },
