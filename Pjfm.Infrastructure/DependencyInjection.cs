@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -99,10 +100,15 @@ namespace Pjfm.Infrastructure
                     .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
             }
 
-            // Todo: add production signing credentials 
-            
-            identityServiceBuilder
-                .AddDeveloperSigningCredential();
+            if (webHostEnvironment.IsProduction())
+            {
+                identityServiceBuilder.AddSigningCredential(
+                    new X509Certificate2(configuration["Crypt:Cert"], configuration["Crypt:Password"]));
+            }
+            else
+            {
+                identityServiceBuilder.AddDeveloperSigningCredential();
+            }
             
             services.AddLocalApiAuthentication();
 
