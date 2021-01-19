@@ -41,8 +41,6 @@ namespace Pjfm.WebClient.Services
             }
 
             IPlaybackController.CurrentPlaybackState = state;
-
-            NotifyChangePlaybackSettings();
         }
 
         public void SetMaxRequestsPerUserAmount(int amount)
