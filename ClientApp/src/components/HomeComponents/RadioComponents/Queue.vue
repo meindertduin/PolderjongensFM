@@ -27,8 +27,6 @@ import {Watch} from "vue-property-decorator";
 import {playbackState, queueTrack, trackDto, userPlaybackInfo} from "@/common/types";
 import QueueTracksList from "@/components/HomeComponents/RadioComponents/QueueTracksList.vue";
 
-
-
 @Component({
   name: 'Queue',
   components: {
