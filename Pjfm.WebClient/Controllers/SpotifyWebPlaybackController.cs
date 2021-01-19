@@ -24,7 +24,7 @@ namespace pjfm.Controllers
     {
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
-        private readonly IPlaybackEventTransmitter _eventTransmitter;
+        private readonly IPlaybackInfoTransmitter _infoTransmitter;
         private readonly IMediator _mediator;
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
@@ -33,14 +33,14 @@ namespace pjfm.Controllers
         public SpotifyWebPlaybackController(IPlaybackController playbackController,
             ISpotifyBrowserService spotifyBrowserService,
             UserManager<ApplicationUser> userManager,
-            IPlaybackEventTransmitter eventTransmitter,
+            IPlaybackInfoTransmitter infoTransmitter,
             IMediator mediator,
             IPlaybackListenerManager playbackListenerManager,
             ISpotifyPlayerService spotifyPlayerService)
         {
             _playbackController = playbackController;
             _spotifyBrowserService = spotifyBrowserService;
-            _eventTransmitter = eventTransmitter;
+            _infoTransmitter = infoTransmitter;
             _mediator = mediator;
             _playbackListenerManager = playbackListenerManager;
             _spotifyPlayerService = spotifyPlayerService;
@@ -128,6 +128,14 @@ namespace pjfm.Controllers
             return BadRequest();
         }
 
+        [HttpPut("mod/dequeueTrack")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult DequeueTrack([FromQuery] string trackId)
+        {
+            _playbackController.DequeueTrack(trackId);
+            return Accepted();
+        }
+        
         /// <summary>
         /// Search topTracks with parameters
         /// </summary>
@@ -183,7 +191,7 @@ namespace pjfm.Controllers
                 }
 
                 // publish queue state to all users connected to radio hub
-                _eventTransmitter.PublishUpdatePlaybackInfoEvents();
+                _infoTransmitter.PublishUpdatePlaybackInfoEvents();
 
                 return Accepted(response);
             }

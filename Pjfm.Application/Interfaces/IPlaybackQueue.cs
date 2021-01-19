@@ -16,6 +16,7 @@ namespace Pjfm.WebClient.Services
         Task SetUsers();
         void AddUsersToIncludedUsers(ApplicationUserDto user);
         bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user);
+        bool TryDequeueTrack(string trackId);
         public void AddPriorityTrack(TrackDto track);
         void AddSecondaryTrack(TrackRequestDto trackRequest);
         public List<TrackDto> GetFillerQueueTracks();

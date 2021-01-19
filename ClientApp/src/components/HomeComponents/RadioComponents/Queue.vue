@@ -80,6 +80,7 @@ export default class Queue extends Vue {
           this.queue = [];
           this.playbackInfo.priorityQueuedTracks.forEach((track) => {
               this.queue.push({
+                  id: track.id,
                   track: track,
                   user: 'DJ',
                   queueNum: 0,
@@ -90,6 +91,7 @@ export default class Queue extends Vue {
         
           this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
               this.queue.push({
+                  id: track.id,
                   track: track,
                   user: track.user.displayName,
                   queueNum: 1,
@@ -100,6 +102,7 @@ export default class Queue extends Vue {
 
           this.playbackInfo.fillerQueuedTracks.forEach((track) => {
               this.queue.push({
+                  id: track.id,
                   track: track,
                   user: 'AutoDJ',
                   queueNum: 2,

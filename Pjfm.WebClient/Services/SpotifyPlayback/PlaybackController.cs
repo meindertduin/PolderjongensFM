@@ -125,6 +125,22 @@ namespace Pjfm.WebClient.Services
             return _playbackQueue.TryRemoveUserFromIncludedUsers(user);
         }
 
+        public void DequeueTrack(string trackId)
+        {
+            var dequeueResult = _playbackQueue.TryDequeueTrack(trackId);
+            NotifyChangePlaybackInfo();
+        }
+        
+        private void NotifyChangePlaybackInfo()
+        {
+            var infoModelFactory = new PlaybackInfoFactory(this);
+            var userInfo = infoModelFactory.CreateUserInfoModel();
+            var djInfo = infoModelFactory.CreateUserInfoModel();
+            
+            _radioHubContext.Clients.All.SendAsync("ReceivePlaybackInfo", userInfo);
+            _djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
+        }
+        
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
             return IPlaybackController.CurrentPlaybackState.AddPriorityTrack(track);
@@ -213,7 +229,7 @@ namespace Pjfm.WebClient.Services
                 MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
             });
         }
-
+        
         public IDisposable SubscribeToPlayingStatus(IObserver<bool> observer)
         {
             return _spotifyPlaybackManager.Subscribe(observer);

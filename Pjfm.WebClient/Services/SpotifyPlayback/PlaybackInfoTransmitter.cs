@@ -5,13 +5,13 @@ using pjfm.Hubs;
 
 namespace Pjfm.WebClient.Services
 {
-    public class PlaybackEventTransmitter : IPlaybackEventTransmitter, IObserver<bool>
+    public class PlaybackInfoTransmitter : IPlaybackInfoTransmitter, IObserver<bool>
     {
         private readonly IPlaybackController _playbackController;
         private readonly IServiceProvider _serviceProvider;
         private IDisposable _unsubscriber;
 
-        public PlaybackEventTransmitter(IPlaybackController playbackController, IServiceProvider serviceProvider)
+        public PlaybackInfoTransmitter(IPlaybackController playbackController, IServiceProvider serviceProvider)
         {
             _playbackController = playbackController;
             _serviceProvider = serviceProvider;
@@ -65,7 +65,7 @@ namespace Pjfm.WebClient.Services
         }
     }
 
-    public interface IPlaybackEventTransmitter
+    public interface IPlaybackInfoTransmitter
     {
         void PublishUpdatePlaybackInfoEvents();
         void PublishPlayingStatus(bool isPlaying);

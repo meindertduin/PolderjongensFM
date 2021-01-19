@@ -83,6 +83,7 @@ export interface identityProfile {
 }
 
 export interface queueTrack {
+    id: string,
     track: trackDto,
     user: string,
     icon: string,

@@ -18,7 +18,7 @@
           </v-list-item-icon>
           <div v-else :class="`${item.chipClass.split(' ')[1]}`">{{ item.user }}</div>
           <v-list-item-action v-if="isMod">
-            <v-btn color="red" text x-small :disabled="false">Remove</v-btn>
+            <v-btn color="red" text x-small :disabled="false" @click="removeTrack(item.id)">Remove</v-btn>
           </v-list-item-action>
         </v-list-item>
         <v-divider v-if="i !== tracks.length -1"></v-divider>
@@ -55,6 +55,11 @@ export default class QueueTracksList extends Vue {
 
   get isMod():boolean{
     return this.$store.getters['profileModule/isMod'];
+  }
+  
+  private removeTrack(trackId: string){
+    // @ts-ignore
+    this.$axios.put(`api/playback/mod/dequeueTrack?trackId=${trackId}`);
   }
 }
 </script>
