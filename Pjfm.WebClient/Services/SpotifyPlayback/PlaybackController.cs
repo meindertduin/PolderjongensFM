@@ -160,7 +160,6 @@ namespace Pjfm.WebClient.Services
         }
         public PlaybackSettingsDto GetPlaybackSettings()
         {
-
             PlaybackState currentPlaybackState = PlaybackState.RequestPlaybackState;
             
             // get the current playbackState
