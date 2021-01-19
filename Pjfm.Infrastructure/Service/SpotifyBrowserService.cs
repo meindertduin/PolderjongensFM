@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Common;
 using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Application.Services
@@ -26,7 +22,7 @@ namespace Pjfm.Application.Services
             var request = new HttpRequestMessage();
             request.RequestUri = new Uri($"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range={terms[term]}");
             
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> Search(string userId , string accessToken, SearchRequestDto searchRequestInfo)
@@ -46,7 +42,7 @@ namespace Pjfm.Application.Services
             
             request.RequestUri = new Uri(requestUri);
             
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> GetTrackInfo(string userId, string accessToken, string trackId)
@@ -54,7 +50,7 @@ namespace Pjfm.Application.Services
             var request = new HttpRequestMessage();
             request.RequestUri = new Uri($"https://api.spotify.com/v1/tracks/{trackId}");
 
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> Me(string userId, string accessToken)
@@ -65,7 +61,7 @@ namespace Pjfm.Application.Services
             
             request.RequestUri = new Uri($"https://api.spotify.com/v1/me");
             
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> GetUserPlaylists(string userId, string accessToken, PlaylistRequestDto playlistRequest)
@@ -75,7 +71,7 @@ namespace Pjfm.Application.Services
             request.Method = HttpMethod.Get;
             request.RequestUri = new Uri($"https://api.spotify.com/v1/me/playlists?limit={playlistRequest.Limit}&offset={playlistRequest.Offset}"); 
             
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> GetPlaylistTracks(string userId, string accessToken, PlaylistTracksRequestDto playlistTracksRequestDto)
@@ -86,7 +82,7 @@ namespace Pjfm.Application.Services
                                          $"?limit={playlistTracksRequestDto.Limit}" +
                                          $"&offset={playlistTracksRequestDto.Offset}");
             
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> GetTopTracks(string userId, string accessToken, TopTracksRequestDto topTracksRequestDto)
@@ -100,7 +96,7 @@ namespace Pjfm.Application.Services
                                           $"&limit={topTracksRequestDto.Limit}" +
                                           $"&offset={topTracksRequestDto.Offset}");
             
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
 
         // Overload with pagination support
@@ -111,7 +107,7 @@ namespace Pjfm.Application.Services
             request.Method = HttpMethod.Get;
             request.RequestUri = nextUri;
 
-            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId);
+            return _spotifyHttpClientService.SendAuthenticatedRequest(request, userId, accessToken);
         }
     }
 }

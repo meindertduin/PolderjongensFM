@@ -91,15 +91,5 @@ namespace Pjfm.Application.Spotify.Queries
 
             return sqlBuilder.ToString();
         }
-
-        private object GenerateQueryParams(bool withIncludedUsers, GetRandomTopTrackQuery request)
-        {
-            return new
-            {
-                TrackIds = request.NotIncludeTracks.Count > 0? request.NotIncludeTracks.Select(x => x.Id) : new [] { "" },
-                Terms = request.TopTrackTermFilter,
-                RequestedAmount = 50,
-            };
-        }
     }
 }
