@@ -88,6 +88,7 @@ namespace Pjfm.Application.Spotify.Commands
                 {
                     await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
                 }
+
                 // iterate over all topTracks to update the values 
                 else if (updatedTopTracks.Count == TopTracksRetrievalCount)
                 {

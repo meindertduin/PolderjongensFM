@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
+using Pjfm.Domain.ValueObjects;
 
 namespace Pjfm.Domain.Converters
 {
@@ -20,10 +21,12 @@ namespace Pjfm.Domain.Converters
                     artistNames.Add((string) artist.name);
                 }
 
+                string title = item.name.ToString();
+
                 topTracksResult.Add(new TopTrack
                 {
                     SpotifyTrackId = item.id,
-                    Title = item.name.WithMaxLength(100),
+                    Title = title.WithMaxLength(100),
                     Artists = artistNames.ToArray(),
                     Term = (TopTrackTerm) term,
                     ApplicationUserId = userId,
