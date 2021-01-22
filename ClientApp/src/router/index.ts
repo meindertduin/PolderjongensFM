@@ -29,11 +29,6 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
-    path: '/Test',
-    name: 'Test',
-    component: () => import(/* webpackChunkName: "Test" */ '../views/Test.vue')
-  },
-  {
     path: '/oidc-callback',
     name: 'OidcCallback',
     component: OidcCallback,

@@ -5,7 +5,7 @@
             <Alert :key="alertId"/>
           </v-col>
         </v-row>
-        <div style="margin: 10px;">
+        <div>
           <SongInformation/>
           <Queue/>
         </div>

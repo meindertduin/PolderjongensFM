@@ -24,7 +24,7 @@ namespace pjfm.Controllers
     {
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
-        private readonly IPlaybackEventTransmitter _eventTransmitter;
+        private readonly IPlaybackInfoTransmitter _infoTransmitter;
         private readonly IMediator _mediator;
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
@@ -33,14 +33,14 @@ namespace pjfm.Controllers
         public SpotifyWebPlaybackController(IPlaybackController playbackController,
             ISpotifyBrowserService spotifyBrowserService,
             UserManager<ApplicationUser> userManager,
-            IPlaybackEventTransmitter eventTransmitter,
+            IPlaybackInfoTransmitter infoTransmitter,
             IMediator mediator,
             IPlaybackListenerManager playbackListenerManager,
             ISpotifyPlayerService spotifyPlayerService)
         {
             _playbackController = playbackController;
             _spotifyBrowserService = spotifyBrowserService;
-            _eventTransmitter = eventTransmitter;
+            _infoTransmitter = infoTransmitter;
             _mediator = mediator;
             _playbackListenerManager = playbackListenerManager;
             _spotifyPlayerService = spotifyPlayerService;
@@ -87,68 +87,55 @@ namespace pjfm.Controllers
 
             return NoContent();
         }
-        
-        /// <summary>
-        /// Sets the spotify playback term, changes will require a reset of the playback
-        /// </summary>
-        [HttpPut("mod/setTerm")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult AllTermFilter([FromQuery] TopTrackTermFilter term)
-        {
-            switch (term)
-            {
-                case TopTrackTermFilter.ShortTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.ShortTermFilterMode);
-                    break;
-                case TopTrackTermFilter.ShortMediumTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.ShortMediumTermFilterMode);
-                    break;
-                case TopTrackTermFilter.MediumTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.MediumTermFilterMode);
-                    break;
-                case TopTrackTermFilter.MediumLongTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.MediumLongTermFilterMode);
-                    break;
-                case TopTrackTermFilter.LongTerm:
-                    _playbackController.TurnOn(PlaybackControllerCommands.LongTermFilterMode);
-                    break;
-                case TopTrackTermFilter.AllTerms:
-                    _playbackController.TurnOn(PlaybackControllerCommands.AllTermFilterMode);
-                    break;
-                default:
-                    return BadRequest();
-            }
-
-            return Accepted();
-        }
-
-        /// <summary>
-        /// update the max request amount that users can request, changes won't require a reset of the playback
-        /// </summary>
-        [HttpPut("mod/userRequestAmount")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult SetMaxRequestPerUser([FromQuery] int amount)
-        {
-            if (amount >= 0)
-            {
-                _playbackController.SetMaxRequestsPerUserAmount(amount);
-                return Accepted();
-            }
-
-            return BadRequest();
-        }
 
         /// <summary>
         /// resets the playback
         /// </summary>
         [HttpPut("mod/reset")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult ResetPlayer()
+        public IActionResult ResetPlayer([FromQuery] int maxRequestAmount, [FromQuery] TopTrackTermFilter term)
         {
-            _playbackController.TurnOn(PlaybackControllerCommands.ResetPlaybackCommand);
-            return Accepted();
+            if (maxRequestAmount >= 0)
+            {
+                switch (term)
+                {
+                    case TopTrackTermFilter.ShortTerm:
+                        _playbackController.TurnOn(PlaybackControllerCommands.ShortTermFilterMode);
+                        break;
+                    case TopTrackTermFilter.ShortMediumTerm:
+                        _playbackController.TurnOn(PlaybackControllerCommands.ShortMediumTermFilterMode);
+                        break;
+                    case TopTrackTermFilter.MediumTerm:
+                        _playbackController.TurnOn(PlaybackControllerCommands.MediumTermFilterMode);
+                        break;
+                    case TopTrackTermFilter.MediumLongTerm:
+                        _playbackController.TurnOn(PlaybackControllerCommands.MediumLongTermFilterMode);
+                        break;
+                    case TopTrackTermFilter.LongTerm:
+                        _playbackController.TurnOn(PlaybackControllerCommands.LongTermFilterMode);
+                        break;
+                    case TopTrackTermFilter.AllTerms:
+                        _playbackController.TurnOn(PlaybackControllerCommands.AllTermFilterMode);
+                        break;
+                    default:
+                        return BadRequest();
+                }
+                _playbackController.SetMaxRequestsPerUserAmount(maxRequestAmount);
+                
+                _playbackController.TurnOn(PlaybackControllerCommands.ResetPlaybackCommand);
+                return Accepted();
+            }
+            return BadRequest();
         }
 
+        [HttpPut("mod/dequeueTrack")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult DequeueTrack([FromQuery] string trackId)
+        {
+            _playbackController.DequeueTrack(trackId);
+            return Accepted();
+        }
+        
         /// <summary>
         /// Search topTracks with parameters
         /// </summary>
@@ -204,7 +191,7 @@ namespace pjfm.Controllers
                 }
 
                 // publish queue state to all users connected to radio hub
-                _eventTransmitter.PublishUpdatePlaybackInfoEvents();
+                _infoTransmitter.PublishUpdatePlaybackInfoEvents();
 
                 return Accepted(response);
             }
@@ -329,17 +316,6 @@ namespace pjfm.Controllers
             var trackDto = trackSerializer.ConvertSingle(trackResponseContent);
 
             return trackDto;
-        }
-
-        /// <summary>
-        /// Gets the current active playbackSettings of the playback
-        /// </summary>
-        [HttpGet("mod/playbackSettings")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult GetPlaybackSettings()
-        {
-            var settings = _playbackController.GetPlaybackSettings();
-            return Ok(settings);
         }
     }
 }

@@ -55,8 +55,8 @@ export default class App extends Vue{
         .build();
 
     radioConnection.start()
-        .then(() => console.log("radio connection started"));
-
+      .then(() => {});
+    
     radioConnection.on("ReceivePlaybackInfo", (playbackInfo: userPlaybackInfo) => {
         this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo);
         this.$store.dispatch('profileModule/tryCalculateRequestedAmount');

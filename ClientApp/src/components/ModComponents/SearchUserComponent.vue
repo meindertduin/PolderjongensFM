@@ -49,8 +49,6 @@
         created(){
             this.$store.dispatch('modModule/loadIncludedUsers');
             this.$store.dispatch('modModule/loadUsers');
-
-            console.log(this.selectableUsers)
         }
         
         addUser(user: applicationUser){

@@ -7,7 +7,7 @@
                   <QueueTracksList :span-title="`Dj wachtrij`" :tracks="queue.filter(track => track.queueNum === 0).slice(0, 10)"  
                                    empty-message="null"/>
                 </div>
-                <QueueTracksList :span-title="`verzoekjes pool`" :tracks="queue.filter(track => track.queueNum === 1).slice(0, 3)" 
+                <QueueTracksList :span-title="`verzoekjes pool - Random Verzoekjes`" :tracks="queue.filter(track => track.queueNum === 1).slice(0, 3)" 
                                  :empty-message="'De verzoekjes pool is op dit moment leeg... doe snel een verzoekje om hem te vullen!'" />
                 <QueueTracksList :span-title="`Filler wachtrij`" :tracks="queue.filter(track => track.queueNum === 2).slice(0, 3)" 
                                  :empty-message="null" />
@@ -26,8 +26,6 @@ import Component from 'vue-class-component'
 import {Watch} from "vue-property-decorator";
 import {playbackState, queueTrack, trackDto, userPlaybackInfo} from "@/common/types";
 import QueueTracksList from "@/components/HomeComponents/RadioComponents/QueueTracksList.vue";
-
-
 
 @Component({
   name: 'Queue',
@@ -82,6 +80,7 @@ export default class Queue extends Vue {
           this.queue = [];
           this.playbackInfo.priorityQueuedTracks.forEach((track) => {
               this.queue.push({
+                  id: track.id,
                   track: track,
                   user: 'DJ',
                   queueNum: 0,
@@ -92,6 +91,7 @@ export default class Queue extends Vue {
         
           this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
               this.queue.push({
+                  id: track.id,
                   track: track,
                   user: track.user.displayName,
                   queueNum: 1,
@@ -102,6 +102,7 @@ export default class Queue extends Vue {
 
           this.playbackInfo.fillerQueuedTracks.forEach((track) => {
               this.queue.push({
+                  id: track.id,
                   track: track,
                   user: 'AutoDJ',
                   queueNum: 2,
@@ -109,7 +110,6 @@ export default class Queue extends Vue {
                   icon: 'mdi-robot',
               })
           })
-          console.log(this.queue);
       }
     }
   

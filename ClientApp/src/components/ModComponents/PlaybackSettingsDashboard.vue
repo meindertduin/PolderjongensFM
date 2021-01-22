@@ -87,6 +87,7 @@
     import Component from "vue-class-component";
     import {playbackSettings, playbackState} from "@/common/types";
     import {Watch} from "vue-property-decorator";
+    import {NavigationFailureType} from "vue-router";
 
     @Component({
         name: "PlaybackSettingsDashboard",
@@ -140,25 +141,17 @@
         private selectedState :any | null = null;
         
         @Watch("selectedState")
-        onSelectedStateChanged(newValue:any){
-            // @ts-ignore
-            this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
-                .catch((err:any) => console.log(err));
+        onSelectedStateChanged(newValue:any, oldValue:any){
+          if (oldValue === null) return;
+          if (oldValue === newValue) return;
+          
+          // @ts-ignore
+          this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
+              .catch((err:any) => console.log(err));
         }
 
-      private maxRequestAmount : number | null = null;
+        private maxRequestAmount : number | null = null;
       
-      @Watch("maxRequestAmount")
-      onMaxRequestAmountChanged(newValue:any, oldValue:any){
-        if (newValue !== oldValue && this.maxRequestAmount){
-          if (this.maxRequestAmount >= 0 && this.maxRequestAmount < 21){
-            // @ts-ignore
-            this.$axios.put(`api/playback/mod/userRequestAmount?amount=${this.maxRequestAmount}`)
-                .catch((err:any) => console.log(err));
-          }
-        }
-      }
-       
         async handleConfirmPlaybackSet(){
             this.showConfirmNotification = false;
             try {
@@ -175,21 +168,23 @@
               console.log(e)
             }
         }
-        
+
         async handleRejectPlaybackSet(){
-            this.showConfirmNotification = false;
+          this.showConfirmNotification = false;
         }
-      
+
         async handleReset(){
-            // @ts-ignore
-            await this.$axios.put(`api/playback/mod/setTerm?term=${this.selectedTerm}`);
-            // @ts-ignore
-            await this.$axios.put('api/playback/mod/reset');
+          // set to default value if null
+          if (this.maxRequestAmount === 0){
+            this.maxRequestAmount = 3;
+          }
+          // @ts-ignore
+          await this.$axios.put(`api/playback/mod/reset?maxRequestAmount=${this.maxRequestAmount}&term=${this.selectedTerm}`);
         }
-        
+  
         handleSkip(){
-            // @ts-ignore
-            this.$axios.put('api/playback/mod/skip');
+          // @ts-ignore
+          this.$axios.put('api/playback/mod/skip');
         }
     }
         

@@ -16,7 +16,8 @@ namespace Pjfm.WebClient.Services
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
-        
+        private readonly IPlaybackInfoTransmitter _playbackInfoTransmitter;
+
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
         private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>(); 
@@ -89,7 +90,62 @@ namespace Pjfm.WebClient.Services
         {
             _currentTermFilter = termFilter;
         }
-        
+
+        public bool TryDequeueTrack(string trackId)
+        {
+            TrackDto[] tracks = { };
+            Action<TrackDto> addTrackAction = null;
+            
+            // based in what queue the track is in, clear queue and move out tracks
+            if (_priorityQueue.Any(x => x.Id == trackId))
+            {
+                tracks = _priorityQueue.ToArray();
+                _priorityQueue.Clear();
+                addTrackAction = (track) => _priorityQueue.Enqueue(track);
+            }
+            else if(_fillerQueue.Any(x => x.Id == trackId))
+            {
+                tracks = _fillerQueue.ToArray();
+                _fillerQueue.Clear();
+                addTrackAction = (track) => _fillerQueue.Enqueue(track);
+            }
+            else if (_secondaryQueue.Any(x => x.Track.Id == trackId))
+            {
+                // handle secondary queue differently as the items are different
+                HandleDequeueSecondaryQueueTracks(trackId);
+                return true;
+            }
+
+            if (addTrackAction != null)
+            {
+                // iterate over tracks and invoke add track to queue action except for track with track id
+                for (int i = 0; i < tracks.Length; i++)
+                {
+                    if (tracks[i].Id != trackId)
+                    {
+                        addTrackAction.Invoke(tracks[i]);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void HandleDequeueSecondaryQueueTracks(string trackId)
+        {
+            var queueItems = _secondaryQueue.ToArray();
+            _secondaryQueue.Clear();
+
+            for (int i = 0; i < queueItems.Length; i++)
+            {
+                if (queueItems[i].Track.Id != trackId)
+                {
+                    _secondaryQueue.Enqueue(queueItems[i]);
+                }
+            }
+        }
         public void AddPriorityTrack(TrackDto track)
         {
             _priorityQueue.Enqueue(track);

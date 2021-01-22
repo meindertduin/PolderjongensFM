@@ -54,6 +54,7 @@ namespace pjfm.Hubs
             await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackController.GetPlaybackSettings().IsPlaying);
             
             var playbackSettings = _playbackController.GetPlaybackSettings();
+            
             await Clients.Caller.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
             {
                 PlaybackState = playbackSettings.PlaybackState,

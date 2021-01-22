@@ -55,7 +55,7 @@
     </v-card-text>
     <v-card-actions>
       <v-btn color="red" text @click="togglePlayerTimerOverlay" width="100%">
-        Dikke Doei!
+        Annuleren
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -114,7 +114,6 @@ export default class PlayerTimeSelectComponent extends Vue {
     this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", minutes)
         .then(() => {
           this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);
-          console.log("connection s tarted with player")
         })
         .catch((err:any) => console.log(err))
         .finally(() => {
@@ -123,11 +122,11 @@ export default class PlayerTimeSelectComponent extends Vue {
   }
   
   increment(){
-    this.sliderUnit++;
+    this.sliderUnit += 10;
   }
 
   decrement(){
-    this.sliderUnit--;
+    this.sliderUnit -= 10;
   }
 
   togglePlayerTimerOverlay(){

@@ -36,13 +36,13 @@ namespace Pjfm.Application.Spotify.Queries
         {
             using (var connection = new MySqlConnection(_configuration["ConnectionStrings:ApplicationDb"]))
             {
-                var result = await connection.QueryAsync<RandomTrackQueryEntity>(
+                var result = await connection.QueryAsync<dynamic>(
                     GenerateRandomTracksSqlQuery(request.IncludedUsersId.Length > 0), new
                 {
                     TrackIds = request.NotIncludeTracks.Count > 0? request.NotIncludeTracks.Select(x => x.Id) : new [] { "" },
                     Terms = request.TopTrackTermFilter,
                     RequestedAmount = request.RequestedAmount,
-                    UserIds = request.IncludedUsersId,
+                    UserIds = request.IncludedUsersId
                 });
 
                 var tracks = new List<TrackDto>();
