@@ -7,7 +7,9 @@
             <v-list-item v-for="(user, i) in includedUsers" @click="excludeUser(user)">
               <v-list-item-content>
                 <v-list-item-title>
-                  {{i + 1}}. {{user.displayName}} <span class="grey--text float-right" v-if="user.member">PJ</span>
+                  {{i + 1}}. {{user.displayName}}
+                  <span class="green--text float-right ml-4" v-if="user.spotifyAuthenticated">Auth</span>
+                  <span class="grey--text float-right" v-if="user.member">PJ </span>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>

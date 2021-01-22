@@ -38,7 +38,7 @@ namespace Pjfm.Application.MediatR.Users.Queries
                 .Where(x => x.Member)
                 .ToList();
 
-            return Task.FromResult(Response.Ok<List<ApplicationUserDto>>("query successful", result));
+            return Task.FromResult(Response.Ok("query successful", result));
         }
     }
 }

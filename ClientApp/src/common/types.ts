@@ -2,6 +2,7 @@
     id: string,
     displayName: string,
     member: boolean,
+    spotifyAuthenticated: boolean,
 }
 
 export interface userSettings{
