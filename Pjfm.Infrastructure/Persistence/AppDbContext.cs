@@ -28,7 +28,8 @@ namespace Pjfm.Infrastructure.Persistence
             builder.Entity<TopTrack>()
                 .HasOne(t => t.ApplicationUser)
                 .WithMany(a => a.TopTracks)
-                .HasForeignKey(t => t.ApplicationUserId);
+                .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<TopTrack>()
                 .Property(t => t.Artists)

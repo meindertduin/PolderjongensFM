@@ -65,6 +65,8 @@ namespace Pjfm.Application.Spotify.Commands
 
                     var result = await client.PostAsync("https://accounts.spotify.com/api/token", formContent, cancellationToken);
 
+                    
+                    
                     if (result.IsSuccessStatusCode)
                     {
                         var resultString = await result.Content.ReadAsStringAsync();
@@ -74,7 +76,7 @@ namespace Pjfm.Application.Spotify.Commands
                             {
                                 ContractResolver = new UnderScorePropertyNamesContractResolver(),
                             });
-
+                        
                         // add access token to user
                         if (resultContent != null)
                         {
@@ -84,8 +86,11 @@ namespace Pjfm.Application.Spotify.Commands
                         }
                     }
 
+                    var errorResult =
+                        JsonConvert.DeserializeObject<dynamic>(await result.Content.ReadAsStringAsync());
+                    
                     // refresh token is invalid due to being withdrawn
-                    if (result.StatusCode == HttpStatusCode.BadRequest)
+                    if (result.StatusCode == HttpStatusCode.BadRequest && errorResult.error == "invalid_grant")
                     {
                         user.SpotifyAuthenticated = false;
                         await _userManager.RemoveClaimAsync(user, new Claim(SpotifyIdentityConstants.Claims.SpStatus,

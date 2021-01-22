@@ -25,7 +25,7 @@ namespace Pjfm.Application.Services
         public SpotifyHttpClientService(HttpClient httpClient, IServiceProvider serviceProvider)
         {
             _httpClient = httpClient;
-            
+
             // creates a retry policy that will handle refreshing of access-token if expired
             _retryPolicy = Policy
                 .HandleResult<HttpResponseMessage>(message => message.StatusCode == HttpStatusCode.Unauthorized)
