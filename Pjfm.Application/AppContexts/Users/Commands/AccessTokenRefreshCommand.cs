@@ -96,11 +96,6 @@ namespace Pjfm.Application.Spotify.Commands
                         await _userManager.RemoveClaimAsync(user, new Claim(SpotifyIdentityConstants.Claims.SpStatus,
                             SpotifyIdentityConstants.Roles.Auth));
                         
-                        var userTopTracks = _appDbContext.TopTracks
-                            .AsNoTracking()
-                            .Where(track => track.ApplicationUserId == user.Id);
-                        
-                        _appDbContext.TopTracks.RemoveRange(userTopTracks);
                         await _appDbContext.SaveChangesAsync(cancellationToken);
                     }
                 }
