@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using AutoMapper;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -71,6 +72,23 @@ namespace pjfm
             {
                 services.AddHostedService<TopTracksUpdaterHostedService>();
             }
+
+            services.AddFluentEmail(Configuration["Smtp:ContactAddress"])
+                .AddSmtpSender(() =>
+                {
+                    if (WebHostEnvironment.IsDevelopment())
+                    {
+                        return new SmtpClient("127.0.0.1", 25)
+                        {
+                            EnableSsl = false,
+                            UseDefaultCredentials = true,
+                        };
+                    }
+                    else
+                    {
+                        return new SmtpClient("127.0.0.1, 25");
+                    }
+                });
 
             services.AddSignalR();
             

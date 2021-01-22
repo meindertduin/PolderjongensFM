@@ -1,7 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using System.Web;
+using FluentEmail.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
+using Pjfm.Application.Identity;
 
 namespace Pjfm.WebClient.Pages.Account
 {
@@ -16,12 +22,32 @@ namespace Pjfm.WebClient.Pages.Account
             Form = new ForgetPasswordForm() { Summeries = new List<string>() };
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager,
+            [FromServices] IFluentEmail fluentEmail, [FromServices] IConfiguration configuration)
         {
             if (ModelState.IsValid == false)
             {
                 return Page();
             }
+
+            var user = await userManager.FindByEmailAsync(Form.EmailAddress);
+            
+            if (user == null)
+            {
+                return Page();
+            }
+
+            var code = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            var confirmResetUrl = $"{configuration["AppUrls:ApiBaseUrl"]}" 
+                                  + "/account/ConfirmResetPassword" 
+                                  + $"?code={HttpUtility.UrlEncode(code)}";
+            
+            var email =  fluentEmail.To(configuration["Smtp:ContactAddress"])
+                .Subject("Opnieuw instellen wachtwoord pjfm")
+                .Body("Volg de volgende link om een nieuw wachtwoord in te stellen: \r\n" + confirmResetUrl);
+
+            await email.SendAsync();
             
             EmailSend = true;
             return Page();
