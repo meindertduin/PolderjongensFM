@@ -41,7 +41,8 @@ namespace Pjfm.WebClient.Pages.Account
 
             var confirmResetUrl = $"{configuration["AppUrls:ApiBaseUrl"]}" 
                                   + "/account/ConfirmResetPassword" 
-                                  + $"?code={HttpUtility.UrlEncode(code)}";
+                                  + $"?code={HttpUtility.UrlEncode(code)}"
+                                  + $"&userId={user.Id}";
             
             var email =  fluentEmail.To(configuration["Smtp:ContactAddress"])
                 .Subject("Opnieuw instellen wachtwoord pjfm")

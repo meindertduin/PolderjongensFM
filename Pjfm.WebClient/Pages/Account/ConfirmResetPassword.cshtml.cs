@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,9 +12,9 @@ namespace Pjfm.WebClient.Pages.Account
     {
         [BindProperty] public ResetPasswordForm Form { get; set; }
         
-        public void OnGet(string code)
+        public void OnGet(string code, string userId)
         {
-            Form = new ResetPasswordForm() { Code = code };
+            Form = new ResetPasswordForm { Code = code, UserId = userId };
         }
 
         public async Task<IActionResult> OnPost([FromServices] IConfiguration configuration, 
@@ -26,9 +25,7 @@ namespace Pjfm.WebClient.Pages.Account
                 return Forbid();
             }
 
-            var user = await userManager.GetUserAsync(HttpContext.User);
-
-            
+            var user = await userManager.FindByIdAsync(Form.UserId);
             var result = await userManager.ResetPasswordAsync(user, Form.Code, Form.Password);
 
             if (result.Succeeded)
@@ -42,6 +39,8 @@ namespace Pjfm.WebClient.Pages.Account
 
     public class ResetPasswordForm
     {
+        [Required] 
+        public string UserId { get; set; }
         [Required]
         public string Code { get; set; }
         
