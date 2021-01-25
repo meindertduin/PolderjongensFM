@@ -44,7 +44,7 @@ namespace Pjfm.WebClient.Pages.Account
                                   + $"?code={HttpUtility.UrlEncode(code)}"
                                   + $"&userId={user.Id}";
             
-            var email =  fluentEmail.To(configuration["Smtp:ContactAddress"])
+            var email =  fluentEmail.To(Form.EmailAddress)
                 .Subject("Opnieuw instellen wachtwoord pjfm")
                 .Body("Volg de volgende link om een nieuw wachtwoord in te stellen: \r\n" + confirmResetUrl);
 
