@@ -14,14 +14,23 @@
             </div>
             @if (Model.ConfirmEmailSucceeded)
             {
-                <div style="color: orange; margin-bottom: 20px">
-                    Uw account is nu geverifieerd.
+                <div class="row justify-content-center">
+                    <div style="color: orange; margin-bottom: 20px">
+                        Uw account is nu geverifieerd.
+                    </div>
                 </div>
+                <form method="post" style="width: 100%">
+                    <div class="row justify-content-center">
+                        <input type="submit" class="btnSubmit" value="Ga terug naar website"/>
+                    </div>
+                </form>
             }
             else
             {
-                <div style="color: orange; margin-bottom: 20px">
-                    Uw account kon met deze link niet geferieerd worden.
+                <div class="row justify-content-center">
+                    <div style="color: orange; margin-bottom: 20px">
+                        Uw account kon met deze url niet geferieerd worden.
+                    </div>
                 </div>
             }
         </div>

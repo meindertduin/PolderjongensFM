@@ -1,5 +1,6 @@
 ﻿body{
     background:#121212;
+    overflow: hidden;
 }
 
 .login-container{

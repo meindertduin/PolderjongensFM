@@ -52,8 +52,8 @@ namespace Pjfm.WebClient.Pages.Account
                                       + $"&userId={newUser.Id}";
                 
                 var email =  fluentEmail.To(Form.Email)
-                    .Subject("Opnieuw instellen wachtwoord pjfm")
-                    .Body("Volg de volgende link om een nieuw wachtwoord in te stellen: \r\n" + confirmEmailUrl);
+                    .Subject("Verifiëren mail-address account pjfm")
+                    .Body("Volg de volgende link om uw account te verifiëren: \r\n" + confirmEmailUrl);
 
                 await email.SendAsync();
                 

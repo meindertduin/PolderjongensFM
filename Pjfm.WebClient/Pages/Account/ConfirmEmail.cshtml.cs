@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Identity;
 
 namespace Pjfm.WebClient.Pages.Account
@@ -28,6 +29,11 @@ namespace Pjfm.WebClient.Pages.Account
             }
 
             return Page();
+        }
+
+        public IActionResult OnPost([FromServices] IConfiguration configuration)
+        {
+            return Redirect(configuration["AppUrls:ClientBaseUrl"]);
         }
     }
 }
