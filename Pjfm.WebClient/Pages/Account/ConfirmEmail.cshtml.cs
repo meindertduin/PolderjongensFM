@@ -23,6 +23,7 @@ namespace Pjfm.WebClient.Pages.Account
 
             if (confirmResult.Succeeded)
             {
+                user.EmailConfirmed = true;
                 ConfirmEmailSucceeded = true;
             }
 

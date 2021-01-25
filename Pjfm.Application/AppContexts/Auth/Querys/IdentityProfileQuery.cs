@@ -49,6 +49,7 @@ namespace Pjfm.Application.Auth.Querys
                     },
                     IsMod = isMod,
                     IsSpotifyAuthenticated = isSpotifyAuthenticated,
+                    EmailConfirmed = user.EmailConfirmed,
                 });
             }
             return Response.Fail<IdentityProfileViewModel>("user could not be found");

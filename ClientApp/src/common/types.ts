@@ -80,7 +80,8 @@ export interface userPlaybackSettings {
 export interface identityProfile {
     userProfile: applicationUser,
     isMod: boolean,
-    isSpotifyAuthenticated: boolean
+    isSpotifyAuthenticated: boolean,
+    emailConfirmed: boolean,
 }
 
 export interface queueTrack {

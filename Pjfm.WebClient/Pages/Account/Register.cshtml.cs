@@ -23,8 +23,7 @@ namespace Pjfm.WebClient.Pages.Account
             Form = new RegisterForm(){ReturnUrl = configuration["AppUrls:ClientBaseUrl"], Summeries = new List<string>()};
         }
         
-        public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, 
-            [FromServices] SignInManager<ApplicationUser> signInManager, [FromServices] IMediator mediator,
+        public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, [FromServices] IMediator mediator,
             [FromServices] IConfiguration configuration, [FromServices] IFluentEmail fluentEmail)
         {
             Form.Summeries = new List<string>();
@@ -39,7 +38,6 @@ namespace Pjfm.WebClient.Pages.Account
             
             if (userCreateRequest.Succeeded)
             {
-                
                 var emailConfirmToken = await userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 
                 await mediator.Send(new LoginCommand()
