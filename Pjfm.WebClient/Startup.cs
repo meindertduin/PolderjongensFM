@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -84,10 +85,13 @@ namespace pjfm
                             UseDefaultCredentials = true,
                         };
                     }
-                    else
+                    
+                    return new SmtpClient(Configuration["Smtp:Host"], int.Parse(Configuration["Smtp:Port"]))
                     {
-                        return new SmtpClient("127.0.0.1, 25");
-                    }
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        Credentials = new NetworkCredential(Configuration["Smtp:Login"], Configuration["Smtp:Password"]),
+                    };
                 });
 
             services.AddSignalR();
