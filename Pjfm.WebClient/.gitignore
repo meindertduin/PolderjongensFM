@@ -9,6 +9,11 @@
 *.userosscache
 *.sln.docstates
 
+wwwroot/fonts
+wwwroot/vendor
+wwwroot/vendor.min.js
+wwwroot/vendor.min.css
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
