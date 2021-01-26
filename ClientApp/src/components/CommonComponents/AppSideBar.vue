@@ -74,6 +74,13 @@
           <!--  -->
         </v-list-item-content>
       </v-list-item>
+      <v-list-item v-if="emailConfirmed === false">
+        <v-list-item-content>
+          <v-list-item-action>
+            <span class="orange--text subtitle-2">Uw email is nog niet geverifieerd<a class="blue--text" @click="verifyEmail"> klik hier</a> om hem te verifieren</span>
+          </v-list-item-action>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -124,6 +131,14 @@ export default class AppSideBar extends Vue{
 
   get isMod(){
     return this.$store.getters['profileModule/isMod'];
+  }
+  
+  get emailConfirmed():boolean{
+    return this.$store.getters['profileModule/emailConfirmed']
+  }
+  
+  private verifyEmail(){
+    location.href = `${process.env.VUE_APP_API_BASE_URL}/account/setupEmailConfirm`
   }
   
   private isPlaybackConnected() : boolean{

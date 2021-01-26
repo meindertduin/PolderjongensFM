@@ -61,6 +61,7 @@ namespace Pjfm.Application.Spotify.Queries
                             DisplayName = queryEntity.DisplayName,
                             Id = queryEntity.UserId,
                             Member = queryEntity.Member,
+                            SpotifyAuthenticated = queryEntity.SpotifyAuthenticated,
                         }
                     });
                 }
@@ -73,7 +74,7 @@ namespace Pjfm.Application.Spotify.Queries
         {
             var sqlBuilder = new StringBuilder(
                 "SELECT TopTracks.Title, TopTracks.Artists, TopTracks.Term, TopTracks.SpotifyTrackId As Id, " +
-                "TopTracks.SongDurationMs, AspNetUsers.Id AS UserId, AspNetUsers.DisplayName, AspNetUsers.Member ");
+                "TopTracks.SongDurationMs, AspNetUsers.Id AS UserId, AspNetUsers.DisplayName, AspNetUsers.Member, AspNetUsers.SpotifyAuthenticated ");
             
             sqlBuilder.Append("FROM PJFM.TopTracks ");
             sqlBuilder.Append("LEFT JOIN PJFM.AspNetUsers ");

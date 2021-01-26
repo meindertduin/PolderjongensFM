@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using System.Web;
+using FluentEmail.Core;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +15,7 @@ namespace Pjfm.WebClient.Pages.Account
 {
     public class Register : PageModel
     {
+        [BindProperty] public bool EmailSend { get; set; }
         [BindProperty] public RegisterForm Form { get; set; }
         
         public void OnGet([FromServices] IConfiguration configuration)
@@ -20,9 +23,8 @@ namespace Pjfm.WebClient.Pages.Account
             Form = new RegisterForm(){ReturnUrl = configuration["AppUrls:ClientBaseUrl"], Summeries = new List<string>()};
         }
         
-        public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, 
-            [FromServices] SignInManager<ApplicationUser> signInManager, [FromServices] IMediator mediator,
-            [FromServices] IConfiguration configuration)
+        public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager, [FromServices] IMediator mediator,
+            [FromServices] IConfiguration configuration, [FromServices] IFluentEmail fluentEmail)
         {
             Form.Summeries = new List<string>();
             
@@ -33,18 +35,30 @@ namespace Pjfm.WebClient.Pages.Account
 
             var newUser = new ApplicationUser(Form.Email){Email = Form.Email, DisplayName = Form.Username};
             var userCreateRequest = await userManager.CreateAsync(newUser, Form.Password);
-
+            
             if (userCreateRequest.Succeeded)
             {
-                var loginResult = await mediator.Send(new LoginCommand()
+                var emailConfirmToken = await userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                
+                await mediator.Send(new LoginCommand()
                 {
                     EmailAddress = Form.Email,
                     Password = Form.Password,
                 });
-
-                var redirectRoute = configuration["AppUrls:ApiBaseUrl"] + "/api/spotify/account/authenticate";
                 
-                return Redirect(redirectRoute);
+                var confirmEmailUrl = $"{configuration["AppUrls:ApiBaseUrl"]}" 
+                                      + "/account/ConfirmEmail" 
+                                      + $"?code={HttpUtility.UrlEncode(emailConfirmToken)}"
+                                      + $"&userId={newUser.Id}";
+                
+                var email =  fluentEmail.To(Form.Email)
+                    .Subject("Verifiëren mail-address account pjfm")
+                    .Body("Volg de volgende link om uw account te verifiëren: \r\n" + confirmEmailUrl);
+
+                await email.SendAsync();
+                
+                EmailSend = true;
+                return Page();
             }
             
             foreach (var identityError in userCreateRequest.Errors)

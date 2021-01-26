@@ -1,0 +1,38 @@
+﻿@page
+@model Pjfm.WebClient.Pages.Account.ConfirmEmail
+
+@{
+    ViewData["Title"] = "ConfirmEmail";
+    Layout = "Shared/_Layout";
+}
+
+<div class="login-container">
+    <div class="row justify-content-center align-content-center">
+        <div class="col-lg-4 col-md-6 col-sm-8 col-10 login-form">
+            <div class="form-image">
+                <img style="max-width: 300px; margin-bottom: 2vh" src="~/images/pjfm.png" />
+            </div>
+            @if (Model.ConfirmEmailSucceeded)
+            {
+                <div class="row justify-content-center">
+                    <div style="color: orange; margin-bottom: 20px">
+                        Uw account is nu geverifieerd.
+                    </div>
+                </div>
+                <form method="post" style="width: 100%">
+                    <div class="row justify-content-center">
+                        <input type="submit" class="btnSubmit" value="Ga terug naar website"/>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="row justify-content-center">
+                    <div style="color: orange; margin-bottom: 20px">
+                        Uw account kon met deze url niet geferieerd worden.
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

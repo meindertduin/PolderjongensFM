@@ -2,6 +2,7 @@
     id: string,
     displayName: string,
     member: boolean,
+    spotifyAuthenticated: boolean,
 }
 
 export interface userSettings{
@@ -79,7 +80,8 @@ export interface userPlaybackSettings {
 export interface identityProfile {
     userProfile: applicationUser,
     isMod: boolean,
-    isSpotifyAuthenticated: boolean
+    isSpotifyAuthenticated: boolean,
+    emailConfirmed: boolean,
 }
 
 export interface queueTrack {

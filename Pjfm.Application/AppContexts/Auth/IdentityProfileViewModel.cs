@@ -7,5 +7,6 @@ namespace pjfm.Models
         public UserProfileViewModel UserProfile { get; set; }
         public bool IsMod { get; set; }
         public bool IsSpotifyAuthenticated { get; set; }
+        public bool EmailConfirmed { get; set; }
     }
 }

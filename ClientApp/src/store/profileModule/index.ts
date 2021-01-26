@@ -23,6 +23,7 @@ const getters = <GetterTree<State, any>>{
     userProfile: (state) => state.userProfile? state.userProfile.userProfile : null,
     isMod: state => state.userProfile? state.userProfile.isMod: false,
     isSpotifyAuthenticated: state => state.userProfile? state.userProfile.isSpotifyAuthenticated: false,
+    emailConfirmed: state => state.userProfile? state.userProfile.emailConfirmed : true,
     isPlaylistDialogActive: state => state.playlistDialog,
     userId: state => state.userProfile? state.userProfile.userProfile.id : null,
     userRequestedAmount: state => state.userRequestedTracksAmount,
