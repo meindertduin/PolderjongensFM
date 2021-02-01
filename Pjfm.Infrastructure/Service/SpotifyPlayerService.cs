@@ -50,11 +50,21 @@ namespace Pjfm.Application.Services
             return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
         }
 
+        public Task<HttpResponseMessage> GetDevices(string userId, string accessToken)
+        {
+            var requestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get, 
+                RequestUri = new Uri("https://api.spotify.com/v1/me/player/devices"),
+            };
+
+            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
+        }
+        
         public Task<HttpResponseMessage> AddTrackToQueue(string userId, string accessToken, string trackId ,string deviceId = null)
         {
-            var requestMessage = new HttpRequestMessage();
-            
-            requestMessage.Method = HttpMethod.Post;
+            var requestMessage = new HttpRequestMessage {Method = HttpMethod.Post};
+
             var requestUri = $"https://api.spotify.com/v1/me/player/queue?uri=spotify:track:{trackId}";
             
             if (string.IsNullOrEmpty(deviceId) == false)
