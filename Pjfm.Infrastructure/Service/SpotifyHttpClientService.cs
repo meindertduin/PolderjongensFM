@@ -20,11 +20,13 @@ namespace Pjfm.Application.Services
     public class SpotifyHttpClientService : ISpotifyHttpClientService
     {
         private readonly HttpClient _httpClient;
+        private readonly IServiceProvider _serviceProvider;
         private AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
         
         public SpotifyHttpClientService(HttpClient httpClient, IServiceProvider serviceProvider)
         {
             _httpClient = httpClient;
+            _serviceProvider = serviceProvider;
 
             // creates a retry policy that will handle refreshing of access-token if expired
             _retryPolicy = Policy
@@ -54,8 +56,9 @@ namespace Pjfm.Application.Services
         public async Task<HttpResponseMessage> SendAuthenticatedRequest(HttpRequestMessage requestMessage, string userId, string accessToken)
         {
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            
             // send the requestMessage through the retry policy that will handle access-token refresh if expired
-            return await _retryPolicy.ExecuteAsync(async context => 
+            return await _retryPolicy.ExecuteAsync(async context =>
                     await _httpClient.SendAsync(context["request_message"] as HttpRequestMessage), 
                 new Dictionary<string, object>()
             {

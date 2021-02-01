@@ -89,7 +89,7 @@ namespace Pjfm.Application.Spotify.Commands
                     await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
                 }
                 // update existing topTracks
-                else
+                else if(updatedTopTracks.Count > 0)
                 {
                     _ctx.TopTracks.RemoveRange(termTopTracks);
                     await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
@@ -97,7 +97,7 @@ namespace Pjfm.Application.Spotify.Commands
                 
                 await _ctx.SaveChangesAsync(cancellationToken);
 
-                return Response.Ok("}succeeded", "topt racks have been saved to the database");
+                return Response.Ok("succeeded", "topt racks have been saved to the database");
             }
             catch (Exception e)
             {

@@ -53,7 +53,7 @@ namespace Pjfm.Application.Spotify.Commands
                 var authString = Encoding.ASCII.GetBytes($"{_configuration["Spotify:ClientId"]}:{_configuration["Spotify:ClientSecret"]}");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authString));
 
-                var user = _appDbContext.ApplicationUsers.FirstOrDefault(u => u.Id == request.UserId);
+                var user = await _userManager.FindByIdAsync(request.UserId);
 
                 if (user != null)
                 {
@@ -90,13 +90,13 @@ namespace Pjfm.Application.Spotify.Commands
                         JsonConvert.DeserializeObject<dynamic>(await result.Content.ReadAsStringAsync());
                     
                     // refresh token is invalid due to being withdrawn
-                    if (result.StatusCode == HttpStatusCode.BadRequest && errorResult.error == "invalid_grant")
-                    {
+                    if (result.StatusCode == HttpStatusCode.BadRequest && errorResult.error_description == "Refresh token revoked")
+                    {   
                         user.SpotifyAuthenticated = false;
                         await _userManager.RemoveClaimAsync(user, new Claim(SpotifyIdentityConstants.Claims.SpStatus,
                             SpotifyIdentityConstants.Roles.Auth));
-                        
-                        await _appDbContext.SaveChangesAsync(cancellationToken);
+
+                        await _userManager.UpdateAsync(user);
                     }
                 }
 
