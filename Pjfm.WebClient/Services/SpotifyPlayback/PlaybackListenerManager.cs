@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
@@ -17,8 +18,8 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackController _playbackController;
         private readonly IHubContext<RadioHub> _radioHubContext;
 
-        public static readonly ConcurrentDictionary<string, ApplicationUser> ConnectedUsers 
-            = new ConcurrentDictionary<string, ApplicationUser>();
+        public static readonly ConcurrentDictionary<string, ConnectedUser> ConnectedUsers 
+            = new ConcurrentDictionary<string, ConnectedUser>();
 
         public static readonly ConcurrentDictionary<string, TimedListenerModel> SubscribedListeners = new ConcurrentDictionary<string, TimedListenerModel>();
         
@@ -31,12 +32,16 @@ namespace Pjfm.WebClient.Services
             _radioHubContext = radioHubContext;
         }
         
-        public async Task AddListener(ApplicationUser user)
+        public async Task AddListener(ApplicationUser user, PlaybackDevice playbackDevice)
         {
             // add user to ConnectedUsers if not null and synch with player
             if (user != null)
             {
-                ConnectedUsers[user.Id] = user;
+                ConnectedUsers[user.Id] = new ConnectedUser()
+                {
+                    User = user,
+                    PlaybackDevice = playbackDevice,
+                };
             
                 await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
             }
@@ -61,9 +66,9 @@ namespace Pjfm.WebClient.Services
         
         public ApplicationUser RemoveListener(string userId)
         {
-            ConnectedUsers.TryRemove(userId, out ApplicationUser user);
-            
-            return user;
+            ConnectedUsers.TryRemove(userId, out ConnectedUser connectedUser);
+
+            return connectedUser?.User;
         }
 
         public bool TrySetTimedListener(string userId, int minutes, string userConnectionId)

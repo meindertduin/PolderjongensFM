@@ -194,7 +194,12 @@ namespace Pjfm.WebClient.Services
             // iterate through all connected users and make request to spotify to play track on users client
             foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
             {
-                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty,
+                var user = keyValuePair.Value.User;
+                var playbackDevice = keyValuePair.Value.PlaybackDevice;
+
+                var deviceId = playbackDevice.Id ?? String.Empty;
+                
+                var playTask = _spotifyPlayerService.Play(keyValuePair.Key, user.SpotifyAccessToken, deviceId,
                     new PlayRequestDto()
                     {
                         Uris = new[] {$"spotify:track:{track.Id}"}
@@ -213,7 +218,7 @@ namespace Pjfm.WebClient.Services
             foreach (var keyValuePair in PlaybackListenerManager.ConnectedUsers)
             {
                 var pauseTask =
-                    _spotifyPlayerService.PausePlayer(keyValuePair.Key, keyValuePair.Value.SpotifyAccessToken, String.Empty);
+                    _spotifyPlayerService.PausePlayer(keyValuePair.Key, keyValuePair.Value.User.SpotifyAccessToken, String.Empty);
                 
                 responseTasks.Add(pauseTask);
             }
