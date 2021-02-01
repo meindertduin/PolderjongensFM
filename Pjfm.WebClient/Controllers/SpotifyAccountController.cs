@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -29,6 +30,8 @@ namespace pjfm.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAppDbContext _ctx;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
+
+        private const int AuthenticationTime = 300;
 
         private const int StateStringLength = 30;
 
@@ -113,6 +116,8 @@ namespace pjfm.Controllers
                 return Forbid();
             }
             
+            EmptyUnUsedCachedStates();
+
             // 401 forbid if no cached state matches for the user
             var removeResult=  _cachedStates.TryRemove(user.Id, out var cachedAuthenticationState);
             if (removeResult == false)
@@ -122,11 +127,11 @@ namespace pjfm.Controllers
 
             // forbid if cached state is older than 5 minutes
             if (state != cachedAuthenticationState.State || 
-                DateTime.Now - cachedAuthenticationState.TimeCached > TimeSpan.FromSeconds(300))
+                DateTime.Now - cachedAuthenticationState.TimeCached > TimeSpan.FromSeconds(AuthenticationTime))
             {
                 return Forbid();
             }
-
+            
             // request access-token and refresh-token from spotify-api through mediatr
             var result = await _mediator.Send(new AccessTokensRequestCommand()
             {
@@ -167,7 +172,14 @@ namespace pjfm.Controllers
 
         private void EmptyUnUsedCachedStates()
         {
-            // Todo fill in this method
+            foreach (var state in _cachedStates)
+            {
+                var span = DateTime.Now - state.Value.TimeCached;
+                if (span.TotalSeconds > AuthenticationTime)
+                {
+                    _cachedStates.Remove(state.Key, out _);
+                }
+            }
         }
         
         /// <summary>
