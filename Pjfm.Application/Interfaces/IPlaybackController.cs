@@ -15,7 +15,7 @@ namespace Pjfm.WebClient.Services
         void TurnOn(PlaybackControllerCommands command);
         void TurnOff(PlaybackControllerCommands command);
         void Undo();
-        Task SynchWithPlayback(string userId, string spotifyAccessToken);
+        Task SynchWithPlayback(string userId, string spotifyAccessToken, PlaybackDevice playbackDevice);
         List<ApplicationUserDto> GetIncludedUsers();
         void AddIncludedUser(ApplicationUserDto user);
         bool TryRemoveIncludedUser(ApplicationUserDto user);

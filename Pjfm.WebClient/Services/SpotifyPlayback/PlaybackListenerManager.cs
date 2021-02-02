@@ -43,7 +43,7 @@ namespace Pjfm.WebClient.Services
                     PlaybackDevice = playbackDevice,
                 };
             
-                await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken);
+                await _playbackController.SynchWithPlayback(user.Id, user.SpotifyAccessToken, playbackDevice);
             }
         }
 

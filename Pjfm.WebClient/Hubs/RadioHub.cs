@@ -71,7 +71,7 @@ namespace pjfm.Hubs
         }
 
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task ConnectWithPlayer(int minutes, PlaybackDevice device = null)
+        public async Task ConnectWithPlayer(int minutes, PlaybackDevice device)
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);

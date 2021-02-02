@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Users.Queries;
@@ -47,6 +48,23 @@ namespace pjfm.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Gets the spotify playback devices of the user that queries
+        /// </summary>
+        [HttpGet("devices")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        public async Task<IActionResult> GetPlaybackDevices()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var result = await _mediator.Send(new GetPlaybackDevicesQuery()
+            {
+                UserId = user.Id,
+            });
+
+            return Ok(result.Data);
+        }
+        
         /// <summary>
         /// Turns the playback on
         /// </summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
@@ -227,11 +228,12 @@ namespace Pjfm.WebClient.Services
             await Task.WhenAll(responseTasks);
         }
         
-        public async Task SynchWithCurrentPlayer(string userId, string accessToken)
+        public async Task SynchWithCurrentPlayer(string userId, string accessToken, PlaybackDevice playbackDevice)
         {
             var synchedRequestData = GetSynchronisedRequestData();
+            
             // play track on user spotify client
-            await _spotifyPlayerService.Play(userId, accessToken, String.Empty, synchedRequestData);
+            await _spotifyPlayerService.Play(userId, accessToken, playbackDevice.Id ?? String.Empty, synchedRequestData);
         }
 
         private PlayRequestDto GetSynchronisedRequestData()

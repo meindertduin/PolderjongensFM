@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Common;
 using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Application.Common.Dto.Queries

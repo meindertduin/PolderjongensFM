@@ -44,14 +44,16 @@
         </template>
 
         <template v-slot:append>
-          <v-icon
-              color="green"
-              @click="increment"
-          >
+          <v-icon color="green" @click="increment">
             mdi-plus
           </v-icon>
         </template>
       </v-slider>
+      <v-row justify="center">
+        <v-col class="col-8 col-md-10">
+          <v-select outlined v-model="selectedDevice" :items="userDevices" item-text="name" return-object single-line></v-select>
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-actions>
       <v-btn color="red" text @click="togglePlayerTimerOverlay" width="100%">
@@ -65,15 +67,27 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 
+interface playbackDevice {
+  id: string,
+  isActive: boolean,
+  isPrivateSession: boolean,
+  isRestricted: boolean,
+  name: string,
+  type: string,
+  volumePercent: number,
+}
+
+
 @Component({
   name: 'PlayerTimeSelectComponent',
 })
-
 export default class PlayerTimeSelectComponent extends Vue {
-  
   private sliderUnit = 0;
   private sliderMin : number = 0;
   private sliderMax : number = 1000;
+  
+  private userDevices: Array<playbackDevice> = [];
+  private selectedDevice: playbackDevice | null = null;
   
   get selectedTimeString():string{
       let minutes = this.getSelectedMinutes();
@@ -85,6 +99,24 @@ export default class PlayerTimeSelectComponent extends Vue {
   
   get loggedInUserProfile(){
     return this.$store.getters["profileModule/userProfile"];
+  }
+  
+  created(){
+    // @ts-ignore
+    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playback/devices`)
+      .then(({data}:{data:Array<playbackDevice> | null}) => {
+         if (data){
+           this.userDevices = data.filter(d => !d.isPrivateSession && !d.isRestricted);
+           if (this.userDevices.length > 0){
+             const activeDevice: playbackDevice | undefined = this.userDevices.find(d => d.isActive);
+             if (activeDevice){
+               this.selectedDevice = activeDevice;
+             } else {
+               this.selectedDevice = this.userDevices[0];
+             }
+           }
+         }
+      })
   }
   
   getSelectedMinutes():number{
@@ -111,7 +143,7 @@ export default class PlayerTimeSelectComponent extends Vue {
   }
   
   connectWithPlayer(minutes: number){
-    this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", minutes)
+    this.$store.getters['playbackModule/getRadioConnection']?.invoke("ConnectWithPlayer", minutes, this.selectedDevice)
         .then(() => {
           this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);
         })
