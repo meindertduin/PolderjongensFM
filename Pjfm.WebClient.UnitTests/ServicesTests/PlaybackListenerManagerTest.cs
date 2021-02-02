@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Moq;
+using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
@@ -24,8 +25,10 @@ namespace Pjfm.WebClient.UnitTests.ServicesTests
                         
             var fakeUserId = "0";
             var fakeUser = new ApplicationUser("fake@mail.com"){ Id = fakeUserId};
-
-            _playbackListenerManager.AddListener(fakeUser);
+            var fakeDevice = new PlaybackDevice() {Id = "1234"};
+            
+            
+            _playbackListenerManager.AddListener(fakeUser, fakeDevice);
             var removedUser = _playbackListenerManager.RemoveListener(fakeUserId);
             Assert.NotNull(removedUser);
         }
