@@ -105,9 +105,9 @@ namespace Pjfm.WebClient.Services
             NotifyChangePlaybackSettings();
         }
 
-        public Task SynchWithPlayback(string userId, string spotifyAccessToken)
+        public Task SynchWithPlayback(string userId, string spotifyAccessToken, PlaybackDevice playbackDevice)
         {
-            return _spotifyPlaybackManager.SynchWithCurrentPlayer(userId, spotifyAccessToken);
+            return _spotifyPlaybackManager.SynchWithCurrentPlayer(userId, spotifyAccessToken, playbackDevice);
         }
 
         public List<ApplicationUserDto> GetIncludedUsers()

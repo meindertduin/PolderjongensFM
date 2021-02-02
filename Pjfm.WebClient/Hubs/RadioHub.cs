@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
 using Pjfm.Domain.Interfaces;
 using pjfm.Models;
@@ -16,16 +19,18 @@ namespace pjfm.Hubs
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
+        private readonly IMediator _mediator;
 
         private static int _listenerCount = 0;
 
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService)
+            IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService, IMediator mediator)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
             _playbackController = playbackController;
             _spotifyPlayerService = spotifyPlayerService;
+            _mediator = mediator;
         }
         
         public override async Task OnConnectedAsync()
@@ -66,7 +71,7 @@ namespace pjfm.Hubs
         }
 
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task ConnectWithPlayer(int minutes)
+        public async Task ConnectWithPlayer(int minutes, PlaybackDevice device)
         {
             var context = Context.GetHttpContext();
             var user = await _userManager.GetUserAsync(context.User);
@@ -74,7 +79,14 @@ namespace pjfm.Hubs
             // set user as timed user if spotify authenticated and send some playback status info
             if (user.SpotifyAuthenticated)
             {
-                await _playbackListenerManager.AddListener(user);
+                if (device == null)
+                {
+                    await _playbackListenerManager.AddListener(user, await GetPlaybackDevice(user.Id));
+                }
+                else
+                {
+                    await _playbackListenerManager.AddListener(user, device);
+                }
 
                 if (minutes != 0)
                 {
@@ -95,6 +107,20 @@ namespace pjfm.Hubs
             await Clients.Caller.SendAsync("IsConnected", false);
             await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
         }
-        
+
+        private async Task<PlaybackDevice> GetPlaybackDevice(string userId)
+        {
+            var result = await _mediator.Send(new GetPlaybackDevicesQuery()
+            {
+                UserId = userId,
+            });
+
+            if (result.Data.Count > 0)
+            {
+                return result.Data[0];
+            }
+
+            return null;
+        }
     }
 }

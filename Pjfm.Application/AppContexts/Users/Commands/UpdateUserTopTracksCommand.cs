@@ -88,30 +88,16 @@ namespace Pjfm.Application.Spotify.Commands
                 {
                     await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
                 }
-
-                // iterate over all topTracks to update the values 
-                else if (updatedTopTracks.Count == TopTracksRetrievalCount)
-                {
-                    for (int i = 0; i < updatedTopTracks.Count; i++)
-                    {
-                        termTopTracks[i].SpotifyTrackId = updatedTopTracks[i].SpotifyTrackId;
-                        termTopTracks[i].Artists = updatedTopTracks[i].Artists;
-                        termTopTracks[i].Term = updatedTopTracks[i].Term;
-                        termTopTracks[i].Title = updatedTopTracks[i].Title.WithMaxLength(100);
-                        termTopTracks[i].TimeAdded = updatedTopTracks[i].TimeAdded;
-                        termTopTracks[i].SongDurationMs = updatedTopTracks[i].SongDurationMs;
-                    }
-                }
-                // remove all topTracks of user if amount isn't the retrievalCount
-                else
+                // update existing topTracks
+                else if(updatedTopTracks.Count > 0)
                 {
                     _ctx.TopTracks.RemoveRange(termTopTracks);
-                    Log.Error($@"Error while trying to update users toptracks of user with userId: {user.Id}. As a result the toptracks of user are deleted and have to be re-updated.");
+                    await _ctx.TopTracks.AddRangeAsync(updatedTopTracks, cancellationToken);
                 }
                 
                 await _ctx.SaveChangesAsync(cancellationToken);
 
-                return Response.Ok("}succeeded", "topt racks have been saved to the database");
+                return Response.Ok("succeeded", "topt racks have been saved to the database");
             }
             catch (Exception e)
             {

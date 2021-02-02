@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
 using Pjfm.Application.Test.Queries;
@@ -17,11 +19,13 @@ namespace pjfm.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
+        private readonly IMediator _mediator;
 
-        public SpotifyPlaylistController(UserManager<ApplicationUser> userManager, ISpotifyBrowserService spotifyBrowserService)
+        public SpotifyPlaylistController(UserManager<ApplicationUser> userManager, ISpotifyBrowserService spotifyBrowserService, IMediator mediator)
         {
             _userManager = userManager;
             _spotifyBrowserService = spotifyBrowserService;
+            _mediator = mediator;
         }
         
         /// <summary>
@@ -118,5 +122,6 @@ namespace pjfm.Controllers
             
             return Ok(content);
         }
+        
     }
 }
