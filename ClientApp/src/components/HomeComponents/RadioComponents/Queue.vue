@@ -7,7 +7,7 @@
                   <QueueTracksList :span-title="`Dj wachtrij`" :tracks="queue.filter(track => track.queueNum === 0).slice(0, 10)"  
                                    empty-message="null"/>
                 </div>
-                <QueueTracksList :span-title="`verzoekjes pool - Random Verzoekjes`" :tracks="queue.filter(track => track.queueNum === 1).slice(0, 3)" 
+                <QueueTracksList :span-title="`verzoekjes pool - Random Verzoekjes`" :tracks="queue.filter(track => track.queueNum === 1)" 
                                  :empty-message="'De verzoekjes pool is op dit moment leeg... doe snel een verzoekje om hem te vullen!'" />
                 <QueueTracksList :span-title="`Filler wachtrij`" :tracks="queue.filter(track => track.queueNum === 2).slice(0, 3)" 
                                  :empty-message="null" />
