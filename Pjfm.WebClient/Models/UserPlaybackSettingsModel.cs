@@ -7,5 +7,6 @@ namespace pjfm.Models
         public PlaybackState PlaybackState { get; set; }
         public bool IsPlaying { get; set; }
         public int MaxRequestsPerUser { get; set; }
+        public int ListenersCount { get; set; }
     }
 }

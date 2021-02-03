@@ -2,6 +2,9 @@
     <v-row justify="center">
       <v-col class="col-12 col-sm-11 col-md-10 col-lg-10">
           <v-card class="pa-2" outlined round>
+              <div class="body-2 orange--text text-end">
+                momenteel {{listenersCount}} luisteraars
+              </div>
               <div v-if="playbackState === 2">
                 <div v-if="queue.filter(x => x.queueNum === 0).length > 0">
                   <QueueTracksList :span-title="`Dj wachtrij`" :tracks="queue.filter(track => track.queueNum === 0).slice(0, 10)"  
@@ -52,6 +55,9 @@ export default class Queue extends Vue {
       return this.$store.getters['playbackModule/getPlaybackInfo'];
   }
   
+  get listenersCount():number {
+    return this.$store.getters['playbackModule/getListenersCount'];
+  }
   
   get playbackState():playbackState | null{
     return this.$store.getters['playbackModule/getPlaybackState'];

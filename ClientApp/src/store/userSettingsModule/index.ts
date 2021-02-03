@@ -4,7 +4,7 @@ import {userSettings} from "@/common/types"
 
 class State {
     public sideBarOpen:boolean = false;
-    }
+}
 
 const mutations = <MutationTree<State>>{
     TOGGLE_SIDE_BAR: state => state.sideBarOpen = ! state.sideBarOpen,

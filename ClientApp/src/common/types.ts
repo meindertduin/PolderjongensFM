@@ -48,6 +48,7 @@ export interface playbackSettings {
     includedUsers: Array<applicationUser>,
     playbackState: playbackState,
     maxRequestsPerUser: number,
+    listenersCount: number,
 }
 
 export interface userPlaybackInfo {
@@ -75,6 +76,7 @@ export interface userPlaybackSettings {
     playbackState: playbackState,
     isPlaying: boolean,
     maxRequestsPerUser: number,
+    listenersCount: number,
 }
 
 export interface identityProfile {

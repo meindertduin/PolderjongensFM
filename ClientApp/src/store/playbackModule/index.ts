@@ -1,7 +1,5 @@
 ﻿import {ActionTree, GetterTree, MutationTree} from "vuex"
 import {
-    playbackSettings,
-    djPlaybackInfo,
     trackDto,
     userPlaybackInfo,
     playbackState,
@@ -13,6 +11,8 @@ class State {
     public playbackInfo: userPlaybackInfo | null = null;
     public radioConnection: HubConnection | null = null;
     public PlayerTimerOverLay : boolean = false
+    
+    public listenersCount : number = 0;
     
     public isPlaying: boolean = false;
     public isConnected: boolean = false;
@@ -32,7 +32,6 @@ class State {
 const mutations = <MutationTree<State>>{
     SET_PLAYBACK_INFO: (state, playerUpdateInfo:userPlaybackInfo) => {
         state.playbackInfo = playerUpdateInfo;
-        
         // playback tracks info
         state.currentSongInfo = playerUpdateInfo.currentPlayingTrack;
         state.fillerQueuedTracks = playerUpdateInfo.fillerQueuedTracks;
@@ -43,6 +42,7 @@ const mutations = <MutationTree<State>>{
     
     SET_PLAYBACK_SETTINGS: (state, playbackSettings:userPlaybackSettings) => {
         state.playbackState = playbackSettings.playbackState;
+        state.listenersCount = playbackSettings.listenersCount;
         state.isPlaying = playbackSettings.isPlaying;
         state.maxRequestsPerUser = playbackSettings.maxRequestsPerUser;
     },
@@ -82,7 +82,7 @@ const getters = <GetterTree<State, any>>{
     // playback settings
     getPlaybackState: state => state.playbackState,
     getMaxRequestsPerUser: state => state.maxRequestsPerUser,
-
+    getListenersCount: state => state.listenersCount,
 }
 
 const actions = <ActionTree<State, any>>{
