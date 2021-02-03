@@ -1,6 +1,7 @@
 ﻿<template>
   <div>
-        <v-alert v-if="userIsMod === false" type="info" colored-border border="left" color="orange">
+        <v-alert v-if="userIsMod === false || this.$store.getters['userSettingsModule/getMakeRequestAsMod'] === false" 
+                 type="info" colored-border border="left" color="orange">
           Je hebt momenteel {{userRequestedAmount.toString()}} / {{ maxRequestsPerUser }} van het maximaal aantal verzoekjes in de wachtrij staan.
         </v-alert>
         <v-card>
