@@ -198,7 +198,6 @@ namespace Pjfm.WebClient.Services
                 PlaybackState = currentPlaybackState,
                 IncludedUsers = _playbackQueue.IncludedUsers,
                 MaxRequestsPerUser = maxRequestsPerUser,
-                ListenersCount = RadioHub.ListenersCount,
             };
 
             return playbackSettings;
@@ -228,7 +227,6 @@ namespace Pjfm.WebClient.Services
                 PlaybackState = playbackSettings.PlaybackState,
                 IsPlaying = playbackSettings.IsPlaying,
                 MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
-                ListenersCount = playbackSettings.ListenersCount,
             });
         }
         

@@ -67,7 +67,6 @@ namespace pjfm.Hubs
                 PlaybackState = playbackSettings.PlaybackState,
                 IsPlaying = playbackSettings.IsPlaying,
                 MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
-                ListenersCount = playbackSettings.ListenersCount,
             });
             
             await base.OnConnectedAsync();
@@ -98,6 +97,7 @@ namespace pjfm.Hubs
                     {
                         Interlocked.Increment(ref ListenersCount);
                         await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
+                        await Clients.All.SendAsync("ListenersCountUpdate", ListenersCount);
                         await Clients.Caller.SendAsync("IsConnected", true);    
                     }
                 }
@@ -113,6 +113,7 @@ namespace pjfm.Hubs
             _playbackListenerManager.TryRemoveTimedListener(user.Id);
             Interlocked.Decrement(ref ListenersCount);
             await Clients.Caller.SendAsync("IsConnected", false);
+            await Clients.All.SendAsync("ListenersCountUpdate", ListenersCount);
             await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
         }
 

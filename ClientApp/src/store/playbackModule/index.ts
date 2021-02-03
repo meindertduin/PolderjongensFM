@@ -42,10 +42,11 @@ const mutations = <MutationTree<State>>{
     
     SET_PLAYBACK_SETTINGS: (state, playbackSettings:userPlaybackSettings) => {
         state.playbackState = playbackSettings.playbackState;
-        state.listenersCount = playbackSettings.listenersCount;
         state.isPlaying = playbackSettings.isPlaying;
         state.maxRequestsPerUser = playbackSettings.maxRequestsPerUser;
     },
+    
+    SET_LISTENERS_COUNT: (state, amount: number) => state.listenersCount = amount,
     
     SET_RADIO_CONNECTION: (state, radioConnection:HubConnection) => state.radioConnection = radioConnection,
     TOGGLE_PLAYER_TIMER_OVERLAY: state => state.PlayerTimerOverLay = ! state.PlayerTimerOverLay,

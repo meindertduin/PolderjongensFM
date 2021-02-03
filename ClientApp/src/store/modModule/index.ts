@@ -33,7 +33,6 @@ const mutations = <MutationTree<State>>{
         state.playbackState = settings.playbackState;
         state.playbackTermFilter = settings.playbackTermFilter;
         state.maxRequestsPerUser = settings.maxRequestsPerUser;
-        state.listenersCount = settings.listenersCount;
     },
     
     SET_DJ_PLAYBACK_INFO: (state, playbackInfo:djPlaybackInfo) => {

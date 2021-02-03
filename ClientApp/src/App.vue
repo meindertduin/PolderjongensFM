@@ -70,6 +70,10 @@ export default class App extends Vue{
       this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);  
     }))
     
+    radioConnection.on("ListenersCountUpdate", ((amount: number)=> {
+      this.$store.commit('playbackModule/SET_LISTENERS_COUNT', amount);
+    }));
+    
     radioConnection.on("ReceivePlayingStatus", (isPlaying:boolean) => {
       this.$store.commit("playbackModule/SET_PLAYBACK_PLAYING_STATUS", isPlaying);
     });
