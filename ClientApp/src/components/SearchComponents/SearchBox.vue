@@ -193,7 +193,10 @@ export default class SearchBox extends Vue {
 
   requestSong(track: trackDto) {
     if (this.checkCertainSongs(track.id)){
-      this.$store.dispatch('playbackModule/requestTrack', track.id)
+      this.$store.dispatch('playbackModule/requestTrack', {
+        trackId: track.id,
+        message: "hello",
+      })
           .then((response: AxiosResponse) => {
             let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
             this.$store.commit('alertModule/SET_ALERT', alert);

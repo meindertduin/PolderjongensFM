@@ -113,7 +113,10 @@ export default class Playlist extends Vue {
   private async requestSong(track:any){
     let alert : alertInfo | null = null;
 
-    this.$store.dispatch('playbackModule/requestTrack', track.id)
+    this.$store.dispatch('playbackModule/requestTrack', {
+      trackId: track.id,
+      message: "hello",
+    })
         .then((response: AxiosResponse) => {
           this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
         })

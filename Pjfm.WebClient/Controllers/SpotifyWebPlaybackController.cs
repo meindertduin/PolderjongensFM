@@ -183,11 +183,16 @@ namespace pjfm.Controllers
         /// </summary>
         [HttpPut("request/{trackId}")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task<IActionResult> UserTrackRequest(string trackId)
+        public async Task<IActionResult> UserTrackRequest(string trackId, [FromQuery] string message)
         {
             var track = await GetRequestedTrack(trackId);
             if (track != null)
             {
+                if (message != null)
+                {
+                    track.Message = message;
+                }
+                
                 var user = await _userManager.GetUserAsync(HttpContext.User);
 
                 // add track to queue

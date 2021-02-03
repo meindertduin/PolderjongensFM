@@ -103,6 +103,7 @@ export default class Queue extends Vue {
                   queueNum: 1,
                   chipClass: "orange orange--text",
                   icon: 'mdi-account',
+                  message: track.message??  undefined,
               })
           })
 
@@ -114,6 +115,7 @@ export default class Queue extends Vue {
                   queueNum: 2,
                   chipClass: "grey grey--text",
                   icon: 'mdi-robot',
+                  message: track.message??  undefined,
               })
           })
       }

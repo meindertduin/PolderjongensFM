@@ -9,6 +9,9 @@
               {{i + 1}}. {{item.track.title}}
             </v-list-item-title>
             <v-list-item-subtitle :style="`margin-left: ${i < 9? '17': '25'}px;`">{{item.track.artists.join(", ")}}</v-list-item-subtitle>
+            <div v-if="item.message !== undefined" class="body-2 blue--text" :style="`margin-left: ${i < 9? '17': '25'}px;`">
+              {{item.user}} stuurde: {{ item.message }}
+            </div>
           </v-list-item-content>
           <v-list-item-icon v-if="breakPointWidth > 600">
             <v-chip :class="item.chipClass" outlined>

@@ -27,6 +27,7 @@ export interface trackDto{
     trackType: number,
     songDurationMs: number,
     user: applicationUser,
+    message: string,
 }
 
 export interface playbackSettings {

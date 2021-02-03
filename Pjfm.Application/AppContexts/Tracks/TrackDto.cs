@@ -11,5 +11,6 @@ namespace Pjfm.Application.Common.Dto
         public TrackType TrackType { get; set; }
         public int SongDurationMs { get; set; }
         public ApplicationUserDto User { get; set; }
+        public string Message { get; set; }
     }
 }
