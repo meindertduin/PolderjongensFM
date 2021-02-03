@@ -9,6 +9,10 @@ export interface userSettings{
     darkMode: boolean,
 }
 
+export interface modLocalSettings {
+    requestAsMod: boolean,
+}
+
 export interface liveChatMessageModel{
     userName: string,
     message: string,

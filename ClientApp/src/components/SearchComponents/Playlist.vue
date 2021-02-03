@@ -41,18 +41,22 @@ import {alertInfo, trackDto, userPlaybackSettings} from "@/common/types";
 })
 export default class Playlist extends Vue {
   private loading = true;
+  
   private selectedTracks = [];
-
-
+  
   @Watch("selectedTracks")
   private onSelectedTracksChange(newValue:any, oldValue:any){
-      if (newValue.length > this.maxSelectedAmount) {
-        this.$nextTick(() => {
-          this.selectedTracks = oldValue;
-        })
-      }
+    const isMod:boolean = this.$store.getters['profileModule/isMod'];
+    
+    if (!isMod && newValue.length > this.maxSelectedAmount){
+      this.$nextTick(() => {
+        this.selectedTracks = oldValue;
+      })
+    } else if(this.$store.getters['userSettingsModule/getMakeRequestAsMod'] && newValue.length > this.maxSelectedAmount) {
+      this.selectedTracks = oldValue;
+    }
   }
-
+  
   get maxRequestsPerUser():number{
     return this.$store.getters['playbackModule/getMaxRequestsPerUser'];
   }
@@ -109,12 +113,13 @@ export default class Playlist extends Vue {
   private async requestSong(track:any){
     let alert : alertInfo | null = null;
 
-    // @ts-ignore
-    this.$axios.put(process.env.VUE_APP_API_BASE_URL + `/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
-      this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
-    }).catch((error: any) => {
-      this.$store.commit('alertModule/SET_ALERT', { type: "error", message: error.response.data.message }); 
-    })
+    this.$store.dispatch('playbackModule/requestTrack', track.id)
+        .then((response: AxiosResponse) => {
+          this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
+        })
+        .catch((error: any) => {
+          this.$store.commit('alertModule/SET_ALERT', { type: "error", message: error.response.data.message });
+        });
   }
   
   // TODO: Cleanup

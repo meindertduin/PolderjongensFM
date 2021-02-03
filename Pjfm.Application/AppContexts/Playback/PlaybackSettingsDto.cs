@@ -11,5 +11,6 @@ namespace Pjfm.Application.Common.Dto
         public PlaybackState PlaybackState { get; set; }
         public List<ApplicationUserDto> IncludedUsers { get; set; }
         public int MaxRequestsPerUser { get; set; }
+        public int ListenersCount { get; set; }
     }
 }

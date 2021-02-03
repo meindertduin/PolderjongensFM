@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,8 +22,9 @@ namespace pjfm.Hubs
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly IMediator _mediator;
 
-        private static int _listenerCount = 0;
 
+        public static int ListenersCount = 0;
+        
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
             IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService, IMediator mediator)
         {
@@ -90,9 +92,14 @@ namespace pjfm.Hubs
 
                 if (minutes != 0)
                 {
-                    _playbackListenerManager.TrySetTimedListener(user.Id, minutes, Context.ConnectionId);
-                    await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
-                    await Clients.Caller.SendAsync("IsConnected", true);
+                    var result = _playbackListenerManager.TrySetTimedListener(user.Id, minutes, Context.ConnectionId);
+                    if (result)
+                    {
+                        Interlocked.Increment(ref ListenersCount);
+                        await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
+                        await Clients.All.SendAsync("ListenersCountUpdate", ListenersCount);
+                        await Clients.Caller.SendAsync("IsConnected", true);    
+                    }
                 }
             }
         }
@@ -104,7 +111,9 @@ namespace pjfm.Hubs
             var user = await _userManager.GetUserAsync(context.User);
             
             _playbackListenerManager.TryRemoveTimedListener(user.Id);
+            Interlocked.Decrement(ref ListenersCount);
             await Clients.Caller.SendAsync("IsConnected", false);
+            await Clients.All.SendAsync("ListenersCountUpdate", ListenersCount);
             await _spotifyPlayerService.PausePlayer(user.Id, user.SpotifyAccessToken, String.Empty);
         }
 

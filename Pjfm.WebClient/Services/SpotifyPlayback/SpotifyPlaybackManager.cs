@@ -248,7 +248,6 @@ namespace Pjfm.WebClient.Services
             
             return requestInfo;
         }
-        
         public IDisposable Subscribe(IObserver<bool> observer)
         {
             // subscribe to the event which will fire on every new track being played

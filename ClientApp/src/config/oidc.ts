@@ -10,4 +10,5 @@ export const oidcSettings : VuexOidcClientSettings = {
     postLogoutRedirectUri: `${process.env.VUE_APP_BASE_URL}`,
     silentRedirectUri: `${process.env.VUE_APP_BASE_URL}/oidc-client-silent-renew.html`,
     automaticSilentRenew: true,
+    automaticSilentSignin: true,
 }

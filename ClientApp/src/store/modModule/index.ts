@@ -1,7 +1,6 @@
-﻿import { GetterTree, MutationTree, ActionTree } from "vuex"
-import {applicationUser, djPlaybackInfo, playbackSettings, playbackState, trackDto} from "@/common/types";
+﻿import {ActionTree, GetterTree, MutationTree} from "vuex"
+import {applicationUser, djPlaybackInfo, modLocalSettings, playbackSettings, playbackState} from "@/common/types";
 import axios from "axios";
-import App from "@/App.vue";
 
 class State {
     public playbackInfo: djPlaybackInfo | null = null;
@@ -13,10 +12,10 @@ class State {
     public playbackTermFilter: number | null = null;
     public isPlaying: boolean = false;
     public maxRequestsPerUser: number | null = null
+    public listenersCount: number = 0;
     
     // misc
     public isConnected: boolean = false;
-
 }
 
 const mutations = <MutationTree<State>>{
@@ -36,7 +35,7 @@ const mutations = <MutationTree<State>>{
     
     SET_DJ_PLAYBACK_INFO: (state, playbackInfo:djPlaybackInfo) => {
         state.playbackInfo = playbackInfo;
-    }, 
+    },
 }
 
 const getters = <GetterTree<State, any>>{
@@ -45,6 +44,7 @@ const getters = <GetterTree<State, any>>{
     getPlaybackState: state => state.playbackState,
     getPlaybackTermFiler: state => state.playbackTermFilter,
     getMaxRequestsPerUser: state => state.maxRequestsPerUser,
+    listenersCount: state => state.listenersCount,
 }
 
 const actions = <ActionTree<State, any>>{
@@ -73,7 +73,7 @@ const actions = <ActionTree<State, any>>{
                 context.commit('SET_LOADED_USERS', data);
             })
             .catch((err) => console.log(err))
-    }
+    },
 }
 
 const ModModule = {
