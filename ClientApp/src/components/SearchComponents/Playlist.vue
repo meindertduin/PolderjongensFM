@@ -41,18 +41,22 @@ import {alertInfo, trackDto, userPlaybackSettings} from "@/common/types";
 })
 export default class Playlist extends Vue {
   private loading = true;
+  
   private selectedTracks = [];
-
-
+  
   @Watch("selectedTracks")
   private onSelectedTracksChange(newValue:any, oldValue:any){
-      if (newValue.length > this.maxSelectedAmount) {
-        this.$nextTick(() => {
-          this.selectedTracks = oldValue;
-        })
-      }
+    const isMod:boolean = this.$store.getters['profileModule/isMod'];
+    
+    if (!isMod && newValue.length > this.maxSelectedAmount){
+      this.$nextTick(() => {
+        this.selectedTracks = oldValue;
+      })
+    } else if(this.$store.getters['userSettingsModule/getMakeRequestAsMod'] && newValue.length > this.maxSelectedAmount) {
+      this.selectedTracks = oldValue;
+    }
   }
-
+  
   get maxRequestsPerUser():number{
     return this.$store.getters['playbackModule/getMaxRequestsPerUser'];
   }

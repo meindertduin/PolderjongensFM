@@ -31,7 +31,7 @@ export default class ModServerMessageHandler extends Vue{
   }
   
   loadModPreferences(){
-     
+    this.$store.dispatch('userSettingsModule/loadModLocalSettings'); 
   }
   
   connectToDjHub(){
