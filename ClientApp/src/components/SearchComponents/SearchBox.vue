@@ -192,16 +192,17 @@ export default class SearchBox extends Vue {
 
   requestSong(track: trackDto) {
     if (this.checkCertainSongs(track.id)){
-      // @ts-ignore
-      this.$axios.put(process.env.VUE_APP_API_BASE_URL + `/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
-        let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
-        this.$store.commit('alertModule/SET_ALERT', alert);
-        this.$router.push('/');
-      }).catch((error: any) => {
-        let alert : alertInfo = { type: "error", message: error.response.data.message }
-        this.$store.commit('alertModule/SET_ALERT', alert);
-        this.$router.push('/');
-      })
+      this.$store.dispatch('playbackModule/requestTrack', track.id)
+          .then((response: AxiosResponse) => {
+            let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
+            this.$store.commit('alertModule/SET_ALERT', alert);
+            this.$router.push('/');
+          })
+          .catch((error: any) => {
+            let alert : alertInfo = { type: "error", message: error.response.data.message }
+            this.$store.commit('alertModule/SET_ALERT', alert);
+            this.$router.push('/');
+          });
     }
   }
   

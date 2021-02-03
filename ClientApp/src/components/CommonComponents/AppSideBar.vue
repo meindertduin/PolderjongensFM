@@ -55,6 +55,14 @@
         <v-divider></v-divider>
       </div>
       <div v-else>
+        <v-list-item v-if="isMod">
+          <v-list-item-action>
+            <v-switch v-model="requestAsMod"></v-switch>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Request als mod</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item link @click="signOutOidcClient()">
           <v-list-item-action>
             <v-icon>mdi-logout-variant</v-icon>
@@ -94,6 +102,18 @@ import {Watch} from "vue-property-decorator";
   name: 'AppSideBar',
 })
 export default class AppSideBar extends Vue{
+  
+  private requestAsMod : boolean = false;
+  
+  @Watch("requestAsMod")
+  onRequestAsModChange(newValue:boolean){
+    this.$store.dispatch('userSettingsModule/setAsModRequest', newValue)
+  }
+  
+  created(){
+    this.requestAsMod = this.$store.getters['userSettingsModule/getMakeRequestAsMod'];
+  }
+  
   get sideBar(): boolean {
     const sideBarOpen = this.$store.getters["userSettingsModule/getSidebarOpenState"];
     this.sideBarOpen = sideBarOpen;

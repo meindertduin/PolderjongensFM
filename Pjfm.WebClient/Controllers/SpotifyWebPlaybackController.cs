@@ -183,57 +183,67 @@ namespace pjfm.Controllers
         /// </summary>
         [HttpPut("request/{trackId}")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task<IActionResult> UserRequestTrack(string trackId)
+        public async Task<IActionResult> UserTrackRequest(string trackId)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
-                ApplicationIdentityConstants.Roles.Mod);
-            
-            var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
-
-            if (trackResponse.IsSuccessStatusCode)
+            var track = await GetRequestedTrack(trackId);
+            if (track != null)
             {
-                var requestedTrack = SerializeTrackOfResponse(await trackResponse.Content.ReadAsStringAsync());
+                var user = await _userManager.GetUserAsync(HttpContext.User);
 
-                if (requestedTrack == null)
-                {
-                    return BadRequest();
-                }
+                // add track to queue
+                var response = _playbackController.AddSecondaryTrack(track,
+                    ApplicationUserSerializer.SerializeToDto(user));
                 
-                // handles request based on mod on if user is a mod
-                var response = MakeRequestWithTrackDto(isMod, requestedTrack, user);
-
                 if (response.Error)
                 {
                     return Conflict(response);
                 }
+                
+                // publish queue state to all users connected to radio hub
+                _infoTransmitter.PublishUpdatePlaybackInfoEvents();
 
+                return Accepted(response);
+            }
+            
+            return BadRequest();
+        }
+
+        [HttpPut("mod/request/{trackId}")]
+        public async Task<IActionResult> ModTrackRequest(string trackId)
+        {
+            var track = await GetRequestedTrack(trackId);
+            if (track != null)
+            {
+                var response = _playbackController.AddPriorityTrack(track);
+                
+                if (response.Error)
+                {
+                    return Conflict(response);
+                }
+                
                 // publish queue state to all users connected to radio hub
                 _infoTransmitter.PublishUpdatePlaybackInfoEvents();
 
                 return Accepted(response);
             }
 
-            return StatusCode((int) trackResponse.StatusCode);
+            return BadRequest();
         }
 
-        private Response<bool> MakeRequestWithTrackDto(bool isMod, TrackDto requestedTrack, ApplicationUser user)
+        private async Task<TrackDto> GetRequestedTrack(string trackId)
         {
-            Response<bool> response;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var trackResponse = await _spotifyBrowserService.GetTrackInfo(user.Id, user.SpotifyAccessToken, trackId);
 
-            if (isMod)
+            if (trackResponse.IsSuccessStatusCode)
             {
-                response = _playbackController.AddPriorityTrack(requestedTrack);
-            }
-            else
-            {
-                response = _playbackController.AddSecondaryTrack(requestedTrack,
-                    ApplicationUserSerializer.SerializeToDto(user));
+                var requestedTrack = SerializeTrackOfResponse(await trackResponse.Content.ReadAsStringAsync());
+                return requestedTrack;
             }
 
-            return response;
+            return null;
         }
-
+        
         /// <summary>
         /// Skips a track in the playback
         /// </summary>

@@ -6,6 +6,7 @@ import {
     userPlaybackSettings
 } from "@/common/types"
 import {HubConnection} from "@microsoft/signalr";
+import axios, {AxiosResponse} from "axios";
 
 class State {
     public playbackInfo: userPlaybackInfo | null = null;
@@ -87,7 +88,27 @@ const getters = <GetterTree<State, any>>{
 }
 
 const actions = <ActionTree<State, any>>{
-
+    requestTrack(context, trackId:string): Promise<AxiosResponse> {
+        const isMod: boolean = context.rootGetters["profileModule/isMod"]
+        if (isMod){
+            if (context.rootGetters['userSettingsModule/getMakeRequestAsMod']){
+                return axios.put(`/api/playback/mod/request/${trackId}`, null,{
+                    baseURL: process.env.VUE_APP_API_BASE_URL,
+                    withCredentials: true,
+                    headers: {
+                        authorization: `Bearer ${context.rootState.oidcStore.access_token}`
+                    }
+                });
+            }
+        }
+        return axios.put(`/api/playback/request/${trackId}`, null, {
+            baseURL: process.env.VUE_APP_API_BASE_URL,
+            withCredentials: true,
+            headers: {
+                authorization: `Bearer ${context.rootState.oidcStore.access_token}`
+            }
+        })
+    },
 }
 
 const PlaybackModule = {

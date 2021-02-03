@@ -109,12 +109,13 @@ export default class Playlist extends Vue {
   private async requestSong(track:any){
     let alert : alertInfo | null = null;
 
-    // @ts-ignore
-    this.$axios.put(process.env.VUE_APP_API_BASE_URL + `/api/playback/request/${track.id}`).then((response: AxiosResponse) => {
-      this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
-    }).catch((error: any) => {
-      this.$store.commit('alertModule/SET_ALERT', { type: "error", message: error.response.data.message }); 
-    })
+    this.$store.dispatch('playbackModule/requestTrack', track.id)
+        .then((response: AxiosResponse) => {
+          this.$store.commit('alertModule/SET_ALERT', { type: "success", message: `${track.artist} - ${track.name} toegevoegd aan de wachtrij.` });
+        })
+        .catch((error: any) => {
+          this.$store.commit('alertModule/SET_ALERT', { type: "error", message: error.response.data.message });
+        });
   }
   
   // TODO: Cleanup
