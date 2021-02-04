@@ -41,6 +41,13 @@
             <v-tab-item>
               <v-card flat>
                 <v-card-text>
+                  <v-textarea 
+                      outlined 
+                      counter="100" 
+                      v-model="requestMessage" 
+                      :rules="[formRules.counterMax100]"
+                      label="Verstuur een berichtje bij je verzoek">
+                  </v-textarea>
                   <v-text-field prepend-icon="mdi-magnify" label="Zoek naar artiesten of nummers" v-on:keyup="searchBarKeyUp($event)" v-model="query"></v-text-field>
 
                   <v-list dense>
@@ -82,6 +89,8 @@ import {AxiosResponse} from "axios";
 import {Watch} from "vue-property-decorator";
 import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
 import Playlist from "@/components/SearchComponents/Playlist.vue";
+import {formRules} from '@/common/objects';
+import {trackRequest} from "@/store/playbackModule";
 
 // @ts-ignore
 window.$ = JQuery
@@ -95,9 +104,14 @@ window.$ = JQuery
 export default class SearchBox extends Vue {
   private query = '';
   private searchResults = [];
+  private requestMessage:string = "";
   
   get searchResultsLength(){
     return this.searchResults.length;
+  }
+  
+  get formRules() {
+    return formRules;
   }
   
   @Watch("searchResultsLength")
@@ -192,11 +206,16 @@ export default class SearchBox extends Vue {
   }
 
   requestSong(track: trackDto) {
+    if (this.requestMessage.length > 100) return;
     if (this.checkCertainSongs(track.id)){
-      this.$store.dispatch('playbackModule/requestTrack', {
+      const payload: trackRequest = {
         trackId: track.id,
-        message: "hello",
-      })
+        message: this.requestMessage.length > 0? this.requestMessage : undefined,
+      }
+      
+      this.requestMessage = "";
+
+      this.$store.dispatch('playbackModule/requestTrack', payload)
           .then((response: AxiosResponse) => {
             let alert : alertInfo = { type: "success", message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.` }
             this.$store.commit('alertModule/SET_ALERT', alert);

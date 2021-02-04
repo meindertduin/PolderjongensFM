@@ -125,5 +125,5 @@ export default PlaybackModule;
 
 export interface trackRequest {
     trackId: string,
-    message: string,
+    message: string | undefined,
 }

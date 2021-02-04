@@ -96,4 +96,5 @@ export interface queueTrack {
     icon: string,
     queueNum: number,
     chipClass: string,
+    message: string | undefined,
 }
