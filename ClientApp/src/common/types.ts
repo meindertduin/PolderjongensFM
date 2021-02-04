@@ -27,6 +27,7 @@ export interface trackDto{
     trackType: number,
     songDurationMs: number,
     user: applicationUser,
+    message: string,
 }
 
 export interface playbackSettings {
@@ -95,4 +96,5 @@ export interface queueTrack {
     icon: string,
     queueNum: number,
     chipClass: string,
+    message: string | undefined,
 }

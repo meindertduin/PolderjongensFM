@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Ganss.XSS;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,7 @@ using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
+using Pjfm.Domain.ValueObjects;
 using Pjfm.Infrastructure.Service;
 using Pjfm.WebClient.Services;
 
@@ -183,11 +185,18 @@ namespace pjfm.Controllers
         /// </summary>
         [HttpPut("request/{trackId}")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task<IActionResult> UserTrackRequest(string trackId)
+        public async Task<IActionResult> UserTrackRequest(string trackId, [FromQuery] string message)
         {
             var track = await GetRequestedTrack(trackId);
             if (track != null)
             {
+                
+                if (message != null)
+                {
+                    HtmlSanitizer sanitizer = new HtmlSanitizer();
+                    track.Message = sanitizer.Sanitize(message.WithMaxLength(100));
+                }
+                
                 var user = await _userManager.GetUserAsync(HttpContext.User);
 
                 // add track to queue
@@ -209,11 +218,17 @@ namespace pjfm.Controllers
         }
 
         [HttpPut("mod/request/{trackId}")]
-        public async Task<IActionResult> ModTrackRequest(string trackId)
+        public async Task<IActionResult> ModTrackRequest(string trackId, [FromQuery] string message)
         {
             var track = await GetRequestedTrack(trackId);
             if (track != null)
             {
+                if (message != null)
+                {
+                    HtmlSanitizer sanitizer = new HtmlSanitizer();
+                    track.Message = sanitizer.Sanitize(message.WithMaxLength(100));
+                }
+                
                 var response = _playbackController.AddPriorityTrack(track);
                 
                 if (response.Error)

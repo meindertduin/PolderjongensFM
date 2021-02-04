@@ -88,23 +88,25 @@ const getters = <GetterTree<State, any>>{
 }
 
 const actions = <ActionTree<State, any>>{
-    requestTrack(context, trackId:string): Promise<AxiosResponse> {
+    requestTrack(context, request: trackRequest): Promise<AxiosResponse> {
         const isMod: boolean = context.rootGetters["profileModule/isMod"]
-        if (isMod){
-            if (context.rootGetters['userSettingsModule/getMakeRequestAsMod']){
-                return axios.put(`/api/playback/mod/request/${trackId}`, null,{
-                    baseURL: process.env.VUE_APP_API_BASE_URL,
-                    withCredentials: true,
-                    headers: {
-                        authorization: `Bearer ${context.rootState.oidcStore.access_token}`
-                    }
-                });
-            }
+        
+        let route:string = ""
+        
+        if (isMod &&  context.rootGetters['userSettingsModule/getMakeRequestAsMod']){
+            route = `/api/playback/mod/request/${request.trackId}`;
+        } else{
+            route = `api/playback/request/${request.trackId}`;
         }
-        return axios.put(`/api/playback/request/${trackId}`, null, {
+        if (request.message !== undefined){
+            route += `?message=${request.message}`
+        }
+        
+        return axios.put(route, null, {
             baseURL: process.env.VUE_APP_API_BASE_URL,
             withCredentials: true,
             headers: {
+                'Content-Type': 'application/json',
                 authorization: `Bearer ${context.rootState.oidcStore.access_token}`
             }
         })
@@ -120,3 +122,8 @@ const PlaybackModule = {
 }
 
 export default PlaybackModule;
+
+export interface trackRequest {
+    trackId: string,
+    message: string | undefined,
+}

@@ -49,7 +49,6 @@ const actions = <ActionTree<State, any>>{
     loadModLocalSettings({commit}) {
         const modSettings = localStorage.getItem("modSettings");
         let modSettingObj: modLocalSettings | null = null;
-
         if (modSettings){
             modSettingObj = JSON.parse(modSettings);
 

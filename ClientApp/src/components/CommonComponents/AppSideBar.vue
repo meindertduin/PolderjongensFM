@@ -97,6 +97,7 @@
 import Vue from 'vue';
 import Component from "vue-class-component";
 import {Watch} from "vue-property-decorator";
+import {modLocalSettings} from "@/common/types";
 
 @Component({
   name: 'AppSideBar',
@@ -111,7 +112,8 @@ export default class AppSideBar extends Vue{
   }
   
   created(){
-    this.requestAsMod = this.$store.getters['userSettingsModule/getMakeRequestAsMod'];
+    const modSettings:modLocalSettings = this.$store.getters['userSettingsModule/getModLocalSettings'];
+    this.requestAsMod = modSettings.requestAsMod;
   }
   
   get sideBar(): boolean {
