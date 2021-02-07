@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Identity;
@@ -8,7 +9,7 @@ using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
-    public class RoundRobinPlaybackState : IPlaybackState
+    public class RoundRobinPlaybackState : IPlaybackState, IObserver<bool>
     {
         private readonly IPlaybackQueue _playbackQueue;
         private  int _maxRequestsPerUserAmount = 3;
@@ -74,8 +75,21 @@ namespace Pjfm.WebClient.Services
                     return trackDto;
                 }));
             }
-
-            return result;
+    
+            // this block of linq queries makes the result round robin
+            return result
+                .GroupBy(track => track.User.Id)
+                .SelectMany((trackGroup, groupIndex) =>
+                    trackGroup.Select((item, index) => new
+                    {
+                        Index = index,
+                        GroupIndex = groupIndex,
+                        Value = item,
+                    }))
+                .OrderBy(u => u.Index)
+                .ThenBy(u => u.GroupIndex)
+                .Select((u) => u.Value)
+                .ToList();
         }
 
         public void SetMaxRequestsPerUser(int amount)
@@ -86,6 +100,49 @@ namespace Pjfm.WebClient.Services
         public int GetMaxRequestsPerUser()
         {
             return _maxRequestsPerUserAmount;
+        }
+        
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public void OnNext(bool value)
+        {
+            if (_secondaryRequests.Count > 0)
+            {
+                var track = GetSecondaryTracks()[0];
+
+                var result = _secondaryRequests.TryGetValue(track.User.Id, out var requests);
+
+                if (result && requests != null)
+                {
+                    var request = requests.FirstOrDefault(x => x.Track.Id == track.Id);
+                    _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
+                    {
+                        User = request.User,
+                        Track = request.Track,
+                    });
+
+                    if (requests.Count <= 1)
+                    {
+                        _secondaryRequests.Remove(request.User.Id);
+                    }
+                    else
+                    {
+                        requests.Remove(request);
+                    }
+                }
+            }
+            else
+            {
+                _secondaryInQueue = false;
+            }
         }
     }
 }
