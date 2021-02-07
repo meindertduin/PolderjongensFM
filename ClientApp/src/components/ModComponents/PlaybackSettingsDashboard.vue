@@ -124,7 +124,12 @@
         private isPlaying:boolean = false;
         private selectedTerm: number = 0;
         private terms :any[] = ['short', 'short-med', 'med', 'med-long', 'long', 'all'];
-        private stateItems :any[] = [{text: 'Dj-mode', value: 0}, {text: 'wachtrij-mode', value: 1}, {text: 'random-mode', value: 2}]
+        private stateItems :any[] = [
+            {text: 'Dj-mode', value: 0}, 
+            {text: 'wachtrij-mode', value: 1}, 
+            {text: 'random-mode', value: 2}, 
+            {text: 'round-robin', value: 3},
+          ]
       
         private maxRequestItems: any[] = [
           {text: "1", value: 1},

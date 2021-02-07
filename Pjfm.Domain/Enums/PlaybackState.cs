@@ -4,6 +4,7 @@
     {
         DefaultPlaybackState = 0,
         RequestPlaybackState = 1,
-        RandomRequestPlaybackState = 2
+        RandomRequestPlaybackState = 2,
+        RoundRobinPlaybackState = 3,
     }
 }

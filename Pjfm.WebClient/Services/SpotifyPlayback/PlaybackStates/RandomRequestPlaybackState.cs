@@ -75,9 +75,7 @@ namespace Pjfm.WebClient.Services
 
             foreach (var request in _tracksBuffer)
             {
-                var trackDto = new TrackDto();
-
-                trackDto = request.Track;
+                var trackDto = request.Track;
                 trackDto.User = request.User;
 
                 result.Add(trackDto);

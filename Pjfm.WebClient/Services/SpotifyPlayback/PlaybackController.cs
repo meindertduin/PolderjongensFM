@@ -88,6 +88,8 @@ namespace Pjfm.WebClient.Services
                     _playbackQueue),
                 PlaybackControllerCommands.SetRandomRequestPlaybackState => new RandomRequestPlaybackStateOnCommand(
                     this, _playbackQueue),
+                PlaybackControllerCommands.SetRoundRobinPlaybackState => new RoundRobinPlaybackStateOnCommand(
+                    this, _playbackQueue),
                 _ => new NoCommand(),
             };
         
