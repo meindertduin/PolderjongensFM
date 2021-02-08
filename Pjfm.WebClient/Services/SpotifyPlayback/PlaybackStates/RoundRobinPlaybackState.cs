@@ -76,9 +76,14 @@ namespace Pjfm.WebClient.Services
 
         public List<TrackDto> GetSecondaryTracks()
         {
-            var tracks = new List<TrackDto>() {_cachedTrackSendToQueue.Track};
-            tracks.AddRange(_secondaryRequests.GetValues().Select(x => x.Track));
-            return tracks;
+            if (_secondaryInQueue)
+            {
+                var tracks = new List<TrackDto>() { _cachedTrackSendToQueue.Track};
+                tracks.AddRange(_secondaryRequests.GetValues().Select(x => x.Track));
+                return tracks;
+            }
+            
+            return new List<TrackDto>();
         }
 
         public void SetMaxRequestsPerUser(int amount)
@@ -89,11 +94,6 @@ namespace Pjfm.WebClient.Services
         public int GetMaxRequestsPerUser()
         {
             return _maxRequestsPerUserAmount;
-        }
-
-        public void Reset()
-        {
-            _secondaryRequests = new RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>>();
         }
 
         public void OnCompleted()

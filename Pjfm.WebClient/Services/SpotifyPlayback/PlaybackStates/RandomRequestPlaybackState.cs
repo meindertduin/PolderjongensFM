@@ -94,11 +94,6 @@ namespace Pjfm.WebClient.Services
             return _maxRequestsPerUserAmount;
         }
 
-        public void Reset()
-        {
-            _tracksBuffer = new List<TrackRequestDto>();
-        }
-
         public void OnCompleted()
         {
             throw new NotImplementedException();

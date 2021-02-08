@@ -90,6 +90,7 @@ namespace Pjfm.WebClient.Services
                 }
             }
 
+            _count = _innerObjects.Count;
             return null;
         }
 

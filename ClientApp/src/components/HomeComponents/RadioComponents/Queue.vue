@@ -102,7 +102,6 @@ export default class Queue extends Vue {
           })
         
           this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
-              console.log(track);
               this.queue.push({
                   id: track.id,
                   track: track,

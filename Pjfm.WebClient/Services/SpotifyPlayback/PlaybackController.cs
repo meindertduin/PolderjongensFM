@@ -77,7 +77,7 @@ namespace Pjfm.WebClient.Services
                 PlaybackControllerCommands.LongTermFilterMode => new PlaybackModeLongTermCommand(_playbackQueue),
                 PlaybackControllerCommands.ShortMediumTermFilterMode => new PlaybackModeShortMediumTermCommand(
                     _playbackQueue),
-                PlaybackControllerCommands.ResetPlaybackCommand => new ResetPlaybackCommand(this, _spotifyPlaybackManager),
+                PlaybackControllerCommands.ResetPlaybackCommand => new ResetPlaybackCommand(_spotifyPlaybackManager),
                 PlaybackControllerCommands.AllTermFilterMode => new PlaybackModeAllTermCommand(_playbackQueue),
                 PlaybackControllerCommands.MediumLongTermFilterMode => new PlaybackModeMediumLongTermCommand(
                     _playbackQueue),
@@ -143,14 +143,6 @@ namespace Pjfm.WebClient.Services
             _djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
         }
 
-        public void ResetPlaybackState()
-        {
-            if (IPlaybackController.CurrentPlaybackState != null)
-            {
-                IPlaybackController.CurrentPlaybackState.Reset();
-            }
-        }
-        
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
             return IPlaybackController.CurrentPlaybackState.AddPriorityTrack(track);

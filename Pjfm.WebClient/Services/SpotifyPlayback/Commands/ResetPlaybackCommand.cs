@@ -7,15 +7,13 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
 
-        public ResetPlaybackCommand(IPlaybackController playbackController ,ISpotifyPlaybackManager spotifyPlaybackManager)
+        public ResetPlaybackCommand(ISpotifyPlaybackManager spotifyPlaybackManager)
         {
-            _playbackController = playbackController;
             _spotifyPlaybackManager = spotifyPlaybackManager;
         }
         public async void Execute()
         {
             await _spotifyPlaybackManager.ResetPlayingTracks(0);
-            _playbackController.ResetPlaybackState();
         }
 
         public void Undo()
