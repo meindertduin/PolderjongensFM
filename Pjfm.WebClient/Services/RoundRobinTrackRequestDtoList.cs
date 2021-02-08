@@ -31,13 +31,15 @@ namespace Pjfm.WebClient.Services
             }
 
             return indexedRequests
-                .Select((pair, index) => new
-                {
-                    ListIndex = index,
-                    Value = pair,
-                })
-                .OrderBy(pair => pair.ListIndex)
-                .ThenBy(pair => pair.Value.Index)
+                .GroupBy(pair => pair.Index)
+                .SelectMany(group => group.Select((request, index) => new
+                    {
+                        Value = request,
+                        GroupIndex = request.Index,
+                        Index = index,
+                    }))
+                .OrderBy(v => v.Index)
+                .ThenBy(v => v.GroupIndex)
                 .Select(pair => pair.Value.Request);
         }
 
@@ -76,7 +78,7 @@ namespace Pjfm.WebClient.Services
                 if (nextRequestGroup.Count > 0)
                 {
                     var track = nextRequestGroup.Dequeue();
-                    if (nextRequestGroup.Count > 1)
+                    if (nextRequestGroup.Count >= 1)
                     {
                         _innerObjects.Enqueue(nextRequestGroup);
                     }

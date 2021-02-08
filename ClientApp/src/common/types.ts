@@ -40,6 +40,7 @@ export enum playbackState{
     'DJ Only Mode',
     'Verzoekjes (op volgorde)',
     'Verzoekjes (random)',
+    'Round-Robin'
 }
 
 export interface hubServerMessage{

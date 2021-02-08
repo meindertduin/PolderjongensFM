@@ -11,5 +11,6 @@ namespace Pjfm.WebClient.Services
         List<TrackDto> GetSecondaryTracks();
         void SetMaxRequestsPerUser(int amount);
         int GetMaxRequestsPerUser();
+        void Reset();
     }
 }

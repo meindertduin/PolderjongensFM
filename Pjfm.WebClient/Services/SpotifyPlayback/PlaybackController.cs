@@ -77,7 +77,7 @@ namespace Pjfm.WebClient.Services
                 PlaybackControllerCommands.LongTermFilterMode => new PlaybackModeLongTermCommand(_playbackQueue),
                 PlaybackControllerCommands.ShortMediumTermFilterMode => new PlaybackModeShortMediumTermCommand(
                     _playbackQueue),
-                PlaybackControllerCommands.ResetPlaybackCommand => new ResetPlaybackCommand(_spotifyPlaybackManager),
+                PlaybackControllerCommands.ResetPlaybackCommand => new ResetPlaybackCommand(this, _spotifyPlaybackManager),
                 PlaybackControllerCommands.AllTermFilterMode => new PlaybackModeAllTermCommand(_playbackQueue),
                 PlaybackControllerCommands.MediumLongTermFilterMode => new PlaybackModeMediumLongTermCommand(
                     _playbackQueue),
@@ -142,6 +142,14 @@ namespace Pjfm.WebClient.Services
             _radioHubContext.Clients.All.SendAsync("ReceivePlaybackInfo", userInfo);
             _djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
         }
+
+        public void ResetPlaybackState()
+        {
+            if (IPlaybackController.CurrentPlaybackState != null)
+            {
+                IPlaybackController.CurrentPlaybackState.Reset();
+            }
+        }
         
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
@@ -187,6 +195,8 @@ namespace Pjfm.WebClient.Services
                 currentPlaybackState = PlaybackState.RequestPlaybackState;
             if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
                 currentPlaybackState = PlaybackState.RandomRequestPlaybackState;
+            if (IPlaybackController.CurrentPlaybackState is RoundRobinPlaybackState)
+                currentPlaybackState = PlaybackState.RoundRobinPlaybackState;
 
             // get the maxRequestPerUser amount
             var maxRequestsPerUser = IPlaybackController.CurrentPlaybackState != null

@@ -16,6 +16,8 @@ namespace Pjfm.WebClient.Services
         private RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>> _secondaryRequests = 
             new RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>>();
 
+
+        private TrackRequestDto _cachedTrackSendToQueue;
         private bool _secondaryInQueue = false;
         private IDisposable _unsubscriber;
 
@@ -37,26 +39,33 @@ namespace Pjfm.WebClient.Services
         {
             var requestCount = _secondaryRequests.GetRequestsCountUser(user.Id);
             
-            
             if (requestCount < _maxRequestsPerUserAmount)
             {
                 if (_secondaryInQueue == false)
                 {
-                    _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
+                    track.User = user;
+                    var request = new TrackRequestDto()
                     {
                         Track = track,
                         User = user,
-                    });
+                    };
+                    
+                    _playbackQueue.AddSecondaryTrack(request);
+                    _cachedTrackSendToQueue = request;
 
                     _secondaryInQueue = true;
                 }
                 else
                 {
-                    _secondaryRequests.Add(new TrackRequestDto()
+                    track.User = user;
+                    var request = new TrackRequestDto()
                     {
                         Track = track,
                         User = user,
-                    });
+                    };
+
+                    _secondaryRequests.Add(request);
+                    _cachedTrackSendToQueue = request;
                 }
                     
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
@@ -67,10 +76,9 @@ namespace Pjfm.WebClient.Services
 
         public List<TrackDto> GetSecondaryTracks()
         {
-            return _secondaryRequests
-                .GetValues()
-                .Select(x => x.Track)
-                .ToList();
+            var tracks = new List<TrackDto>() {_cachedTrackSendToQueue.Track};
+            tracks.AddRange(_secondaryRequests.GetValues().Select(x => x.Track));
+            return tracks;
         }
 
         public void SetMaxRequestsPerUser(int amount)
@@ -82,7 +90,12 @@ namespace Pjfm.WebClient.Services
         {
             return _maxRequestsPerUserAmount;
         }
-        
+
+        public void Reset()
+        {
+            _secondaryRequests = new RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>>();
+        }
+
         public void OnCompleted()
         {
             throw new NotImplementedException();

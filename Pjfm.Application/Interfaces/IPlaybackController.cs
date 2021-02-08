@@ -20,6 +20,7 @@ namespace Pjfm.WebClient.Services
         void AddIncludedUser(ApplicationUserDto user);
         bool TryRemoveIncludedUser(ApplicationUserDto user);
         void DequeueTrack(string trackId);
+        void ResetPlaybackState();
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
         List<TrackDto> GetPriorityQueueTracks();

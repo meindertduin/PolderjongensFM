@@ -42,5 +42,10 @@ namespace Pjfm.WebClient.Services
         {
             return _maxRequestsPerUserAmount;
         }
+
+        public void Reset()
+        {
+            
+        }
     }
 }

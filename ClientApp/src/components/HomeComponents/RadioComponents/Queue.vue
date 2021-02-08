@@ -43,6 +43,7 @@ export default class Queue extends Vue {
       "purple",
       "primary",
       "red",
+      "orange",
   ]
   
   private modeChipColor :string = this.modeColors[0]    
@@ -65,6 +66,7 @@ export default class Queue extends Vue {
   
   get playbackStateString():string{
     const state:playbackState | null = this.playbackState;
+    
     if (state === null) return "Playback mode";
     switch (state){
       case 0:
@@ -76,6 +78,9 @@ export default class Queue extends Vue {
       case 2:
         this.modeChipColor = this.modeColors[2]
         return "Random verzoekjes aan"
+      case 3:
+        this.modeChipColor = this.modeColors[3];
+        return "Verdeelde verzoekjes aan";
     }
     return "Dj Only";
   } 
@@ -97,6 +102,7 @@ export default class Queue extends Vue {
           })
         
           this.playbackInfo.secondaryQueuedTracks.forEach((track) => {
+              console.log(track);
               this.queue.push({
                   id: track.id,
                   track: track,
