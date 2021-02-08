@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR;
 using Pjfm.Domain.Enums;
 using pjfm.Models;
@@ -14,14 +13,16 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackQueue _playbackQueue;
         private  int _maxRequestsPerUserAmount = 3;
 
-        private Dictionary<string, List<(TrackDto Track, ApplicationUserDto User)>> _secondaryRequests = 
-            new Dictionary<string, List<(TrackDto Track, ApplicationUserDto User)>>();
+        private RoundRobinTrackRequestDtoList _secondaryRequests = new RoundRobinTrackRequestDtoList();
 
         private bool _secondaryInQueue = false;
+        private IDisposable _unsubscriber;
 
-        public RoundRobinPlaybackState(IPlaybackQueue playbackQueue)
+        public RoundRobinPlaybackState(IPlaybackController playbackController,IPlaybackQueue playbackQueue)
         {
             _playbackQueue = playbackQueue;
+            
+            _unsubscriber = playbackController.SubscribeToPlayingStatus(this);
         }
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
@@ -33,14 +34,10 @@ namespace Pjfm.WebClient.Services
 
         public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
-            var hasDoneRequests = _secondaryRequests.TryGetValue(user.Id, out var requests);
+            var requestCount = _secondaryRequests.GetRequestsCountUser(user.Id);
             
-            if (hasDoneRequests == false || requests == null)
-            {
-                requests = new List<(TrackDto Track, ApplicationUserDto User)>();
-            }
             
-            if (requests.Count < _maxRequestsPerUserAmount)
+            if (requestCount < _maxRequestsPerUserAmount)
             {
                 if (_secondaryInQueue == false)
                 {
@@ -49,11 +46,16 @@ namespace Pjfm.WebClient.Services
                         Track = track,
                         User = user,
                     });
+
+                    _secondaryInQueue = true;
                 }
                 else
                 {
-                    requests.Add((track, user));
-                    _secondaryRequests[user.Id] = requests;   
+                    _secondaryRequests.Add(new TrackRequestDto()
+                    {
+                        Track = track,
+                        User = user,
+                    });
                 }
                     
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
@@ -66,16 +68,6 @@ namespace Pjfm.WebClient.Services
         {
             var result = new List<TrackDto>();
 
-            foreach (var request in _secondaryRequests)
-            {
-                result.AddRange(request.Value.Select(x =>
-                {
-                    var trackDto = x.Track;
-                    trackDto.User = x.User;
-                    return trackDto;
-                }));
-            }
-    
             // this block of linq queries makes the result round robin
             return result
                 .GroupBy(track => track.User.Id)
@@ -116,27 +108,11 @@ namespace Pjfm.WebClient.Services
         {
             if (_secondaryRequests.Count > 0)
             {
-                var track = GetSecondaryTracks()[0];
+                var nextRequest = _secondaryRequests.GetNextRequest();
 
-                var result = _secondaryRequests.TryGetValue(track.User.Id, out var requests);
-
-                if (result && requests != null)
+                if (nextRequest != null)
                 {
-                    var request = requests.FirstOrDefault(x => x.Track.Id == track.Id);
-                    _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
-                    {
-                        User = request.User,
-                        Track = request.Track,
-                    });
-
-                    if (requests.Count <= 1)
-                    {
-                        _secondaryRequests.Remove(request.User.Id);
-                    }
-                    else
-                    {
-                        requests.Remove(request);
-                    }
+                    _playbackQueue.AddSecondaryTrack(nextRequest);
                 }
             }
             else

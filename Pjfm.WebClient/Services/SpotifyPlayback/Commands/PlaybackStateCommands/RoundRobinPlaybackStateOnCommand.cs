@@ -12,7 +12,7 @@
         }
         public void Execute()
         {
-            _playbackController.SetPlaybackState(new RoundRobinPlaybackState(_playbackQueue));   
+            _playbackController.SetPlaybackState(new RoundRobinPlaybackState(_playbackController, _playbackQueue));   
         }
 
         public void Undo()
