@@ -1,22 +1,44 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Pjfm.Application.Common.Dto;
 using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
-    public class RoundRobinTrackRequestDtoList : ICollection
+    public class RoundRobinTrackRequestDtoList<T> : ICollection
     {
         private Queue<Queue<TrackRequestDto>> _innerObjects = new Queue<Queue<TrackRequestDto>>();
         private int _count = 0;
         
         public IEnumerator GetEnumerator()
         {
-            return new Enumerator(_innerObjects.ToArray());
+            var values = GetValues().ToArray();
+            return values.GetEnumerator();
+        }
+        
+        public IEnumerable<TrackRequestDto> GetValues()
+        {
+            var groups = _innerObjects.ToArray();
+            var indexedRequests = new List<(int Index, TrackRequestDto Request)>();
+
+            for (int i = 0; i < groups.Length; i++)
+            {
+                foreach (var request in groups[i])
+                {
+                    indexedRequests.Add((i, request));
+                }
+            }
+
+            return indexedRequests
+                .Select((pair, index) => new
+                {
+                    ListIndex = index,
+                    Value = pair,
+                })
+                .OrderBy(pair => pair.ListIndex)
+                .ThenBy(pair => pair.Value.Index)
+                .Select(pair => pair.Value.Request);
         }
 
         public void CopyTo(Array array, int index)
@@ -42,6 +64,7 @@ namespace Pjfm.WebClient.Services
             else
             {
                 requestGroup.Enqueue(item);
+                _count++;
             }
         }
 
@@ -54,7 +77,13 @@ namespace Pjfm.WebClient.Services
                 {
                     var track = nextRequestGroup.Dequeue();
                     if (nextRequestGroup.Count > 1)
+                    {
                         _innerObjects.Enqueue(nextRequestGroup);
+                    }
+                    else
+                    {
+                        _count--;
+                    }
                     return track;
                 }
             }
@@ -72,65 +101,15 @@ namespace Pjfm.WebClient.Services
             }
 
             return requestGroup.Count;
-        }    
-        
+        }
+
         public int Count => _count;
         public bool IsSynchronized => false;
         public object SyncRoot => this;
-    }
 
-    public struct Enumerator : IEnumerator
-    {
-        private int _index;
-        
-        [AllowNull] private Queue<TrackRequestDto> _currentElement;
-        private Queue<TrackRequestDto>[] _requestGroups;
-
-        internal Enumerator(Queue<TrackRequestDto>[] requestGroups)
+        public List<TrackRequestDto> ToList()
         {
-            _requestGroups = requestGroups;
-            _index = -1;
-            _currentElement = default;
-        }
-        
-        public bool MoveNext()
-        {
-            if (_index == -2)
-                return false;
-
-            _index++;
-
-            if (_index == _requestGroups.Length)
-            {
-                _index = -2;
-                _currentElement = default;
-                return false;
-            }
-
-            _currentElement = _requestGroups[_index];
-            return true;
-        }
-
-        public void Reset()
-        {
-            _index = -1;
-            _currentElement = default;
-        }
-
-        public object Current
-        {
-            get
-            {
-                if (_index < 0)
-                    ThrowEnumerationNotStartedOrEnded();
-                return _currentElement;
-            }
-        }
-        
-        private void ThrowEnumerationNotStartedOrEnded()
-        {
-            Debug.Assert(_index == -1 || _index == -2);
-            throw new InvalidOperationException();
+            return GetValues().ToList();
         }
     }
 }

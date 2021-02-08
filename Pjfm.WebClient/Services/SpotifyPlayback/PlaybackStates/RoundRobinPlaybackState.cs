@@ -13,7 +13,8 @@ namespace Pjfm.WebClient.Services
         private readonly IPlaybackQueue _playbackQueue;
         private  int _maxRequestsPerUserAmount = 3;
 
-        private RoundRobinTrackRequestDtoList _secondaryRequests = new RoundRobinTrackRequestDtoList();
+        private RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>> _secondaryRequests = 
+            new RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>>();
 
         private bool _secondaryInQueue = false;
         private IDisposable _unsubscriber;
@@ -66,21 +67,9 @@ namespace Pjfm.WebClient.Services
 
         public List<TrackDto> GetSecondaryTracks()
         {
-            var result = new List<TrackDto>();
-
-            // this block of linq queries makes the result round robin
-            return result
-                .GroupBy(track => track.User.Id)
-                .SelectMany((trackGroup, groupIndex) =>
-                    trackGroup.Select((item, index) => new
-                    {
-                        Index = index,
-                        GroupIndex = groupIndex,
-                        Value = item,
-                    }))
-                .OrderBy(u => u.Index)
-                .ThenBy(u => u.GroupIndex)
-                .Select((u) => u.Value)
+            return _secondaryRequests
+                .GetValues()
+                .Select(x => x.Track)
                 .ToList();
         }
 
