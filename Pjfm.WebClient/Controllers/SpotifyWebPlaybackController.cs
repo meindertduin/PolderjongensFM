@@ -347,6 +347,9 @@ namespace pjfm.Controllers
                 case PlaybackState.RandomRequestPlaybackState:
                     _playbackController.TurnOn(PlaybackControllerCommands.SetRandomRequestPlaybackState);
                     break;
+                case PlaybackState.RoundRobinPlaybackState:
+                    _playbackController.TurnOn(PlaybackControllerCommands.SetRoundRobinPlaybackState);
+                    break;
                 default:
                     return BadRequest();
             }

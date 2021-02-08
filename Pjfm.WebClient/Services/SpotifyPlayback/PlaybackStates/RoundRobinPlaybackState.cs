@@ -3,33 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
+using Pjfm.Domain.Enums;
 using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
 {
-    public class RandomRequestPlaybackState : IPlaybackState, IObserver<bool>
+    public class RoundRobinPlaybackState : IPlaybackState, IObserver<bool>
     {
         private readonly IPlaybackQueue _playbackQueue;
-        private readonly IPlaybackController _playbackController;
-        private IDisposable _unsubscriber;
-        private List<TrackRequestDto> _tracksBuffer = new List<TrackRequestDto>();
-
         private  int _maxRequestsPerUserAmount = 3;
 
-        private bool _hasNoSecondary = true;
+        private RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>> _secondaryRequests = 
+            new RoundRobinTrackRequestDtoList<Queue<TrackRequestDto>>();
 
-        private Random _random = new Random();
 
-        public RandomRequestPlaybackState(IPlaybackController playbackController, IPlaybackQueue playbackQueue)
+        private TrackRequestDto _cachedTrackSendToQueue;
+        private bool _secondaryInQueue = false;
+        private IDisposable _unsubscriber;
+
+        public RoundRobinPlaybackState(IPlaybackController playbackController,IPlaybackQueue playbackQueue)
         {
             _playbackQueue = playbackQueue;
-            _playbackController = playbackController;
-
-            _unsubscriber = _playbackController.SubscribeToPlayingStatus(this);
-
+            
+            _unsubscriber = playbackController.SubscribeToPlayingStatus(this);
         }
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
+            track.TrackType = TrackType.DjTrack;
             _playbackQueue.AddPriorityTrack(track);
             
             return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
@@ -37,32 +37,37 @@ namespace Pjfm.WebClient.Services
 
         public Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user)
         {
-            // if user doesn't exceed max tracks amount add new track as request
-            if (_tracksBuffer
-                .Select(t => t.User.Id)
-                .Count(t => t == user.Id) < _maxRequestsPerUserAmount)
+            var requestCount = _secondaryRequests.GetRequestsCountUser(user.Id);
+            
+            if (requestCount < _maxRequestsPerUserAmount)
             {
-                // add directly to playbackQueue if there are no tracks in the buffer
-                if (_hasNoSecondary)
+                if (_secondaryInQueue == false)
                 {
-                    _playbackQueue.AddSecondaryTrack(new TrackRequestDto()
+                    track.User = user;
+                    var request = new TrackRequestDto()
                     {
                         Track = track,
                         User = user,
-                    });
+                    };
                     
-                    _hasNoSecondary = false;
+                    _playbackQueue.AddSecondaryTrack(request);
+                    _cachedTrackSendToQueue = request;
+
+                    _secondaryInQueue = true;
                 }
-                // add to buffer
                 else
                 {
-                    _tracksBuffer.Add(new TrackRequestDto()
+                    track.User = user;
+                    var request = new TrackRequestDto()
                     {
                         Track = track,
                         User = user,
-                    });
+                    };
+
+                    _secondaryRequests.Add(request);
+                    _cachedTrackSendToQueue = request;
                 }
-                
+                    
                 return Response.Ok("Nummer toegevoegd aan de wachtrij", true);
             }
             
@@ -71,17 +76,14 @@ namespace Pjfm.WebClient.Services
 
         public List<TrackDto> GetSecondaryTracks()
         {
-            var result = new List<TrackDto>();
-
-            foreach (var request in _tracksBuffer)
+            if (_secondaryInQueue)
             {
-                var trackDto = request.Track;
-                trackDto.User = request.User;
-
-                result.Add(trackDto);
+                var tracks = new List<TrackDto>() { _cachedTrackSendToQueue.Track};
+                tracks.AddRange(_secondaryRequests.GetValues().Select(x => x.Track));
+                return tracks;
             }
             
-            return result;
+            return new List<TrackDto>();
         }
 
         public void SetMaxRequestsPerUser(int amount)
@@ -106,16 +108,18 @@ namespace Pjfm.WebClient.Services
         
         public void OnNext(bool value)
         {
-            if (_tracksBuffer.Count > 0)
+            if (_secondaryRequests.Count > 0)
             {
-                // add a random track from the tracksBuffer to the playbackQueue
-                var randomIndex = _random.Next(_tracksBuffer.Count);
-                _playbackQueue.AddSecondaryTrack(_tracksBuffer[randomIndex]);
-                _tracksBuffer.RemoveAt(randomIndex);
+                var nextRequest = _secondaryRequests.GetNextRequest();
+
+                if (nextRequest != null)
+                {
+                    _playbackQueue.AddSecondaryTrack(nextRequest);
+                }
             }
             else
             {
-                _hasNoSecondary = true;
+                _secondaryInQueue = false;
             }
         }
     }

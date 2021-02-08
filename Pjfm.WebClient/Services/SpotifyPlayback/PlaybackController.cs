@@ -88,6 +88,8 @@ namespace Pjfm.WebClient.Services
                     _playbackQueue),
                 PlaybackControllerCommands.SetRandomRequestPlaybackState => new RandomRequestPlaybackStateOnCommand(
                     this, _playbackQueue),
+                PlaybackControllerCommands.SetRoundRobinPlaybackState => new RoundRobinPlaybackStateOnCommand(
+                    this, _playbackQueue),
                 _ => new NoCommand(),
             };
         
@@ -140,7 +142,7 @@ namespace Pjfm.WebClient.Services
             _radioHubContext.Clients.All.SendAsync("ReceivePlaybackInfo", userInfo);
             _djHubContext.Clients.All.SendAsync("ReceiveDjPlaybackInfo", djInfo);
         }
-        
+
         public Response<bool> AddPriorityTrack(TrackDto track)
         {
             return IPlaybackController.CurrentPlaybackState.AddPriorityTrack(track);
@@ -185,6 +187,8 @@ namespace Pjfm.WebClient.Services
                 currentPlaybackState = PlaybackState.RequestPlaybackState;
             if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
                 currentPlaybackState = PlaybackState.RandomRequestPlaybackState;
+            if (IPlaybackController.CurrentPlaybackState is RoundRobinPlaybackState)
+                currentPlaybackState = PlaybackState.RoundRobinPlaybackState;
 
             // get the maxRequestPerUser amount
             var maxRequestsPerUser = IPlaybackController.CurrentPlaybackState != null

@@ -27,6 +27,8 @@ const mutations = <MutationTree<State>>{
     },
     
     SET_PLAYBACK_SETTINGS: (state, settings: playbackSettings) => {
+        console.log(settings);
+        
         state.includedUsers = settings.includedUsers;
         state.playbackState = settings.playbackState;
         state.playbackTermFilter = settings.playbackTermFilter;

@@ -14,5 +14,6 @@
         SetDefaultPlaybackState = 9,
         SetUserRequestPlaybackState = 10,
         SetRandomRequestPlaybackState = 11,
+        SetRoundRobinPlaybackState = 12,
     }
 }
