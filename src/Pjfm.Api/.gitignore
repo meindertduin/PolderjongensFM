@@ -13,8 +13,6 @@ wwwroot/fonts
 wwwroot/vendor
 wwwroot/vendor.min.js
 wwwroot/vendor.min.css
-wwwroot/vendor/
-wwwroot/fonts/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
