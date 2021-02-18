@@ -26,7 +26,7 @@ namespace Pjfm.Infrastructure.Service
             optionsBuilder.UseMySql(_configuration["ConnectionStrings:ApplicationDb"],
                 builder =>
                 {
-                    builder.MigrationsAssembly("Pjfm.WebClient");
+                    builder.MigrationsAssembly("Pjfm.Api");
                     builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                 });
             var context = new AppDbContext(optionsBuilder.Options);

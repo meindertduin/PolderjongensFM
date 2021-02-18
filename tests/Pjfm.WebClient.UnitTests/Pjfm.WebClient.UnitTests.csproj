@@ -22,11 +22,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Pjfm.WebClient\Pjfm.WebClient.csproj" />
+      <Folder Include="TestResults" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="TestResults" />
+      <ProjectReference Include="..\..\src\Pjfm.Api\Pjfm.Api.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,18 +1,12 @@
 using System;
-using System.Security.Claims;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Pjfm.Application.Identity;
-using Pjfm.Domain.Interfaces;
-using Pjfm.WebClient.Services;
 using Serilog;
 using Serilog.Events;
 
-namespace pjfm
+namespace Pjfm.Api
 {
     public class Program
     {

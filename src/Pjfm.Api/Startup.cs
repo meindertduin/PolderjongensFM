@@ -1,24 +1,20 @@
-using System;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 using AutoMapper;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
-using IdentityServer4.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Pjfm.Api.Services;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
@@ -31,7 +27,7 @@ using pjfm.Services;
 using Pjfm.WebClient.Services;
 using Serilog;
 
-namespace pjfm
+namespace Pjfm.Api
 {
     public class Startup
     {

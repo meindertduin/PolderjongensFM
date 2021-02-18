@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using pjfm.Hubs;
 using pjfm.Models;
+using pjfm.Services;
 
-namespace pjfm.Services
+namespace Pjfm.Api.Services
 {
     public class DjHubMessageService : IDjHubMessageService
     {

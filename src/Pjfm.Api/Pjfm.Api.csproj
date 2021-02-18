@@ -2,20 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-        <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
-        <IsPackable>false</IsPackable>
-        <SpaRoot>ClientApp\</SpaRoot>
-        <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-        <Authors>Software Ateliers</Authors>
-        <Company>Software Ateliers</Company>
-        <Description>ASP.NET Core + Vue.js starter project</Description>
-        <Copyright>MIT 2020 Software Ateliers</Copyright>
-        <AssemblyName>Pjfm.WebClient</AssemblyName>
-        <RootNamespace>Pjfm.WebClient</RootNamespace>
-        <Version>2.5.1</Version>
-        <AssemblyVersion>2.5.1.0</AssemblyVersion>
-        <FileVersion>2.5.1.0</FileVersion>
+        <RootNamespace>Pjfm.Api</RootNamespace>
         <UserSecretsId>75819e73-445d-4d5a-8f6a-21f9c5656eb4</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
@@ -23,7 +10,6 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
-        <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
         <PackageReference Include="Dapper" Version="2.0.78" />
         <PackageReference Include="FluentEmail.Core" Version="2.9.0" />
         <PackageReference Include="FluentEmail.Smtp" Version="2.9.0" />
@@ -40,7 +26,6 @@
         <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
         <PackageReference Include="Slapper.AutoMapper" Version="2.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-        <PackageReference Include="VueCliMiddleware" Version="3.1.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -74,10 +59,6 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Remove="ClientApp\src\plugins\axios.ts" />
     </ItemGroup>
 
     <ItemGroup>

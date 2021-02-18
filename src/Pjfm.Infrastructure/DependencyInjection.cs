@@ -40,7 +40,7 @@ namespace Pjfm.Infrastructure
                 config.UseMySql(connectionString, 
                     builder =>
                     {
-                        builder.MigrationsAssembly("Pjfm.WebClient");
+                        builder.MigrationsAssembly("Pjfm.Api");
                         builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                     });
             }, ServiceLifetime.Transient);
@@ -79,7 +79,7 @@ namespace Pjfm.Infrastructure
                     {
                         options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
                         {
-                            builder.MigrationsAssembly("Pjfm.WebClient");
+                            builder.MigrationsAssembly("Pjfm.Api");
                             builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                         });
                     })
@@ -87,7 +87,7 @@ namespace Pjfm.Infrastructure
                     {
                         options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
                         {
-                            builder.MigrationsAssembly("Pjfm.WebClient");
+                            builder.MigrationsAssembly("Pjfm.Api");
                             builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                         });
                     });
