@@ -68,6 +68,8 @@ namespace pjfm.Hubs
                 IsPlaying = playbackSettings.IsPlaying,
                 MaxRequestsPerUser = playbackSettings.MaxRequestsPerUser,
             });
+           
+            await Clients.All.SendAsync("ListenersCountUpdate", ListenersCount);
             
             await base.OnConnectedAsync();
         }
