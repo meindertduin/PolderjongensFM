@@ -5,18 +5,15 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Spotify.Queries;
 using pjfm.Models;
-using Serilog;
 
 namespace Pjfm.WebClient.Services
 {
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IPlaybackInfoTransmitter _playbackInfoTransmitter;
 
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
