@@ -4,7 +4,6 @@ namespace Pjfm.WebClient.Services
 {
     public class ResetPlaybackCommand : ICommand
     {
-        private readonly IPlaybackController _playbackController;
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
 
         public ResetPlaybackCommand(ISpotifyPlaybackManager spotifyPlaybackManager)

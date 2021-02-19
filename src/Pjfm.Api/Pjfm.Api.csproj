@@ -3,6 +3,9 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <RootNamespace>Pjfm.Api</RootNamespace>
+            <Version>2.5.1</Version>
+            <AssemblyVersion>2.5.1.0</AssemblyVersion>
+            <FileVersion>2.5.1.0</FileVersion>
         <UserSecretsId>75819e73-445d-4d5a-8f6a-21f9c5656eb4</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>

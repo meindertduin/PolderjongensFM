@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Interfaces;
 using Pjfm.Domain.Interfaces;
 using pjfm.Models;
 using pjfm.Services;
@@ -22,21 +20,17 @@ namespace Pjfm.WebClient.Services
         
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly IPlaybackQueue _playbackQueue;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IDjHubMessageService _djHubMessageService;
-        private readonly IPlaybackController _playbackController;
 
         private Timer _trackTimer;
         private AutoResetEvent _trackTimerAutoEvent;
         private bool _isCurrentlyPlaying;
 
         public SpotifyPlaybackManager(ISpotifyPlayerService spotifyPlayerService, 
-            IPlaybackQueue playbackQueue, IServiceProvider serviceProvider, 
-            IDjHubMessageService djHubMessageService)
+            IPlaybackQueue playbackQueue, IDjHubMessageService djHubMessageService)
         {
             _spotifyPlayerService = spotifyPlayerService;
             _playbackQueue = playbackQueue;
-            _serviceProvider = serviceProvider;
             _djHubMessageService = djHubMessageService;
 
         }

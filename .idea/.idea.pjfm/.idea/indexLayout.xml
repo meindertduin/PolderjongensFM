@@ -4,6 +4,7 @@
     <attachedFolders>
       <Path>ClientApp</Path>
       <Path>Pjfm.Application/MediatR/Wrappers</Path>
+      <Path>src/ClientApp</Path>
     </attachedFolders>
     <explicitIncludes />
     <explicitExcludes />
