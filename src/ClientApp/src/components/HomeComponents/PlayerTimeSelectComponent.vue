@@ -129,16 +129,7 @@ export default class PlayerTimeSelectComponent extends Vue {
     if (minutes <= 0) return;
     // checks before connecting if user is spotify authenticated
     if (this.loggedInUserProfile !== null){
-      const userSpotifyAuthenticated: boolean = this.$store.getters["profileModule/isSpotifyAuthenticated"];
-      if (userSpotifyAuthenticated){
-        // connects with player when user is authenticated
-        this.connectWithPlayer(minutes);
-      }
-      else{
-        // redirects to authenticate user spotify
-        
-        window.location.href = process.env.VUE_APP_API_BASE_URL + "/api/spotify/account/authenticate"
-      }
+      this.connectWithPlayer(minutes);
     }
   }
   
