@@ -31,14 +31,7 @@ const getters = <GetterTree<State, any>>{
 
 const actions = <ActionTree<State, any>>{
     getUserProfile(context){
-        return axios.get('api/auth/profile',
-            {
-                baseURL: process.env.VUE_APP_API_BASE_URL,
-                withCredentials: true,
-                headers: {
-                    authorization: `Bearer ${context.rootState.oidcStore.access_token}`
-                }
-            })
+        return axios.get('api/auth/profile')
             .then(({data}) => {
                 const profile:identityProfile = data.data;
                 context.commit('SET_USER_PROFILE', profile)

@@ -8,50 +8,27 @@
       Hieronder kan je aangeven hoelang de PJFM app je Spotify mag besturen.<br><br>
       Als je tijdens het luisteren wilt dat PJFM stopt met het besturen van jouw account kan je op STOP onder in het scherm klikken.<br><br>
       <v-spacer></v-spacer>
-      <v-row
-          class="mb-4"
-          justify="space-between"
-      >
-        <v-col class="text-left">
-                  <span
-                      class="display-3 font-weight-light"
-                      v-text="selectedTimeString"
-                  ></span>
+      <v-row justify="center">
+        <v-col class="col-8 col-md-10">
+          <v-select label="afpseel apparaat" outlined v-model="selectedDevice" :items="userDevices" item-text="name"></v-select>
         </v-col>
-        <v-col class="text-right">
+      </v-row>
+      <v-row class="mb-4" justify="center">
+        <v-col class="col-6 col-md-8">
+          <v-select
+              label="afspeeltijd"
+              outlined
+              :items="playbackTimeOptions"
+              v-model="selectedPlaybackTime"
+              item-text="text"
+          ></v-select>
+        </v-col>
+        <v-col class="col-2 col-md-2">
           <v-btn color="orange darken-1" dark depressed fab @click="initializePlayerConnection">
             <v-icon large>
               mdi-play
             </v-icon>
           </v-btn>
-        </v-col>
-      </v-row>
-      <v-slider
-          v-model="sliderUnit"
-          color="red"
-          track-color="grey"
-          always-dirty
-          :min="sliderMin"
-          :max="sliderMax"
-      >
-        <template v-slot:prepend>
-          <v-icon
-              color="green"
-              @click="decrement"
-          >
-            mdi-minus
-          </v-icon>
-        </template>
-
-        <template v-slot:append>
-          <v-icon color="green" @click="increment">
-            mdi-plus
-          </v-icon>
-        </template>
-      </v-slider>
-      <v-row justify="center">
-        <v-col class="col-8 col-md-10">
-          <v-select outlined v-model="selectedDevice" :items="userDevices" item-text="name" return-object single-line></v-select>
         </v-col>
       </v-row>
     </v-card-text>
@@ -77,25 +54,32 @@ interface playbackDevice {
   volumePercent: number,
 }
 
+interface timeOption {
+  text: string,
+  minutesAmount: number,
+}
 
 @Component({
   name: 'PlayerTimeSelectComponent',
 })
 export default class PlayerTimeSelectComponent extends Vue {
-  private sliderUnit = 0;
-  private sliderMin : number = 0;
-  private sliderMax : number = 1000;
-  
   private userDevices: Array<playbackDevice> = [];
   private selectedDevice: playbackDevice | null = null;
   
-  get selectedTimeString():string{
-      let minutes = this.getSelectedMinutes();
-      let hours = Math.floor(minutes / 60);
-            
-      if (minutes < 60) return `${minutes} minuten`
-      return `${hours} uur`
-  }
+  private playbackTimeOptions: Array<timeOption> = [
+    { text: "5 minuten", minutesAmount: 5 },
+    { text: "10 minutem", minutesAmount: 10 },
+    { text: "15 minuten", minutesAmount: 15},
+    { text: "20 minuten", minutesAmount: 20},
+    { text: "30 minuten", minutesAmount: 30},
+    { text: "1 uur", minutesAmount: 60},
+    { text: "2 uur", minutesAmount: 120 },
+    { text: "4 uur", minutesAmount: 240},
+    { text: "8 uur", minutesAmount: 480},
+    { text: "Hele dag!", minutesAmount: 1440 },
+  ];
+  
+  private selectedPlaybackTime: timeOption = { text: "30 minuten", minutesAmount: 30 };
   
   get loggedInUserProfile(){
     return this.$store.getters["profileModule/userProfile"];
@@ -118,27 +102,13 @@ export default class PlayerTimeSelectComponent extends Vue {
          }
       })
   }
-  
-  getSelectedMinutes():number{
-    return Math.floor(Math.pow(this.sliderUnit / 40, 2));
-  }
-  
-  
+
   initializePlayerConnection(){
-    const minutes = this.getSelectedMinutes();
-    if (minutes <= 0) return;
+    const selectedMinutes: number = this.selectedPlaybackTime.minutesAmount;
+    if (selectedMinutes <= 0) return;
     // checks before connecting if user is spotify authenticated
     if (this.loggedInUserProfile !== null){
-      const userSpotifyAuthenticated: boolean = this.$store.getters["profileModule/isSpotifyAuthenticated"];
-      if (userSpotifyAuthenticated){
-        // connects with player when user is authenticated
-        this.connectWithPlayer(minutes);
-      }
-      else{
-        // redirects to authenticate user spotify
-        
-        window.location.href = process.env.VUE_APP_API_BASE_URL + "/api/spotify/account/authenticate"
-      }
+      this.connectWithPlayer(selectedMinutes);
     }
   }
   
@@ -151,14 +121,6 @@ export default class PlayerTimeSelectComponent extends Vue {
         .finally(() => {
           this.togglePlayerTimerOverlay();
         });
-  }
-  
-  increment(){
-    this.sliderUnit += 10;
-  }
-
-  decrement(){
-    this.sliderUnit -= 10;
   }
 
   togglePlayerTimerOverlay(){

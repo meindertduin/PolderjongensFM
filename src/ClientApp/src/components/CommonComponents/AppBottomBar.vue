@@ -60,7 +60,14 @@ export default class AppBottomBar extends Vue{
   }
   
   private togglePlayerTimerOverlay(){
-    this.$store.commit('playbackModule/TOGGLE_PLAYER_TIMER_OVERLAY');
+    const userSpotifyAuthenticated: boolean = this.$store.getters["profileModule/isSpotifyAuthenticated"];
+    
+    // open playerTimeOverlay only when user is spotify authenticated
+    if (userSpotifyAuthenticated) {
+      this.$store.commit('playbackModule/TOGGLE_PLAYER_TIMER_OVERLAY');
+    } else {
+      window.location.href = process.env.VUE_APP_API_BASE_URL + "/api/spotify/account/authenticate"
+    }
   }
 
   private disconnectWithPlayer(){
