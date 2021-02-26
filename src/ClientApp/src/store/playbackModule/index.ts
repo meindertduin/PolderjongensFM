@@ -102,15 +102,8 @@ const actions = <ActionTree<State, any>>{
             route += `?message=${request.message}`
         }
         
-        return axios.put(route, null, {
-            baseURL: process.env.VUE_APP_API_BASE_URL,
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-                authorization: `Bearer ${context.rootState.oidcStore.access_token}`
-            }
-        })
-    },
+        return axios.put(route, null)
+    }
 }
 
 const PlaybackModule = {

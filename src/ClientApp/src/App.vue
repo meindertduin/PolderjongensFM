@@ -98,14 +98,6 @@ export default class App extends Vue{
   
   @Watch('accessToken')
   setAxiosInterceptor(newValue:any, oldValue:any){
-      // @ts-ignore
-      this.$axios.interceptors.request.use(
-              (config:any) => {
-                config.headers.common["Authorization"] = `Bearer ${newValue}`;
-                config.withCredentials = true;
-                return config;
-            },        
-      )
     this.$store.dispatch('profileModule/getUserProfile');
   }
 }
