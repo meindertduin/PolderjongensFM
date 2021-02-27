@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Css.Dom;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
@@ -14,6 +15,7 @@ namespace Pjfm.WebClient.Services
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMediator _mediator;
 
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
@@ -26,6 +28,7 @@ namespace Pjfm.WebClient.Services
         public PlaybackQueue(IServiceProvider serviceProvider, IMediator mediator)
         {
             _serviceProvider = serviceProvider;
+            _mediator = mediator;
             _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
         }
 
@@ -39,7 +42,22 @@ namespace Pjfm.WebClient.Services
 
         TopTrackTermFilter IPlaybackQueue.CurrentTermFilter => _playbackQueueSettings.TopTrackTermFilter;
         public PlaybackQueueSettings PlaybackQueueSettings => _playbackQueueSettings;
-        
+
+        public void SetFillerQueueState(FillerQueueType fillerQueueType)
+        {
+            switch (fillerQueueType)
+            {
+                case FillerQueueType.UserTopTracks: 
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
+                    break;
+                case FillerQueueType.GenreBrowsing:
+                    break;
+                default:
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
+                    break;
+            };
+        }
+
         public async Task SetUsers()
         {
             using var scope = _serviceProvider.CreateScope();
@@ -74,7 +92,7 @@ namespace Pjfm.WebClient.Services
         {
             _playbackQueueSettings.TopTrackTermFilter = termFilter;
         }
-        
+
         public bool TryDequeueTrack(string trackId)
         {
             TrackDto[] tracks = { };

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
 using pjfm.Models;
+using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace Pjfm.WebClient.Services
 {
@@ -12,6 +13,7 @@ namespace Pjfm.WebClient.Services
         TopTrackTermFilter CurrentTermFilter { get; }
         List<ApplicationUserDto> IncludedUsers { get; }
         void SetTermFilter(TopTrackTermFilter termFilter);
+        void SetFillerQueueState(FillerQueueType fillerQueueType);
         Task SetUsers();
         void AddUsersToIncludedUsers(ApplicationUserDto user);
         bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user);
