@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
-using Pjfm.Application.Spotify.Queries;
 using pjfm.Models;
 using Pjfm.WebClient.Services.FillerQueueState;
 
@@ -24,13 +23,14 @@ namespace Pjfm.WebClient.Services
         private TopTrackTermFilter _currentTermFilter;
 
         private IFillerQueueState _fillerQueueState;
+        private PlaybackQueueSettings _playbackQueueSettings = new PlaybackQueueSettings();
 
         public List<ApplicationUserDto> IncludedUsers { get; private set; } = new List<ApplicationUserDto>();
 
         public PlaybackQueue(IServiceProvider serviceProvider, IMediator mediator)
         {
             _serviceProvider = serviceProvider;
-            _fillerQueueState = new UsersTopTracksFillerQueueState(mediator);
+            _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
             _currentTermFilter = TopTrackTermFilter.AllTerms;
         }
 
@@ -47,6 +47,7 @@ namespace Pjfm.WebClient.Services
             get => _currentTermFilter;
             set => _currentTermFilter = value;
         }
+        public PlaybackQueueSettings PlaybackQueueSettings => _playbackQueueSettings;
         
         public async Task SetUsers()
         {
@@ -88,9 +89,9 @@ namespace Pjfm.WebClient.Services
         
         public void SetTermFilter(TopTrackTermFilter termFilter)
         {
-            _currentTermFilter = termFilter;
+            _playbackQueueSettings.TopTrackTermFilter = termFilter;
         }
-
+        
         public bool TryDequeueTrack(string trackId)
         {
             TrackDto[] tracks = { };
