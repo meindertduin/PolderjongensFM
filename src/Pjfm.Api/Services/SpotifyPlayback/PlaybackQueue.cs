@@ -8,6 +8,7 @@ using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Spotify.Queries;
 using pjfm.Models;
+using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace Pjfm.WebClient.Services
 {
@@ -22,12 +23,14 @@ namespace Pjfm.WebClient.Services
         private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
         private TopTrackTermFilter _currentTermFilter;
 
+        private IFillerQueueState _fillerQueueState;
 
         public List<ApplicationUserDto> IncludedUsers { get; private set; } = new List<ApplicationUserDto>();
 
-        public PlaybackQueue(IServiceProvider serviceProvider)
+        public PlaybackQueue(IServiceProvider serviceProvider, IMediator mediator)
         {
             _serviceProvider = serviceProvider;
+            _fillerQueueState = new UsersTopTracksFillerQueueState(mediator);
             _currentTermFilter = TopTrackTermFilter.AllTerms;
         }
 
@@ -235,23 +238,14 @@ namespace Pjfm.WebClient.Services
         }
         public async Task AddToFillerQueue(int amount)
         {
-            using var scope = _serviceProvider.CreateScope();
-            
-            var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            
-            // gets random tracks of included users
-            var result = await _mediator.Send(new GetRandomTopTrackQuery()
+            var result = await _fillerQueueState.RetrieveFillerTracks(amount);
+            if (result.Error == false)
             {
-                NotIncludeTracks = _recentlyPlayed,
-                RequestedAmount = amount,
-                TopTrackTermFilter = _currentTermFilter.ConvertToTopTrackTerms(),
-                IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
-            });
-                
-            // adds queried tracks to the fillerQueue
-            foreach (var fillerTrack in result.Data)
-            {
-                _fillerQueue.Enqueue(fillerTrack);
+                // adds queried tracks to the fillerQueue
+                foreach (var fillerTrack in result.Data)
+                {
+                    _fillerQueue.Enqueue(fillerTrack);
+                }
             }
         }
         
