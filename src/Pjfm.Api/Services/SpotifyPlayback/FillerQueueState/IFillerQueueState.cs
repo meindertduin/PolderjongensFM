@@ -8,6 +8,8 @@ namespace Pjfm.WebClient.Services.FillerQueueState
     public interface IFillerQueueState
     {
         void AddRecentlyPlayed(TrackDto track);
+        void Reset();
+        int GetRecentlyPlayedAmount();
         Task<Response<List<TrackDto>>> RetrieveFillerTracks(int amount);
     }
 }

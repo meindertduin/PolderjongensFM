@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Entities;
 using pjfm.Models;
 
 namespace Pjfm.WebClient.Services
@@ -10,7 +9,7 @@ namespace Pjfm.WebClient.Services
     {
         public int RecentlyPlayedCount();
         void Reset();
-        TopTrackTermFilter CurrentTermFilter { get; protected set; }
+        TopTrackTermFilter CurrentTermFilter { get; }
         List<ApplicationUserDto> IncludedUsers { get; }
         void SetTermFilter(TopTrackTermFilter termFilter);
         Task SetUsers();

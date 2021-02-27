@@ -5,6 +5,6 @@ namespace Pjfm.WebClient.Services.FillerQueueState
 {
     public class FillerQueueStateBase
     {
-        internal readonly List<TrackDto> RecentlyPlayed = new List<TrackDto>();
+        internal List<TrackDto> RecentlyPlayed = new List<TrackDto>();
     }
 }

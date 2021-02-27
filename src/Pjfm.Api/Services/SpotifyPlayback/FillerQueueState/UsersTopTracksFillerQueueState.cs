@@ -25,6 +25,16 @@ namespace Pjfm.WebClient.Services.FillerQueueState
             RecentlyPlayed.Add(track);    
         }
 
+        public void Reset()
+        {
+            RecentlyPlayed = new List<TrackDto>();
+        }
+
+        public int GetRecentlyPlayedAmount()
+        {
+            return RecentlyPlayed.Count;
+        }
+
         public Task<Response<List<TrackDto>>> RetrieveFillerTracks(int amount)
         {
             var settings = _playbackQueue.PlaybackQueueSettings;

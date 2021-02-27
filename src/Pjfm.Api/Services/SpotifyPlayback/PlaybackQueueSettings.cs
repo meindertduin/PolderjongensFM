@@ -6,6 +6,11 @@ namespace Pjfm.WebClient.Services
 {
     public class PlaybackQueueSettings
     {
+        public PlaybackQueueSettings()
+        {
+            _topTrackTermFilter = TopTrackTermFilter.AllTerms;
+        }
+        
         private List<ApplicationUserDto> _includedUsers = new List<ApplicationUserDto>();
         public List<ApplicationUserDto> IncludedUsers
         {
@@ -23,7 +28,10 @@ namespace Pjfm.WebClient.Services
 
         public void AddIncludedUser(ApplicationUserDto user)
         {
-            _includedUsers.Add(user);
+            if (IncludedUsers.Select(x => x.Id).Contains(user.Id) == false)
+            {
+                _includedUsers.Add(user);
+            }
         }
 
         public bool TryRemoveIncludedUser(ApplicationUserDto user)

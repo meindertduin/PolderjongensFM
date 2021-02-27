@@ -19,34 +19,25 @@ namespace Pjfm.WebClient.Services
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
         private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>(); 
         
-        private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
-        private TopTrackTermFilter _currentTermFilter;
 
         private IFillerQueueState _fillerQueueState;
         private PlaybackQueueSettings _playbackQueueSettings = new PlaybackQueueSettings();
-
-        public List<ApplicationUserDto> IncludedUsers { get; private set; } = new List<ApplicationUserDto>();
 
         public PlaybackQueue(IServiceProvider serviceProvider, IMediator mediator)
         {
             _serviceProvider = serviceProvider;
             _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
-            _currentTermFilter = TopTrackTermFilter.AllTerms;
         }
 
         public void Reset()
         {
-            _recentlyPlayed = new List<TrackDto>();
+            _fillerQueueState.Reset();
             _priorityQueue = new Queue<TrackDto>();
             _secondaryQueue = new Queue<TrackRequestDto>();
             _fillerQueue = new Queue<TrackDto>();
         }
 
-        TopTrackTermFilter IPlaybackQueue.CurrentTermFilter
-        {
-            get => _currentTermFilter;
-            set => _currentTermFilter = value;
-        }
+        TopTrackTermFilter IPlaybackQueue.CurrentTermFilter => _playbackQueueSettings.TopTrackTermFilter;
         public PlaybackQueueSettings PlaybackQueueSettings => _playbackQueueSettings;
         
         public async Task SetUsers()
@@ -58,35 +49,27 @@ namespace Pjfm.WebClient.Services
             var membersResult = await mediator.Send(new GetAllPjMembersQuery());
             if (membersResult.Error == false)
             {
-                IncludedUsers = membersResult.Data;
+                _playbackQueueSettings.IncludedUsers = membersResult.Data;
             }
         }
         
         public void AddUsersToIncludedUsers(ApplicationUserDto user)
         {
-            if (IncludedUsers.Select(x => x.Id).Contains(user.Id) == false)
-            {
-                IncludedUsers.Add(user);
-            }
+            _playbackQueueSettings.AddIncludedUser(user);
         }
 
         public bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user)
         {
-            var item = IncludedUsers.SingleOrDefault(x => x.Id == user.Id);
-            if (item != null)
-            {
-                IncludedUsers.Remove(item);
-                return true;
-            }
-
-            return false;
+            return _playbackQueueSettings.TryRemoveIncludedUser(user);
         }
         
         public int RecentlyPlayedCount()
         {
-            return _recentlyPlayed.Count;
+            return _fillerQueueState.GetRecentlyPlayedAmount();
         }
-        
+
+        public List<ApplicationUserDto> IncludedUsers { get; }
+
         public void SetTermFilter(TopTrackTermFilter termFilter)
         {
             _playbackQueueSettings.TopTrackTermFilter = termFilter;
@@ -233,7 +216,7 @@ namespace Pjfm.WebClient.Services
                 nextTrack = _fillerQueue.Dequeue();
             }
             
-            _recentlyPlayed.Add(nextTrack);
+            _fillerQueueState.AddRecentlyPlayed(nextTrack);
             
             return nextTrack;
         }
