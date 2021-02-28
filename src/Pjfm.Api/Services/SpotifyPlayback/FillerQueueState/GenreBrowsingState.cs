@@ -29,9 +29,11 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
             var recommendedSettings = new RecommendationsSettings()
             {
                 Limit = amount,
-                SeedGenres = "metal",
+                SeedGenres = "black_metal",
                 SeedArtists = "0sfWl1dWLgEtMy9oFnNoDA",
                 SeedTracks = "3Op2bVsGwXrHxWs7XhR5bX",
+                MaxPopularity = 50,
+                MinInstrumentalness = 0.35m,
             };
             var response = await _spotifyBrowserService.GetRecommendations(recommendedSettings);
 

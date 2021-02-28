@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Pjfm.Application.AppContexts.Spotify;
@@ -52,7 +54,8 @@ namespace Pjfm.Application.Services
 
         public Task<HttpResponseMessage> GetTrackInfo(string userId, string accessToken, string trackId)
         {
-            var request = new HttpRequestMessage {RequestUri = new Uri($"https://api.spotify.com/v1/tracks/{trackId}")};
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri($"https://api.spotify.com/v1/tracks/{trackId}");
 
             return _spotifyHttpClientService.SendAccessTokenRequest(request, userId, accessToken);
         }
@@ -123,10 +126,20 @@ namespace Pjfm.Application.Services
 
             foreach (var property in settingsProperties)
             {
-                if (property.GetValue(settings) != default)
+                if (property.GetValue(settings) != null)
                 {
                     var name = property.Name.PascalToSnakeCase();
-                    uriString.Append($"&{name}={property.GetValue(settings)}");
+                    string value;
+                    if (property.PropertyType == typeof(decimal?))
+                    {
+                        value = ((decimal) property.GetValue(settings)).ToString(CultureInfo.CreateSpecificCulture("en-us"));
+                    }
+                    else
+                    {
+                        value = property.GetValue(settings)?.ToString();
+                    }
+                    
+                    uriString.Append($"&{name}={value}");
                 }
             }
 
