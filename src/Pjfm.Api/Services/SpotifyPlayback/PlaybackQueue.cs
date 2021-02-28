@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Css.Dom;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Application.Common.Dto;
@@ -86,7 +85,7 @@ namespace Pjfm.WebClient.Services
             return _fillerQueueState.GetRecentlyPlayedAmount();
         }
 
-        public List<ApplicationUserDto> IncludedUsers { get; }
+        public List<ApplicationUserDto> IncludedUsers => _playbackQueueSettings.IncludedUsers;
 
         public void SetTermFilter(TopTrackTermFilter termFilter)
         {
