@@ -5,9 +5,10 @@ using MediatR;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.Spotify.Queries;
-using Pjfm.Domain.Enums;
+using Pjfm.WebClient.Services;
+using Pjfm.WebClient.Services.FillerQueueState;
 
-namespace Pjfm.WebClient.Services.FillerQueueState
+namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
 {
     public class UsersTopTracksFillerQueueState: FillerQueueStateBase, IFillerQueueState
     {

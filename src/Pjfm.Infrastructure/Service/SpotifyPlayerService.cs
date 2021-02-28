@@ -47,7 +47,7 @@ namespace Pjfm.Application.Services
                 requestMessage.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             }
             
-            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
+            return _httpClientService.SendAccessTokenRequest(requestMessage, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> GetDevices(string userId, string accessToken)
@@ -58,7 +58,7 @@ namespace Pjfm.Application.Services
                 RequestUri = new Uri("https://api.spotify.com/v1/me/player/devices"),
             };
 
-            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
+            return _httpClientService.SendAccessTokenRequest(requestMessage, userId, accessToken);
         }
         
         public Task<HttpResponseMessage> AddTrackToQueue(string userId, string accessToken, string trackId ,string deviceId = null)
@@ -74,7 +74,7 @@ namespace Pjfm.Application.Services
             
             requestMessage.RequestUri = new Uri(requestUri);
 
-            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
+            return _httpClientService.SendAccessTokenRequest(requestMessage, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> SkipSong(string userId, string accessToken, string deviceId = null)
@@ -89,7 +89,7 @@ namespace Pjfm.Application.Services
                 requestUri.Concat($"?device_id={deviceId}");
             }
 
-            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
+            return _httpClientService.SendAccessTokenRequest(requestMessage, userId, accessToken);
         }
 
         public Task<HttpResponseMessage> PausePlayer(string userId, string accessToken, string deviceId = null)
@@ -106,7 +106,7 @@ namespace Pjfm.Application.Services
             
             requestMessage.RequestUri = new Uri(requestUri);
 
-            return _httpClientService.SendAuthenticatedRequest(requestMessage, userId, accessToken);
+            return _httpClientService.SendAccessTokenRequest(requestMessage, userId, accessToken);
         }
     }
 }

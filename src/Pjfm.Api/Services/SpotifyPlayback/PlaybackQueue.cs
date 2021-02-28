@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Api.Services.SpotifyPlayback.FillerQueueState;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
+using Pjfm.Application.Services;
 using pjfm.Models;
 using Pjfm.WebClient.Services.FillerQueueState;
 
@@ -28,7 +30,9 @@ namespace Pjfm.WebClient.Services
         {
             _serviceProvider = serviceProvider;
             _mediator = mediator;
-            _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
+            using var scope = _serviceProvider.CreateScope();
+            var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
+            _fillerQueueState = new GenreBrowsingState(this, browserService);
         }
 
         public void Reset()
@@ -50,7 +54,12 @@ namespace Pjfm.WebClient.Services
                     _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
                     break;
                 case FillerQueueType.GenreBrowsing:
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
+                    _fillerQueueState = new GenreBrowsingState(this, browserService);
                     break;
+                }
                 default:
                     _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
                     break;
