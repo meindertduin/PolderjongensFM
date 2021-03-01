@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
@@ -18,6 +19,7 @@ using Pjfm.Domain.Interfaces;
 using Pjfm.Domain.ValueObjects;
 using Pjfm.Infrastructure.Service;
 using Pjfm.WebClient.Services;
+using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace pjfm.Controllers
 {
@@ -354,6 +356,14 @@ namespace pjfm.Controllers
                     return BadRequest();
             }
             return Accepted();
+        }
+
+        [HttpPut("mod/fillerQueueState")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult SetFillerQueueState([FromQuery] FillerQueueType fillerQueueType)
+        {
+            _playbackController.SetFillerQueueState(fillerQueueType);
+            return Ok();
         }
         
         private TrackDto SerializeTrackOfResponse(string trackResponseContent)

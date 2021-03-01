@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using pjfm.Models;
+using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace Pjfm.WebClient.Services
 {
@@ -19,6 +20,7 @@ namespace Pjfm.WebClient.Services
         List<ApplicationUserDto> GetIncludedUsers();
         void AddIncludedUser(ApplicationUserDto user);
         bool TryRemoveIncludedUser(ApplicationUserDto user);
+        public void SetFillerQueueState(FillerQueueType fillerQueueType);
         void DequeueTrack(string trackId);
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
