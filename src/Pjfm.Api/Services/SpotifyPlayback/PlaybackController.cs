@@ -199,6 +199,8 @@ namespace Pjfm.WebClient.Services
                 ? IPlaybackController.CurrentPlaybackState.GetMaxRequestsPerUser()
                 : 0;
 
+            var browserQueueSettings = _playbackQueue.GetBrowserQueueSettings();
+
             var playbackSettings = new PlaybackSettingsDto()
             {
                 IsPlaying = _spotifyPlaybackManager.IsCurrentlyPlaying,
@@ -206,6 +208,7 @@ namespace Pjfm.WebClient.Services
                 PlaybackState = currentPlaybackState,
                 IncludedUsers = _playbackQueue.IncludedUsers,
                 MaxRequestsPerUser = maxRequestsPerUser,
+                BrowserQueueSettings = browserQueueSettings,
             };
 
             return playbackSettings;

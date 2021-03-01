@@ -16,6 +16,7 @@ namespace Pjfm.WebClient.Services
         void SetFillerQueueState(FillerQueueType fillerQueueType);
         Task SetUsers();
         void SetBrowserQueueSettings(BrowserQueueSettings settings);
+        BrowserQueueSettings GetBrowserQueueSettings();
         void AddUsersToIncludedUsers(ApplicationUserDto user);
         bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user);
         bool TryDequeueTrack(string trackId);
