@@ -200,7 +200,7 @@ namespace Pjfm.WebClient.Services
                 : 0;
 
             var browserQueueSettings = _playbackQueue.GetBrowserQueueSettings();
-
+            
             var playbackSettings = new PlaybackSettingsDto()
             {
                 IsPlaying = _spotifyPlaybackManager.IsCurrentlyPlaying,
@@ -209,6 +209,7 @@ namespace Pjfm.WebClient.Services
                 IncludedUsers = _playbackQueue.IncludedUsers,
                 MaxRequestsPerUser = maxRequestsPerUser,
                 BrowserQueueSettings = browserQueueSettings,
+                FillerQueueState = _playbackQueue.GetFillerQueueState(),
             };
 
             return playbackSettings;

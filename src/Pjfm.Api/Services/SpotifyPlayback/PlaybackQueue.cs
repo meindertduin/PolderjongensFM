@@ -66,6 +66,16 @@ namespace Pjfm.WebClient.Services
             };
         }
 
+        public FillerQueueType GetFillerQueueState()
+        {
+            return _fillerQueueState switch
+            {
+                UsersTopTracksFillerQueueState _ => FillerQueueType.UserTopTracks,
+                GenreBrowsingState _ => FillerQueueType.GenreBrowsing,
+                _ => FillerQueueType.UserTopTracks
+            };
+        }
+
         public async Task SetUsers()
         {
             using var scope = _serviceProvider.CreateScope();

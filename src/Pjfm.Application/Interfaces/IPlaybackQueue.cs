@@ -14,6 +14,7 @@ namespace Pjfm.WebClient.Services
         List<ApplicationUserDto> IncludedUsers { get; }
         void SetTermFilter(TopTrackTermFilter termFilter);
         void SetFillerQueueState(FillerQueueType fillerQueueType);
+        FillerQueueType GetFillerQueueState();
         Task SetUsers();
         void SetBrowserQueueSettings(BrowserQueueSettings settings);
         BrowserQueueSettings GetBrowserQueueSettings();
