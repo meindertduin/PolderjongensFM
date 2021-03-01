@@ -358,11 +358,30 @@ namespace pjfm.Controllers
             return Accepted();
         }
 
+        /// <summary>
+        /// Sets the fillerQueueState in the playbackQueue Class
+        /// </summary>
+        /// <param name="fillerQueueType"></param>
+        /// <returns>Status 200 on accept</returns>
         [HttpPut("mod/fillerQueueState")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
         public IActionResult SetFillerQueueState([FromQuery] FillerQueueType fillerQueueType)
         {
             _playbackController.SetFillerQueueState(fillerQueueType);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Sets the browserQueueSettings in the fillerQueueSettings class that is hold
+        /// by the PlaybackQueue Class
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns>Returns 200 on accept</returns>
+        [HttpPost("mod/browserQueueSettings")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult SetBrowserQueueSettings([FromBody] BrowserQueueSettings settings)
+        {
+            _playbackController.SetBrowserQueueSettings(settings);
             return Ok();
         }
         

@@ -60,7 +60,10 @@
         ></v-select>
       </v-col>
       <v-col class="col-6">
-        <v-btn width="100%" color="green">Opties toepassen</v-btn>
+        <div v-if="sendMessage !== null" class="orange--text">
+          {{sendMessage}}
+        </div>
+        <v-btn @click="applySettings" width="100%" color="green">Opties toepassen</v-btn>
       </v-col>
     </v-row>
   </div>
@@ -70,6 +73,7 @@
 import Component from "vue-class-component";
 import Vue from "vue";
 import {browserQueueSettings} from "@/common/types";
+import {AxiosResponse} from "axios";
 
 @Component({
   name: "GenreBrowsingOptionsDisplay"
@@ -85,6 +89,7 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     ]
   
     private currentQueueSettings: browserQueueSettings | null = null;
+    private sendMessage: string | null = null;
     
     get browserQueueSettings(): browserQueueSettings {
       const settings = this.$store.getters["modModule/getBrowserQueueSettings"];
@@ -92,6 +97,22 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
         this.currentQueueSettings = settings;
       }
       return settings;
+    }
+    
+    applySettings():void{
+      if (this.currentQueueSettings === null) return; 
+      this.$axios.post("api/playback/mod/browserQueueSettings", this.browserQueueSettings)
+        .then((response:AxiosResponse) => {
+          if (response.status === 200) {
+            this.sendMessage = "Insetllingen zijn toegepast";
+          }
+        })
+      .catch(() => {
+        this.sendMessage = "Iets ging fout bij het versturen van nieuwe instellingen";
+      })
+      .finally(() => {
+        setTimeout(() => { this.sendMessage = null}, 5000);
+      });
     }
 }
 </script>

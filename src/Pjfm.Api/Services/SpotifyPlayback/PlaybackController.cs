@@ -132,7 +132,13 @@ namespace Pjfm.WebClient.Services
         {
             _playbackQueue.SetFillerQueueState(fillerQueueType);
             NotifyChangePlaybackSettings();
-        }        
+        }
+
+        public void SetBrowserQueueSettings(BrowserQueueSettings settings)
+        {
+            _playbackQueue.SetBrowserQueueSettings(settings);
+        }
+
         public void DequeueTrack(string trackId)
         {
             _playbackQueue.TryDequeueTrack(trackId);
