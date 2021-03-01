@@ -43,6 +43,11 @@ export enum playbackState{
     'Round-Robin'
 }
 
+export enum fillerQueueState {
+    'UserTopTracks',
+    'GenreBrowsing'
+}
+
 export interface hubServerMessage{
     message: string,
     error: boolean,

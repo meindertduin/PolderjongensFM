@@ -33,7 +33,7 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
                 SeedArtists = "0sfWl1dWLgEtMy9oFnNoDA",
                 SeedTracks = "3Op2bVsGwXrHxWs7XhR5bX",
                 MaxPopularity = 50,
-                MinInstrumentalness = 0.35m,
+                MinInstrumentalness = 0.95m,
             };
             var response = await _spotifyBrowserService.GetRecommendations(recommendedSettings);
 

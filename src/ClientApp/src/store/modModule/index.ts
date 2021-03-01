@@ -1,5 +1,12 @@
 ﻿import {ActionTree, GetterTree, MutationTree} from "vuex"
-import {applicationUser, djPlaybackInfo, modLocalSettings, playbackSettings, playbackState} from "@/common/types";
+import {
+    applicationUser,
+    djPlaybackInfo,
+    fillerQueueState,
+    modLocalSettings,
+    playbackSettings,
+    playbackState
+} from "@/common/types";
 import axios from "axios";
 
 class State {
@@ -9,6 +16,7 @@ class State {
     
     public playbackSettings : playbackSettings | null = null;
     public playbackState: playbackState | null = null;
+    public fillerQueueState: fillerQueueState | null = null;
     public playbackTermFilter: number | null = null;
     public isPlaying: boolean = false;
     public maxRequestsPerUser: number | null = null
@@ -44,6 +52,8 @@ const getters = <GetterTree<State, any>>{
     getIncludedUsers: state => state.includedUsers, 
     getLoadedUsers: state => state.loadedUsers,
     getPlaybackState: state => state.playbackState,
+    // TODO: hook this up to retrieve the real value
+    getFillerQueueState: state => fillerQueueState.GenreBrowsing,
     getPlaybackTermFiler: state => state.playbackTermFilter,
     getMaxRequestsPerUser: state => state.maxRequestsPerUser,
     listenersCount: state => state.listenersCount,
