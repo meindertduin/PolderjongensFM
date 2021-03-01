@@ -16,6 +16,7 @@ namespace Pjfm.WebClient.Services
                 Instrumentalness = QueueSettingsValue.Not,
                 Popularity = QueueSettingsValue.Not,
                 DanceAbility = QueueSettingsValue.Not,
+                Energy = QueueSettingsValue.Not,
                 Valence = QueueSettingsValue.Not,
             };
         }

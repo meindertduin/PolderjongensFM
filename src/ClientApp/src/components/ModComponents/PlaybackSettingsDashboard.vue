@@ -98,7 +98,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from "vue-class-component";
-import {fillerQueueState} from "@/common/types";
+import {fillerQueueType} from "@/common/types";
 import {Watch} from "vue-property-decorator";
 import GenreBrowsingOptionsDisplay from "@/components/ModComponents/GenreBrowsingOptionsDisplay.vue";
 
@@ -174,7 +174,7 @@ import GenreBrowsingOptionsDisplay from "@/components/ModComponents/GenreBrowsin
         private showConfirmNotification :boolean = false;
         
         private selectedState :any | null = null;
-        private activeFillerQueueState: fillerQueueState | null = null;
+        private activeFillerQueueState: fillerQueueType | null = null;
         
         @Watch("selectedState")
         onSelectedStateChanged(newValue:any, oldValue:any){

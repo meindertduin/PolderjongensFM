@@ -1,13 +1,14 @@
 ﻿import {ActionTree, GetterTree, MutationTree} from "vuex"
 import {
-    applicationUser,
+    applicationUser, browserQueueSettings,
     djPlaybackInfo,
-    fillerQueueState,
+    fillerQueueType,
     modLocalSettings,
     playbackSettings,
     playbackState
 } from "@/common/types";
 import axios from "axios";
+import set = Reflect.set;
 
 class State {
     public playbackInfo: djPlaybackInfo | null = null;
@@ -16,11 +17,14 @@ class State {
     
     public playbackSettings : playbackSettings | null = null;
     public playbackState: playbackState | null = null;
-    public fillerQueueState: fillerQueueState | null = null;
     public playbackTermFilter: number | null = null;
     public isPlaying: boolean = false;
     public maxRequestsPerUser: number | null = null
     public listenersCount: number = 0;
+    
+    // playbackQueueSettings
+    public fillerQueueState: fillerQueueType | null = null;
+    public browserQueueSettings: browserQueueSettings | null = null;
     
     // misc
     public isConnected: boolean = false;
@@ -41,6 +45,8 @@ const mutations = <MutationTree<State>>{
         state.playbackState = settings.playbackState;
         state.playbackTermFilter = settings.playbackTermFilter;
         state.maxRequestsPerUser = settings.maxRequestsPerUser;
+        state.fillerQueueState = settings.fillerQueueState;
+        state.browserQueueSettings = settings.browserQueueSettings;
     },
     
     SET_DJ_PLAYBACK_INFO: (state, playbackInfo:djPlaybackInfo) => {
@@ -52,8 +58,8 @@ const getters = <GetterTree<State, any>>{
     getIncludedUsers: state => state.includedUsers, 
     getLoadedUsers: state => state.loadedUsers,
     getPlaybackState: state => state.playbackState,
-    // TODO: hook this up to retrieve the real value
-    getFillerQueueState: state => fillerQueueState.GenreBrowsing,
+    getFillerQueueState: state => state.fillerQueueState,
+    getBrowserQueueSettings: state => state.browserQueueSettings,
     getPlaybackTermFiler: state => state.playbackTermFilter,
     getMaxRequestsPerUser: state => state.maxRequestsPerUser,
     listenersCount: state => state.listenersCount,

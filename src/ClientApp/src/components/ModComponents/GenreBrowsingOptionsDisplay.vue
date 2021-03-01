@@ -7,7 +7,7 @@
       </v-col>
       <v-col class="col-6">
         <v-select 
-            v-model="tempo"
+            v-model="browserQueueSettings.tempo"
             :items="selectableValues"
             label="Tempo"
             outlined
@@ -17,7 +17,7 @@
     <v-row>
       <v-col class="col-6">
         <v-select
-            v-model="instrumentalness"
+            v-model="browserQueueSettings.instrumentalness"
             :items="selectableValues"
             label="instrumenteelheid"
             outlined
@@ -25,7 +25,7 @@
       </v-col>
       <v-col class="col-6">
         <v-select
-            v-model="popularity"
+            v-model="browserQueueSettings.popularity"
             :items="selectableValues"
             label="populariteit"
             outlined
@@ -35,7 +35,7 @@
     <v-row>
       <v-col class="col-6">
         <v-select
-            v-model="energy"
+            v-model="browserQueueSettings.energy"
             :items="selectableValues"
             label="Energie"
             outlined
@@ -43,7 +43,7 @@
       </v-col>
       <v-col class="col-6">
         <v-select
-            v-model="danceAbility"
+            v-model="browserQueueSettings.danceAbility"
             :items="selectableValues"
             label="Dansbaarheid"
             outlined
@@ -53,7 +53,7 @@
     <v-row>
       <v-col class="col-6">
         <v-select
-            v-model="valence"
+            v-model="browserQueueSettings.valence"
             :items="selectableValues"
             label="Valenciteit"
             outlined
@@ -69,6 +69,7 @@
 <script lang="ts">
 import Component from "vue-class-component";
 import Vue from "vue";
+import {browserQueueSettings} from "@/common/types";
 
 @Component({
   name: "GenreBrowsingOptionsDisplay"
@@ -81,14 +82,17 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
       { text: "Gemiddeld", value: 3 },
       { text: "Veel", value: 4 },
       { text: "maximaal", value: 5 },
-    ] 
+    ]
   
-    private tempo: number | null = null;
-    private instrumentalness: number | null = null;
-    private popularity: number | null = null;
-    private energy: number | null = null;
-    private danceAbility: number | null = null;
-    private valence: number | null = null;
+    private currentQueueSettings: browserQueueSettings | null = null;
+    
+    get browserQueueSettings(): browserQueueSettings {
+      const settings = this.$store.getters["modModule/getBrowserQueueSettings"];
+      if (this.currentQueueSettings === null) {
+        this.currentQueueSettings = settings;
+      }
+      return settings;
+    }
 }
 </script>
 

@@ -30,22 +30,11 @@ export interface trackDto{
     message: string,
 }
 
-export interface playbackSettings {
-    isPlaying: boolean,
-    playbackTermFilter: number,
-    playbackState: playbackState,
-}
-
 export enum playbackState{
     'DJ Only Mode',
     'Verzoekjes (op volgorde)',
     'Verzoekjes (random)',
     'Round-Robin'
-}
-
-export enum fillerQueueState {
-    'UserTopTracks',
-    'GenreBrowsing'
 }
 
 export interface hubServerMessage{
@@ -59,6 +48,32 @@ export interface playbackSettings {
     includedUsers: Array<applicationUser>,
     playbackState: playbackState,
     maxRequestsPerUser: number,
+    fillerQueueState: fillerQueueType,
+    browserQueueSettings: browserQueueSettings, 
+}
+
+export interface browserQueueSettings {
+    genre: string,
+    tempo: queueSettingsValue,
+    instrumentalness: queueSettingsValue,
+    popularity: queueSettingsValue,
+    energy: queueSettingsValue,
+    danceAbility: queueSettingsValue,
+    valence: queueSettingsValue,
+}
+
+export enum fillerQueueType {
+    userTopTracks,
+    genreBrowsing
+}
+
+export enum queueSettingsValue {
+    not,
+    minimal,
+    little,
+    average,
+    much,
+    maximal,
 }
 
 export interface userPlaybackInfo {
