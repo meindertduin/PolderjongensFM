@@ -78,7 +78,12 @@ namespace Pjfm.WebClient.Services
                 _playbackQueueSettings.IncludedUsers = membersResult.Data;
             }
         }
-        
+
+        public void SetBrowserQueueSettings(BrowserQueueSettings settings)
+        {
+            _playbackQueueSettings.BrowserQueueSettings = settings;
+        }
+
         public void AddUsersToIncludedUsers(ApplicationUserDto user)
         {
             _playbackQueueSettings.AddIncludedUser(user);

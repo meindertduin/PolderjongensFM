@@ -8,7 +8,16 @@ namespace Pjfm.WebClient.Services
     {
         public PlaybackQueueSettings()
         {
-            _topTrackTermFilter = TopTrackTermFilter.AllTerms;
+            TopTrackTermFilter = TopTrackTermFilter.AllTerms;
+            BrowserQueueSettings = new BrowserQueueSettings()
+            {
+                Genre = "rock",
+                Tempo = QueueSettingsValue.Not,
+                Instrumentalness = QueueSettingsValue.Not,
+                Popularity = QueueSettingsValue.Not,
+                DanceAbility = QueueSettingsValue.Not,
+                Valence = QueueSettingsValue.Not,
+            };
         }
         
         private List<ApplicationUserDto> _includedUsers = new List<ApplicationUserDto>();
@@ -18,13 +27,9 @@ namespace Pjfm.WebClient.Services
             set => _includedUsers = value;
         }
 
-        private TopTrackTermFilter _topTrackTermFilter;
+        public TopTrackTermFilter TopTrackTermFilter { get; set; }
 
-        public TopTrackTermFilter TopTrackTermFilter
-        {
-            get => _topTrackTermFilter;
-            set => _topTrackTermFilter = value;
-        }
+        public BrowserQueueSettings BrowserQueueSettings { get; set; }
 
         public void AddIncludedUser(ApplicationUserDto user)
         {
