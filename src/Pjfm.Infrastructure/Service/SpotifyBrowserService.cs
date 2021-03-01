@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Pjfm.Application.AppContexts.Spotify;
@@ -145,6 +144,14 @@ namespace Pjfm.Application.Services
 
             request.RequestUri = new Uri(uriString.ToString());
             
+            return _spotifyHttpClientService.SendClientCredentialsRequest(request);
+        }
+
+        public Task<HttpResponseMessage> GetSpotifyGenres()
+        {
+            var request = new HttpRequestMessage() {Method = HttpMethod.Get, 
+                RequestUri = new Uri("https://api.spotify.com/v1/recommendations/available-genre-seeds")};
+
             return _spotifyHttpClientService.SendClientCredentialsRequest(request);
         }
     }

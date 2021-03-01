@@ -131,7 +131,6 @@ import GenreBrowsingOptionsDisplay from "@/components/ModComponents/GenreBrowsin
         
         get fillerQueueState() {
           const fillerQueueState = this.$store.getters['modModule/getFillerQueueState']
-          console.log(fillerQueueState);
           if (this.activeFillerQueueState === null) {
             this.activeFillerQueueState = fillerQueueState;
           }

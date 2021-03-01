@@ -24,6 +24,7 @@ namespace Pjfm.Application.Services
             TopTracksRequestDto topTracksRequestDto);
 
         Task<HttpResponseMessage> CustomRequest(string userId, string accessToken, Uri nextUri);
-        public Task<HttpResponseMessage> GetRecommendations(RecommendationsSettings settings);
+        Task<HttpResponseMessage> GetRecommendations(RecommendationsSettings settings);
+        Task<HttpResponseMessage> GetSpotifyGenres();
     }
 }

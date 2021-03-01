@@ -3,7 +3,21 @@
     <div class="text-h6 my-3">Genre-browsing opties</div>
     <v-row justify="center">
       <v-col class="col-6">
-        <v-select label="Genre" outlined></v-select>
+        <v-autocomplete
+            v-model="browserQueueSettings.genre"
+            :loading="genresLoading"
+            :items="genres"
+            :search-input.sync="searchInput"
+            cache-items
+            class="mx-4"
+            flat
+            hide-no-data
+            hide-details
+            label="Genre"
+            solo-inverted
+            dark
+            outlined
+        ></v-autocomplete>
       </v-col>
       <v-col class="col-6">
         <v-select 
@@ -74,6 +88,7 @@ import Component from "vue-class-component";
 import Vue from "vue";
 import {browserQueueSettings} from "@/common/types";
 import {AxiosResponse} from "axios";
+import spotifyGenres from "@/common/spotifyGenres";
 
 @Component({
   name: "GenreBrowsingOptionsDisplay"
@@ -88,6 +103,17 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
       { text: "maximaal", value: 5 },
     ]
   
+    private searchInput: string | null = null;
+    private genres: string[] = [];
+    private genresLoading: boolean = false;
+    
+    created(){
+      this.$axios.get("api/playback/mod/spotifyGenres")
+          .then((response: AxiosResponse) => {
+            this.genres = response.data.genres;
+          });
+    }
+    
     private currentQueueSettings: browserQueueSettings | null = null;
     private sendMessage: string | null = null;
     

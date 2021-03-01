@@ -384,6 +384,25 @@ namespace pjfm.Controllers
             _playbackController.SetBrowserQueueSettings(settings);
             return Ok();
         }
+
+        /// <summary>
+        /// Gets the genreSeeds of the spotify api
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("mod/spotifyGenres")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public async Task<IActionResult> GetSpotifyGenres()
+        {
+            var response = await _spotifyBrowserService.GetSpotifyGenres();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return Ok(json);
+            }
+
+            return StatusCode((int) response.StatusCode);
+        }
         
         private TrackDto SerializeTrackOfResponse(string trackResponseContent)
         {
