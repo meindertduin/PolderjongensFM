@@ -8,10 +8,11 @@
         chips
         clearable
         item-text="title"
-        label="Your favorite hobbies"
+        label="Geselecteerde tracks"
         multiple
         prepend-icon="mdi-filter-variant"
         solo
+        outlined
         >
         <template v-slot:selection="{ attrs, item, select, selected }">
           <v-chip
@@ -21,8 +22,7 @@
               @click="select"
               @click:close="remove(item)"
           >
-            <strong>{{ item }}</strong>&nbsp;
-            <span>(interest)</span>
+            <strong>{{ item.title }} : {{ item.artists.join(", ")}}</strong>&nbsp;
           </v-chip>
         </template>
         </v-combobox> 
@@ -39,8 +39,9 @@
             item-text="title"
             label="Zoek nummers seed"
             placeholder="Start typen om te zoeken"
-            prepend-icon="mdi-search"
+            prepend-icon="mdi-magnify"
             return-object
+            outlined
         ></v-autocomplete>
       </v-col>
     </v-row>
@@ -153,6 +154,11 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     private tracksQuery: string | null = null;
     private selectedTrack: trackDto | null = null;
     
+    @Watch("selectedTrack")
+    onSelectedTrackChange(newValue: string) {
+      this.selectedTracks.push(newValue);
+    }
+    
     private selectedTracks: Array<trackDto> = [];
     
     created(){
@@ -205,6 +211,11 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
         this.tracks = response.data;
         this.tracks.forEach(track => track.title = track.title + ": " + track.artists.join(", "))
       }).finally(() => this.isLoading = false);
+    }
+    
+    remove(track: trackDto) {
+      this.selectedTracks.splice(this.selectedTracks.indexOf(track), 1);
+      this.selectedTracks = [...this.selectedTracks];
     }
 }
 </script>
