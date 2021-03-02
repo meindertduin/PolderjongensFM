@@ -239,7 +239,8 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     applySettings():void{
       if (this.currentQueueSettings === null) return;
       if (this.currentSeedAmount > 5) return;
-      
+
+      this.browserQueueSettings.genres = this.selectedGenres;
       this.browserQueueSettings.seedTracks = this.selectedTracks.map(track => track.id);
       this.browserQueueSettings.seedArtists = this.selectedTracks.map(track => track.mainArtistId);
 
