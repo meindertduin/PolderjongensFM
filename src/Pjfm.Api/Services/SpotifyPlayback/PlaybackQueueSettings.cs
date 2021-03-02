@@ -11,7 +11,7 @@ namespace Pjfm.WebClient.Services
             TopTrackTermFilter = TopTrackTermFilter.AllTerms;
             BrowserQueueSettings = new BrowserQueueSettings()
             {
-                Genre = "rock",
+                Genres = new []{ "rock" },
                 Tempo = QueueSettingsValue.Not,
                 Instrumentalness = QueueSettingsValue.Not,
                 Popularity = QueueSettingsValue.Not,

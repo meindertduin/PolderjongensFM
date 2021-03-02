@@ -20,7 +20,7 @@
               :input-value="selected"
               close
               @click="select"
-              @click:close="remove(item)"
+              @click:close="removeTrack(item)"
           >
             <strong>{{ item.title }} : {{ item.artists.join(", ")}}</strong>&nbsp;
           </v-chip>
@@ -46,9 +46,33 @@
       </v-col>
     </v-row>
     <v-row justify="center">
+      <v-col class="col-12">
+        <v-combobox
+            v-model="selectedGenres"
+            chips
+            clearable
+            label="Geselecteerde tracks"
+            multiple
+            prepend-icon="mdi-filter-variant"
+            solo
+            outlined
+        >
+          <template v-slot:selection="{ attrs, item, select, selected }">
+            <v-chip
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeTrack(item)"
+            >
+              <strong>{{ item }}</strong>&nbsp;
+            </v-chip>
+          </template>
+        </v-combobox>
+      </v-col>
       <v-col class="col-6">
         <v-autocomplete
-            v-model="browserQueueSettings.genre"
+            v-model="selectedGenre"
             :loading="genresLoading"
             :items="genres"
             :search-input.sync="searchInput"
@@ -153,13 +177,21 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     
     private tracksQuery: string | null = null;
     private selectedTrack: trackDto | null = null;
+    private selectedTracks: Array<trackDto> = [];
     
     @Watch("selectedTrack")
     onSelectedTrackChange(newValue: trackDto) {
       this.selectedTracks.push(newValue);
     }
     
-    private selectedTracks: Array<trackDto> = [];
+    private selectedGenre: string | null = null;
+    private selectedGenres: string[] = [];
+
+    @Watch("selectedGenre")
+    onSelectedGenreChange(newValue: string) {
+      this.selectedGenres.push(newValue);
+    }
+    
     
     created(){
       // @ts-ignore
@@ -219,9 +251,13 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
       }).finally(() => this.isLoading = false);
     }
     
-    remove(track: trackDto) {
+    removeTrack(track: trackDto) {
       this.selectedTracks.splice(this.selectedTracks.indexOf(track), 1);
       this.selectedTracks = [...this.selectedTracks];
+    }
+    
+   removeGenre(genre: string) {
+      this.selectedGenres = this.selectedGenres.filter((g: string) => g !== genre);
     }
 }
 </script>

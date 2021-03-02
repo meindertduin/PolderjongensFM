@@ -4,7 +4,7 @@ namespace Pjfm.WebClient.Services
 {
     public class BrowserQueueSettings
     {
-        public string Genre { get; set; }
+        public string[] Genres { get; set; }
         public string[] SeedTracks { get; set; }
         public string[] SeedArtists { get; set; }
         public QueueSettingsValue Tempo { get; set; }

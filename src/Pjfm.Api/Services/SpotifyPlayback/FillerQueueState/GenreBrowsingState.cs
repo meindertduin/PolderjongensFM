@@ -59,7 +59,7 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
             return new RecommendationsSettings()
             {
                 Limit = amount,
-                SeedGenres = settings.Genre,
+                SeedGenres = String.Join(",", settings.Genres),
                 SeedArtists = String.Join(",", settings.SeedArtists),
                 SeedTracks = String.Join(",", settings.SeedTracks),
                 MinTempo = tempoValues.Min,

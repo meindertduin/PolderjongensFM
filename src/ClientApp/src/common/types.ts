@@ -54,7 +54,7 @@ export interface playbackSettings {
 }
 
 export interface browserQueueSettings {
-    genre: string,
+    genres: string[],
     seedTracks: string[]
     seedArtists: string[],
     tempo: queueSettingsValue,
