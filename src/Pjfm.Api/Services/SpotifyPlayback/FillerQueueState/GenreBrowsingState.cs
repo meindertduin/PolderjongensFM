@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pjfm.Application.AppContexts.Spotify;
@@ -44,7 +43,7 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
 
                 return Response.Ok("retrieving tracks was succesfull", tracks);
             }
-            
+
             return Response.Fail<List<TrackDto>>("failed to retrieve tracks");
         }
 
@@ -63,7 +62,6 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
                 Limit = amount,
                 SeedGenres = String.Join(",", settings.Genres.Distinct()),
                 SeedArtists = String.Join(",", settings.SeedArtists.Distinct()),
-                SeedTracks = String.Join(",", settings.SeedTracks.Distinct()),
                 MinTempo = tempoValues.Min,
                 MaxTempo = tempoValues.Max,
                 TargetTempo = tempoValues.Target,

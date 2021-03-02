@@ -1,6 +1,8 @@
 ﻿<template>
   <div>
     <div class="text-h6 my-3">Genre-browsing opties</div>
+    
+    <div :class="`${currentSeedAmount <= 5? 'orange--text': 'red--text'}`">{{ currentSeedAmount }}/5 seeds gebruikt</div>
     <v-row justify="center">
       <v-col class="col-12">
         <v-combobox
@@ -186,7 +188,9 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     
     @Watch("selectedTrack")
     onSelectedTrackChange(newValue: trackDto) {
-      this.selectedTracks.push(newValue);
+      if (!this.selectedTracks.includes(newValue)) {
+        this.selectedTracks.push(newValue);
+      }
     }
     
     private selectedGenre: string | null = null;
@@ -194,7 +198,9 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
 
     @Watch("selectedGenre")
     onSelectedGenreChange(newValue: string) {
-      this.selectedGenres.push(newValue);
+      if(!this.selectedGenres.includes(newValue)) {
+        this.selectedGenres.push(newValue);
+      }
     }
   
     created(){
@@ -226,8 +232,13 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
       return settings;
     }
     
+    get currentSeedAmount():number {
+      return this.selectedTracks.length + this.selectedGenres.length;
+    }
+    
     applySettings():void{
       if (this.currentQueueSettings === null) return;
+      if (this.currentSeedAmount > 5) return;
       
       this.browserQueueSettings.seedTracks = this.selectedTracks.map(track => track.id);
       this.browserQueueSettings.seedArtists = this.selectedTracks.map(track => track.mainArtistId);
