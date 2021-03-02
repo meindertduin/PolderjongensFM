@@ -8,6 +8,7 @@ using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using pjfm.Models;
+using Pjfm.WebClient.Services.FillerQueueState;
 using Pjfm.WebClient.Services.PlaybackStateCommands;
 
 namespace Pjfm.WebClient.Services
@@ -127,12 +128,23 @@ namespace Pjfm.WebClient.Services
             return _playbackQueue.TryRemoveUserFromIncludedUsers(user);
         }
 
+        public void SetFillerQueueState(FillerQueueType fillerQueueType)
+        {
+            _playbackQueue.SetFillerQueueState(fillerQueueType);
+            NotifyChangePlaybackSettings();
+        }
+
+        public void SetBrowserQueueSettings(BrowserQueueSettings settings)
+        {
+            _playbackQueue.SetBrowserQueueSettings(settings);
+        }
+
         public void DequeueTrack(string trackId)
         {
-            var dequeueResult = _playbackQueue.TryDequeueTrack(trackId);
+            _playbackQueue.TryDequeueTrack(trackId);
             NotifyChangePlaybackInfo();
         }
-        
+
         private void NotifyChangePlaybackInfo()
         {
             var infoModelFactory = new PlaybackInfoFactory(this);
@@ -178,17 +190,15 @@ namespace Pjfm.WebClient.Services
         }
         public PlaybackSettingsDto GetPlaybackSettings()
         {
-            PlaybackState currentPlaybackState = PlaybackState.RequestPlaybackState;
-            
-            // get the current playbackState
-            if (IPlaybackController.CurrentPlaybackState is DefaultPlaybackState)
-                currentPlaybackState = PlaybackState.DefaultPlaybackState;
-            if (IPlaybackController.CurrentPlaybackState is UserRequestPlaybackState)
-                currentPlaybackState = PlaybackState.RequestPlaybackState;
-            if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
-                currentPlaybackState = PlaybackState.RandomRequestPlaybackState;
-            if (IPlaybackController.CurrentPlaybackState is RoundRobinPlaybackState)
-                currentPlaybackState = PlaybackState.RoundRobinPlaybackState;
+            PlaybackState currentPlaybackState = IPlaybackController.CurrentPlaybackState switch
+            {
+                // get the current playbackState
+                DefaultPlaybackState _ => PlaybackState.DefaultPlaybackState,
+                UserRequestPlaybackState _ => PlaybackState.RequestPlaybackState,
+                RandomRequestPlaybackState _ => PlaybackState.RandomRequestPlaybackState,
+                RoundRobinPlaybackState _ => PlaybackState.RoundRobinPlaybackState,
+                _ => PlaybackState.RequestPlaybackState
+            };
 
             // get the maxRequestPerUser amount
             var maxRequestsPerUser = IPlaybackController.CurrentPlaybackState != null
@@ -202,6 +212,8 @@ namespace Pjfm.WebClient.Services
                 PlaybackState = currentPlaybackState,
                 IncludedUsers = _playbackQueue.IncludedUsers,
                 MaxRequestsPerUser = maxRequestsPerUser,
+                BrowserQueueSettings = _playbackQueue.GetBrowserQueueSettings(),
+                FillerQueueState = _playbackQueue.GetFillerQueueState(),
             };
 
             return playbackSettings;

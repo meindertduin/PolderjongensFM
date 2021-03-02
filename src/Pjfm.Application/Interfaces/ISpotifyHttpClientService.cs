@@ -5,7 +5,8 @@ namespace Pjfm.Domain.Interfaces
 {
     public interface ISpotifyHttpClientService
     {
-        Task<HttpResponseMessage> SendAuthenticatedRequest(HttpRequestMessage requestMessage, string userId,
+        Task<HttpResponseMessage> SendAccessTokenRequest(HttpRequestMessage requestMessage, string userId,
             string accessToken);
+        Task<HttpResponseMessage> SendClientCredentialsRequest(HttpRequestMessage requestMessage);
     }
 }

@@ -7,24 +7,37 @@
             <v-row>
                 <v-col>
                     <v-card class="pa-2">
+                      <v-select :items="fillerQueueStates" v-model="activeFillerQueueState" outlined :value="fillerQueueState" label="FillerQueue staat"></v-select>
+                      <div v-if="activeFillerQueueState === 0">
+                        <div class="text-h6 my-3">TopTracks Opties</div>
                         <div class="selects-container">
-                            <div class="text-h6 ma-2">Termijn</div>
-                            <v-slider
-                                    v-model="selectedTerm"
-                                    :tick-labels="terms"
-                                    :value="playbackTermFilter"
-                                    :max="5"
-                                    step="1"
-                                    ticks="always"
-                                    tick-size="4"
-                            ></v-slider>
+                          <div class="text-h6 ma-2">Termijn</div>
+                          <v-slider
+                              v-model="selectedTerm"
+                              :tick-labels="terms"
+                              :value="playbackTermFilter"
+                              :max="5"
+                              step="1"
+                              ticks="always"
+                              tick-size="4"
+                          ></v-slider>
                         </div>
-                        <div class="text-h6 ma-2">Staat</div>
-                        <v-select :items="stateItems" v-model="selectedState" :value="playbackState" outlined label="Playback staat"></v-select>
-                        <div class="text-h6 ma-2">Max requests gebruiker</div>
-                        <v-select :disabled="playbackState === 0" :items="maxRequestItems" v-model="maxRequestAmount" :value="maxUserRequestAmount" outlined label="Playback staat"></v-select>
+                      </div>
+                      <div v-else-if="activeFillerQueueState === 1">
+                        <GenreBrowsingOptionsDisplay /> 
+                      </div>
                     </v-card>
                 </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-card class="pa-2">
+                  <div class="text-h6 ma-2">Staat</div>
+                  <v-select :items="stateItems" v-model="selectedState" :value="playbackState" outlined label="Playback staat"></v-select>
+                  <div class="text-h6 ma-2">Max requests gebruiker</div>
+                  <v-select :disabled="playbackState === 0" :items="maxRequestItems" v-model="maxRequestAmount" :value="maxUserRequestAmount" outlined label="Playback staat"></v-select>
+                </v-card>
+              </v-col>
             </v-row>
             <v-row>
                 <v-col class="col-12">
@@ -83,14 +96,17 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import Component from "vue-class-component";
-    import {playbackSettings, playbackState} from "@/common/types";
-    import {Watch} from "vue-property-decorator";
-    import {NavigationFailureType} from "vue-router";
+import Vue from 'vue';
+import Component from "vue-class-component";
+import {fillerQueueType} from "@/common/types";
+import {Watch} from "vue-property-decorator";
+import GenreBrowsingOptionsDisplay from "@/components/ModComponents/GenreBrowsingOptionsDisplay.vue";
 
-    @Component({
+@Component({
         name: "PlaybackSettingsDashboard",
+        components: {
+            GenreBrowsingOptionsDisplay,
+        },
     })
     export default class PlaybackSettingsDashboard extends Vue{
         get playbackOn(){
@@ -113,6 +129,14 @@
           return selectedState;
         }
         
+        get fillerQueueState() {
+          const fillerQueueState = this.$store.getters['modModule/getFillerQueueState']
+          if (this.activeFillerQueueState === null) {
+            this.activeFillerQueueState = fillerQueueState;
+          }
+          return fillerQueueState;
+        }
+        
         get maxUserRequestAmount(){
           const maxRequestAmount = this.$store.getters['modModule/getMaxRequestsPerUser'];
           if (this.maxRequestAmount === null){
@@ -123,13 +147,18 @@
       
         private isPlaying:boolean = false;
         private selectedTerm: number = 0;
+        
         private terms :any[] = ['short', 'short-med', 'med', 'med-long', 'long', 'all'];
         private stateItems :any[] = [
             {text: 'Dj-mode', value: 0}, 
             {text: 'wachtrij-mode', value: 1}, 
             {text: 'random-mode', value: 2}, 
             {text: 'round-robin', value: 3},
-          ]
+          ];
+        private fillerQueueStates: any[] = [
+          { text: 'Gebruikers Top Tracks', value: 0 },
+          { text: 'Genre Browsing', value: 1 },
+        ]
       
         private maxRequestItems: any[] = [
           {text: "1", value: 1},
@@ -144,6 +173,7 @@
         private showConfirmNotification :boolean = false;
         
         private selectedState :any | null = null;
+        private activeFillerQueueState: fillerQueueType | null = null;
         
         @Watch("selectedState")
         onSelectedStateChanged(newValue:any, oldValue:any){
@@ -153,6 +183,14 @@
           // @ts-ignore
           this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
               .catch((err:any) => console.log(err));
+        }
+        
+        @Watch("activeFillerQueueState")
+        onActiveFillerQueueChange(newValue: any, oldValue:any){
+          if (oldValue === null) return;
+          if (oldValue === newValue) return;
+
+          // Todo: send request to change fillerQueueState
         }
 
         private maxRequestAmount : number | null = null;

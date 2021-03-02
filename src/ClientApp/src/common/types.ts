@@ -22,18 +22,13 @@ export interface liveChatMessageModel{
 export interface trackDto{
     id: string,
     title: string,
+    mainArtistId: string,
     artists: string[],
     term: number,
     trackType: number,
     songDurationMs: number,
     user: applicationUser,
     message: string,
-}
-
-export interface playbackSettings {
-    isPlaying: boolean,
-    playbackTermFilter: number,
-    playbackState: playbackState,
 }
 
 export enum playbackState{
@@ -54,6 +49,34 @@ export interface playbackSettings {
     includedUsers: Array<applicationUser>,
     playbackState: playbackState,
     maxRequestsPerUser: number,
+    fillerQueueState: fillerQueueType,
+    browserQueueSettings: browserQueueSettings, 
+}
+
+export interface browserQueueSettings {
+    genres: string[],
+    seedTracks: string[]
+    seedArtists: string[],
+    tempo: queueSettingsValue,
+    instrumentalness: queueSettingsValue,
+    popularity: queueSettingsValue,
+    energy: queueSettingsValue,
+    danceAbility: queueSettingsValue,
+    valence: queueSettingsValue,
+}
+
+export enum fillerQueueType {
+    userTopTracks,
+    genreBrowsing
+}
+
+export enum queueSettingsValue {
+    not,
+    minimal,
+    little,
+    average,
+    much,
+    maximal,
 }
 
 export interface userPlaybackInfo {
