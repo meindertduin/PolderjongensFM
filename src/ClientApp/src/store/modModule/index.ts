@@ -51,7 +51,7 @@ const getters = <GetterTree<State, any>>{
 
 const actions = <ActionTree<State, any>>{
     loadIncludedUsers(context){
-        return axios.get('api/playback/mod/include',{
+        return axios.get('playback/mod/include',{
             baseURL: process.env.VUE_APP_API_BASE_URL,
             withCredentials: true,
             headers: {
@@ -64,7 +64,7 @@ const actions = <ActionTree<State, any>>{
             .catch((err) => console.log(err));
     },
     loadUsers(context){
-        return axios.get('api/user/list',{
+        return axios.get('user/list',{
             baseURL: process.env.VUE_APP_API_BASE_URL,
             withCredentials: true,
             headers: {

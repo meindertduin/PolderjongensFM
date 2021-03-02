@@ -196,7 +196,7 @@ export default class SearchBox extends Vue {
     this.loading = true;
 
     // @ts-ignore
-    this.$axios.post(process.env.VUE_APP_API_BASE_URL + `/api/playback/search`, {
+    this.$axios.post(process.env.VUE_APP_API_BASE_URL + `/playback/search`, {
       query: this.query,
       type: 'track'
     }).then((response: AxiosResponse) => {
@@ -243,7 +243,7 @@ export default class SearchBox extends Vue {
     this.playlists.push({ id: "3", name: `${this.userProfile.displayName}'s Top 50 (all-time)`})
 
     // @ts-ignore
-    return this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playlist`).then((playlistResponse: AxiosResponse) => {
+    return this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/playlist`).then((playlistResponse: AxiosResponse) => {
       playlistResponse.data.items.forEach((playlist:any) => {
         this.playlists.push({ id: playlist.id, name: playlist.name})
       })

@@ -62,7 +62,7 @@ export default class QueueTracksList extends Vue {
   
   private removeTrack(trackId: string){
     // @ts-ignore
-    this.$axios.put(`api/playback/mod/dequeueTrack?trackId=${trackId}`);
+    this.$axios.put(`playback/mod/dequeueTrack?trackId=${trackId}`);
   }
 }
 </script>

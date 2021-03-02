@@ -31,7 +31,7 @@ const getters = <GetterTree<State, any>>{
 
 const actions = <ActionTree<State, any>>{
     getUserProfile(context){
-        return axios.get('api/auth/profile')
+        return axios.get('auth/profile')
             .then(({data}) => {
                 const profile:identityProfile = data.data;
                 context.commit('SET_USER_PROFILE', profile)

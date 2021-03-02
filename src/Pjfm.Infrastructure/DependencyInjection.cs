@@ -115,7 +115,7 @@ namespace Pjfm.Infrastructure
             services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/Login";
-                config.LogoutPath = "/api/auth/logout";
+                config.LogoutPath = "/auth/logout";
             });
             
             services.AddAuthorization(options =>

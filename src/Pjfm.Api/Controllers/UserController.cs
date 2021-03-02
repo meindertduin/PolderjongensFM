@@ -8,7 +8,7 @@ using Pjfm.Application.MediatR.Users.Queries;
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/user")]
+    [Route("user")]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;

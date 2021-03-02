@@ -172,7 +172,7 @@ export default class AppSideBar extends Vue{
   
   private forceStopPlayback(){
     // @ts-ignore
-    this.$axios.put('api/playback/forcestop')
+    this.$axios.put('playback/forcestop')
       .catch(() => {});
   }
 

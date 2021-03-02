@@ -66,7 +66,7 @@ export default class AppBottomBar extends Vue{
     if (userSpotifyAuthenticated) {
       this.$store.commit('playbackModule/TOGGLE_PLAYER_TIMER_OVERLAY');
     } else {
-      window.location.href = process.env.VUE_APP_API_BASE_URL + "/api/spotify/account/authenticate"
+      window.location.href = process.env.VUE_APP_API_BASE_URL + "/spotify/account/authenticate"
     }
   }
 

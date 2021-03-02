@@ -151,7 +151,7 @@
           if (oldValue === newValue) return;
           
           // @ts-ignore
-          this.$axios.put(`api/playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
+          this.$axios.put(`playback/mod/setPlaybackState?playbackState=${this.selectedState}`)
               .catch((err:any) => console.log(err));
         }
 
@@ -162,11 +162,11 @@
             try {
                 if (this.isPlaying){
                     // @ts-ignore
-                    await this.$axios.put('api/playback/mod/on');
+                    await this.$axios.put('playback/mod/on');
                 }
                 else{
                     // @ts-ignore
-                    await this.$axios.put('api/playback/mod/off');
+                    await this.$axios.put('playback/mod/off');
                 }
             }
             catch (e) {
@@ -184,12 +184,12 @@
             this.maxRequestAmount = 3;
           }
           // @ts-ignore
-          await this.$axios.put(`api/playback/mod/reset?maxRequestAmount=${this.maxRequestAmount}&term=${this.selectedTerm}`);
+          await this.$axios.put(`playback/mod/reset?maxRequestAmount=${this.maxRequestAmount}&term=${this.selectedTerm}`);
         }
   
         handleSkip(){
           // @ts-ignore
-          this.$axios.put('api/playback/mod/skip');
+          this.$axios.put('playback/mod/skip');
         }
     }
         

@@ -55,7 +55,7 @@
         
         addUser(user: applicationUser){
             // @ts-ignore          
-            this.$axios.post('api/playback/mod/include', user)
+            this.$axios.post('playback/mod/include', user)
                 .then((response:AxiosResponse) => {
                     this.$store.commit('modModule/ADD_INCLUDED_USER', user);
                     this.searchUsersResult = this.searchUsersResult.filter(x => x.id !== user.id);

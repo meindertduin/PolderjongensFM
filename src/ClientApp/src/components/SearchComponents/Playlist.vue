@@ -155,7 +155,7 @@ export default class Playlist extends Vue {
 
   private getPlaylist(){
     // @ts-ignore
-    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playlist/tracks?playlistId=${this.playlistId}`).then((results: AxiosResponse) => {
+    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/playlist/tracks?playlistId=${this.playlistId}`).then((results: AxiosResponse) => {
       results.data.results.forEach((trackResponse:any) => {
         trackResponse.items.forEach((track:any) => {
           this.tracks.push({
@@ -189,7 +189,7 @@ export default class Playlist extends Vue {
     }
     
     // @ts-ignore
-    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playlist/top-tracks?term=${termString}`).then((trackResponse: AxiosResponse) => {
+    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/playlist/top-tracks?term=${termString}`).then((trackResponse: AxiosResponse) => {
       trackResponse.data.items.forEach((track:any) => {
         this.tracks.push({
           name: track.name,

@@ -34,7 +34,7 @@
 
         excludeUser(user: applicationUser){
             // @ts-ignore
-            this.$axios.post("api/playback/mod/exclude", user)
+            this.$axios.post("playback/mod/exclude", user)
                 .then(() => {
                     this.$store.commit('modModule/REMOVE_INCLUDED_USER', user);
                 })

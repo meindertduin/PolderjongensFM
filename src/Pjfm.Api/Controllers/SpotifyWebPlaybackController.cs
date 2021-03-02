@@ -22,7 +22,7 @@ using Pjfm.WebClient.Services;
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/playback")]
+    [Route("playback")]
     public class SpotifyWebPlaybackController : ControllerBase
     {
         private readonly IPlaybackController _playbackController;

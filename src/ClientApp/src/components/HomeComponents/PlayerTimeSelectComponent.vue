@@ -87,7 +87,7 @@ export default class PlayerTimeSelectComponent extends Vue {
   
   created(){
     // @ts-ignore
-    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playback/devices`)
+    this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/playback/devices`)
       .then(({data}:{data:Array<playbackDevice> | null}) => {
          if (data){
            this.userDevices = data.filter(d => !d.isPrivateSession && !d.isRestricted);

@@ -22,7 +22,7 @@ using Serilog;
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/spotify/account")]
+    [Route("spotify/account")]
     public class SpotifyAccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -93,7 +93,7 @@ namespace pjfm.Controllers
                                    "?client_id=ebc49acde46148eda6128d944c067b5d" + 
                                    "&response_type=code" +
                                    $"&state={state}" + 
-                                   $@"&redirect_uri={_configuration["AppUrls:ApiBaseUrl"]}/api/spotify/account/callback" + 
+                                   $@"&redirect_uri={_configuration["AppUrls:ApiBaseUrl"]}/spotify/account/callback" + 
                                    "&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative";
 
             return Redirect(authorizationUrl);

@@ -94,9 +94,9 @@ const actions = <ActionTree<State, any>>{
         let route:string = ""
         
         if (isMod &&  context.rootGetters['userSettingsModule/getMakeRequestAsMod']){
-            route = `/api/playback/mod/request/${request.trackId}`;
+            route = `/playback/mod/request/${request.trackId}`;
         } else{
-            route = `api/playback/request/${request.trackId}`;
+            route = `/playback/request/${request.trackId}`;
         }
         if (request.message !== undefined){
             route += `?message=${request.message}`

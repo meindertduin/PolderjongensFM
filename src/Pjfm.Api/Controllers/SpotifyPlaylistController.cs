@@ -6,15 +6,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
-using Pjfm.Application.Test.Queries;
 
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("api/playlist")]
+    [Route("playlist")]
     public class SpotifyPlaylistController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
