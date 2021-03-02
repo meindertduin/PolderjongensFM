@@ -5,6 +5,8 @@ namespace Pjfm.WebClient.Services
     public class BrowserQueueSettings
     {
         public string Genre { get; set; }
+        public string[] SeedTracks { get; set; }
+        public string[] SeedArtists { get; set; }
         public QueueSettingsValue Tempo { get; set; }
         public QueueSettingsValue Instrumentalness { get; set; }
         public QueueSettingsValue Popularity { get; set; }

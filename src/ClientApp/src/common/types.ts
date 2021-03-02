@@ -22,6 +22,7 @@ export interface liveChatMessageModel{
 export interface trackDto{
     id: string,
     title: string,
+    mainArtistId: string,
     artists: string[],
     term: number,
     trackType: number,
@@ -54,6 +55,8 @@ export interface playbackSettings {
 
 export interface browserQueueSettings {
     genre: string,
+    seedTracks: string[]
+    seedArtists: string[],
     tempo: queueSettingsValue,
     instrumentalness: queueSettingsValue,
     popularity: queueSettingsValue,

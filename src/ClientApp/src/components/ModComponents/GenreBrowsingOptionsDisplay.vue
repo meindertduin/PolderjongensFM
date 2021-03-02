@@ -155,13 +155,14 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     private selectedTrack: trackDto | null = null;
     
     @Watch("selectedTrack")
-    onSelectedTrackChange(newValue: string) {
+    onSelectedTrackChange(newValue: trackDto) {
       this.selectedTracks.push(newValue);
     }
     
     private selectedTracks: Array<trackDto> = [];
     
     created(){
+      // @ts-ignore
       this.$axios.get("api/playback/mod/spotifyGenres")
           .then((response: AxiosResponse) => {
             this.genres = response.data.genres;
@@ -183,6 +184,10 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     
     applySettings():void{
       if (this.currentQueueSettings === null) return; 
+      this.browserQueueSettings.seedTracks = this.selectedTracks.map(track => track.id);
+      this.browserQueueSettings.seedArtists = this.selectedTracks.map(track => track.mainArtistId);
+      
+      // @ts-ignore
       this.$axios.post("api/playback/mod/browserQueueSettings", this.browserQueueSettings)
         .then((response:AxiosResponse) => {
           if (response.status === 200) {
@@ -203,7 +208,8 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
       if (this.isLoading) return;
 
       this.isLoading = true;
-      
+     
+      // @ts-ignore
       this.$axios.post(process.env.VUE_APP_API_BASE_URL + `/api/playback/search`, {
         query: newValue,
         type: 'track'

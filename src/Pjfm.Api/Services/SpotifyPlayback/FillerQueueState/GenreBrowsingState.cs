@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -59,8 +60,8 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
             {
                 Limit = amount,
                 SeedGenres = settings.Genre,
-                SeedArtists = "0sfWl1dWLgEtMy9oFnNoDA",
-                SeedTracks = "3Op2bVsGwXrHxWs7XhR5bX",
+                SeedArtists = String.Join(",", settings.SeedArtists),
+                SeedTracks = String.Join(",", settings.SeedTracks),
                 MinTempo = tempoValues.Min,
                 MaxTempo = tempoValues.Max,
                 TargetTempo = tempoValues.Target,
