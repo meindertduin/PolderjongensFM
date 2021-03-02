@@ -2,6 +2,49 @@
   <div>
     <div class="text-h6 my-3">Genre-browsing opties</div>
     <v-row justify="center">
+      <v-col class="col-12">
+        <v-combobox
+        v-model="selectedTracks"
+        chips
+        clearable
+        item-text="title"
+        label="Your favorite hobbies"
+        multiple
+        prepend-icon="mdi-filter-variant"
+        solo
+        >
+        <template v-slot:selection="{ attrs, item, select, selected }">
+          <v-chip
+              v-bind="attrs"
+              :input-value="selected"
+              close
+              @click="select"
+              @click:close="remove(item)"
+          >
+            <strong>{{ item }}</strong>&nbsp;
+            <span>(interest)</span>
+          </v-chip>
+        </template>
+        </v-combobox> 
+      </v-col>
+      <v-col class="col-12">
+        <v-autocomplete
+            v-model="selectedTrack"
+            :items="tracks"
+            :loading="isLoading"
+            :search-input.sync="tracksQuery"
+            color="white"
+            hide-no-data
+            hide-selected
+            item-text="title"
+            label="Zoek nummers seed"
+            placeholder="Start typen om te zoeken"
+            prepend-icon="mdi-search"
+            return-object
+        ></v-autocomplete>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
       <v-col class="col-6">
         <v-autocomplete
             v-model="browserQueueSettings.genre"
@@ -86,8 +129,9 @@
 <script lang="ts">
 import Component from "vue-class-component";
 import Vue from "vue";
-import {browserQueueSettings} from "@/common/types";
+import {browserQueueSettings, trackDto} from "@/common/types";
 import {AxiosResponse} from "axios";
+import {Watch} from "vue-property-decorator";
 
 @Component({
   name: "GenreBrowsingOptionsDisplay"
@@ -106,6 +150,11 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     private genres: string[] = [];
     private genresLoading: boolean = false;
     
+    private tracksQuery: string | null = null;
+    private selectedTrack: trackDto | null = null;
+    
+    private selectedTracks: Array<trackDto> = [];
+    
     created(){
       this.$axios.get("api/playback/mod/spotifyGenres")
           .then((response: AxiosResponse) => {
@@ -115,6 +164,8 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     
     private currentQueueSettings: browserQueueSettings | null = null;
     private sendMessage: string | null = null;
+    private tracks: Array<trackDto> = [];
+    private isLoading: boolean = false;
     
     get browserQueueSettings(): browserQueueSettings {
       const settings = this.$store.getters["modModule/getBrowserQueueSettings"];
@@ -138,6 +189,22 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
       .finally(() => {
         setTimeout(() => { this.sendMessage = null}, 5000);
       });
+    }
+    
+    @Watch("tracksQuery")
+    searchTracks(newValue: string):void {
+      if (newValue.length <= 0) return;
+      if (this.isLoading) return;
+
+      this.isLoading = true;
+      
+      this.$axios.post(process.env.VUE_APP_API_BASE_URL + `/api/playback/search`, {
+        query: newValue,
+        type: 'track'
+      }).then((response: AxiosResponse) => {
+        this.tracks = response.data;
+        this.tracks.forEach(track => track.title = track.title + ": " + track.artists.join(", "))
+      }).finally(() => this.isLoading = false);
     }
 }
 </script>
