@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Application.Interfaces;
 using pjfm.Hubs;
 
 namespace Pjfm.WebClient.Services
@@ -9,12 +10,15 @@ namespace Pjfm.WebClient.Services
     {
         private readonly IPlaybackController _playbackController;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IPlaybackInfoProvider _playbackInfoProvider;
         private IDisposable _unsubscriber;
 
-        public PlaybackInfoTransmitter(IPlaybackController playbackController, IServiceProvider serviceProvider)
+        public PlaybackInfoTransmitter(IPlaybackController playbackController, IServiceProvider serviceProvider,
+            IPlaybackInfoProvider playbackInfoProvider)
         {
             _playbackController = playbackController;
             _serviceProvider = serviceProvider;
+            _playbackInfoProvider = playbackInfoProvider;
             _unsubscriber = _playbackController.SubscribeToPlayingStatus(this);
         }
         
@@ -46,7 +50,7 @@ namespace Pjfm.WebClient.Services
                 var radioHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<RadioHub>>();
                 var djHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<DjHub>>();
                     
-                var infoModelFactory = new PlaybackInfoFactory(_playbackController);
+                var infoModelFactory = new PlaybackInfoFactory(_playbackController, _playbackInfoProvider);
                 var userInfo = infoModelFactory.CreateUserInfoModel();
                 var djInfo = infoModelFactory.CreateUserInfoModel();
 

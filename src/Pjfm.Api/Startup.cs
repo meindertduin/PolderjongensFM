@@ -18,6 +18,7 @@ using Pjfm.Api.Services;
 using Pjfm.Application;
 using Pjfm.Application.Common;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using Pjfm.Infrastructure;
@@ -57,6 +58,7 @@ namespace Pjfm.Api
             
             services.AddTransient<IPlaybackController, PlaybackController>();
             services.AddTransient<IDjHubMessageService, DjHubMessageService>();
+            services.AddTransient<IPlaybackInfoProvider, PlaybackInfoProvider>();
 
             services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
             

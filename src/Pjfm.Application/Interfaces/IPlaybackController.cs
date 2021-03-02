@@ -17,7 +17,6 @@ namespace Pjfm.WebClient.Services
         void TurnOff(PlaybackControllerCommands command);
         void Undo();
         Task SynchWithPlayback(string userId, string spotifyAccessToken, PlaybackDevice playbackDevice);
-        List<ApplicationUserDto> GetIncludedUsers();
         void AddIncludedUser(ApplicationUserDto user);
         bool TryRemoveIncludedUser(ApplicationUserDto user);
         void SetFillerQueueState(FillerQueueType fillerQueueType);
@@ -25,12 +24,6 @@ namespace Pjfm.WebClient.Services
         void DequeueTrack(string trackId);
         Response<bool> AddPriorityTrack(TrackDto track);
         Response<bool> AddSecondaryTrack(TrackDto track, ApplicationUserDto user);
-        List<TrackDto> GetPriorityQueueTracks();
-        List<TrackDto> GetSecondaryQueueTracks();
-        List<TrackDto> GetFillerQueueTracks();
-        Tuple<TrackDto, DateTime> GetPlayingTrackInfo();
-        PlaybackSettingsDto GetPlaybackSettings();
-        bool IsPlaying();
         IDisposable SubscribeToPlayingStatus(IObserver<bool> observer);
     }
 }

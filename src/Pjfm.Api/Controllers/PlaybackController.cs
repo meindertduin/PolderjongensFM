@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Ganss.XSS;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
+using Pjfm.Application.Interfaces;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Enums;
@@ -324,9 +321,9 @@ namespace pjfm.Controllers
         /// </summary>
         [HttpGet("mod/include")]
         [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
-        public IActionResult GetIncludedUsers()
+        public IActionResult GetIncludedUsers([FromServices] IPlaybackInfoProvider playbackInfoProvider)
         {
-            var result = _playbackController.GetIncludedUsers();
+            var result = playbackInfoProvider.GetIncludedUsers();
             return Ok(result);
         }
         

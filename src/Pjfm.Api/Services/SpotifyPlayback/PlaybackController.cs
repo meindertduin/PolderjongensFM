@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Common.Dto;
+using Pjfm.Application.Interfaces;
 using Pjfm.Application.MediatR;
-using Pjfm.Domain.Enums;
 using Pjfm.Domain.Interfaces;
 using pjfm.Hubs;
 using pjfm.Models;
@@ -19,16 +18,18 @@ namespace Pjfm.WebClient.Services
         private readonly ISpotifyPlaybackManager _spotifyPlaybackManager;
         private readonly IHubContext<DjHub> _djHubContext;
         private readonly IHubContext<RadioHub> _radioHubContext;
+        private readonly IPlaybackInfoProvider _playbackInfoProvider;
 
         private ICommand _undoCommand;
 
         public PlaybackController(IPlaybackQueue playbackQueue, ISpotifyPlaybackManager spotifyPlaybackManager,
-            IHubContext<DjHub> djHubContext, IHubContext<RadioHub> radioHubContext)
+            IHubContext<DjHub> djHubContext, IHubContext<RadioHub> radioHubContext, IPlaybackInfoProvider playbackInfoProvider)
         {
             _playbackQueue = playbackQueue;
             _spotifyPlaybackManager = spotifyPlaybackManager;
             _djHubContext = djHubContext;
             _radioHubContext = radioHubContext;
+            _playbackInfoProvider = playbackInfoProvider;
 
             _undoCommand = new NoCommand();
         }
@@ -113,11 +114,6 @@ namespace Pjfm.WebClient.Services
             return _spotifyPlaybackManager.SynchWithCurrentPlayer(userId, spotifyAccessToken, playbackDevice);
         }
 
-        public List<ApplicationUserDto> GetIncludedUsers()
-        {
-            return _playbackQueue.IncludedUsers;
-        }
-
         public void AddIncludedUser(ApplicationUserDto user)
         {
             _playbackQueue.AddUsersToIncludedUsers(user);
@@ -147,7 +143,7 @@ namespace Pjfm.WebClient.Services
 
         private void NotifyChangePlaybackInfo()
         {
-            var infoModelFactory = new PlaybackInfoFactory(this);
+            var infoModelFactory = new PlaybackInfoFactory(this, _playbackInfoProvider);
             var userInfo = infoModelFactory.CreateUserInfoModel();
             var djInfo = infoModelFactory.CreateUserInfoModel();
             
@@ -164,78 +160,9 @@ namespace Pjfm.WebClient.Services
             return IPlaybackController.CurrentPlaybackState.AddSecondaryTrack(track, user);
         }
         
-        public List<TrackDto> GetPriorityQueueTracks()
-        {
-            return _playbackQueue.GetPriorityQueueTracks();
-        }
-        public List<TrackDto> GetSecondaryQueueTracks()
-        {
-            // get secondary tracks of playbackState if not null
-            if (IPlaybackController.CurrentPlaybackState != null)
-            {
-                var secondaryTracks = IPlaybackController.CurrentPlaybackState.GetSecondaryTracks();
-                if (IPlaybackController.CurrentPlaybackState is RandomRequestPlaybackState)
-                {
-                     secondaryTracks.AddRange(_playbackQueue.GetSecondaryQueueTracks());
-                }
-                
-                return secondaryTracks;
-            }
-            
-            return new List<TrackDto>();
-        }
-        public List<TrackDto> GetFillerQueueTracks()
-        {
-            return _playbackQueue.GetFillerQueueTracks();
-        }
-        public PlaybackSettingsDto GetPlaybackSettings()
-        {
-            PlaybackState currentPlaybackState = IPlaybackController.CurrentPlaybackState switch
-            {
-                // get the current playbackState
-                DefaultPlaybackState _ => PlaybackState.DefaultPlaybackState,
-                UserRequestPlaybackState _ => PlaybackState.RequestPlaybackState,
-                RandomRequestPlaybackState _ => PlaybackState.RandomRequestPlaybackState,
-                RoundRobinPlaybackState _ => PlaybackState.RoundRobinPlaybackState,
-                _ => PlaybackState.RequestPlaybackState
-            };
-
-            // get the maxRequestPerUser amount
-            var maxRequestsPerUser = IPlaybackController.CurrentPlaybackState != null
-                ? IPlaybackController.CurrentPlaybackState.GetMaxRequestsPerUser()
-                : 0;
-
-            var playbackSettings = new PlaybackSettingsDto()
-            {
-                IsPlaying = _spotifyPlaybackManager.IsCurrentlyPlaying,
-                PlaybackTermFilter = _playbackQueue.CurrentTermFilter,
-                PlaybackState = currentPlaybackState,
-                IncludedUsers = _playbackQueue.IncludedUsers,
-                MaxRequestsPerUser = maxRequestsPerUser,
-                BrowserQueueSettings = _playbackQueue.GetBrowserQueueSettings(),
-                FillerQueueState = _playbackQueue.GetFillerQueueState(),
-            };
-
-            return playbackSettings;
-        }
-
-        public bool IsPlaying()
-        {
-            return _spotifyPlaybackManager.IsCurrentlyPlaying;
-        }
-        
-        public Tuple<TrackDto, DateTime> GetPlayingTrackInfo()
-        {
-            var result = new Tuple<TrackDto, DateTime>(
-                _spotifyPlaybackManager.CurrentPlayingTrack,
-                _spotifyPlaybackManager.CurrentTrackStartTime);
-
-            return result;
-        }
-
         private void NotifyChangePlaybackSettings()
         {
-            var playbackSettings = GetPlaybackSettings();
+            var playbackSettings = _playbackInfoProvider.GetPlaybackSettings();
             _djHubContext.Clients.All.SendAsync("PlaybackSettings", playbackSettings);
             
             _radioHubContext.Clients.All.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()

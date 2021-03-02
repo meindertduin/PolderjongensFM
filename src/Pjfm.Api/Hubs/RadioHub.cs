@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
+using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Interfaces;
 using pjfm.Models;
 using Pjfm.WebClient.Services;
@@ -21,30 +22,33 @@ namespace pjfm.Hubs
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly IMediator _mediator;
+        private readonly IPlaybackInfoProvider _playbackInfoProvider;
 
 
         public static int ListenersCount = 0;
         
         public RadioHub(UserManager<ApplicationUser> userManager, IPlaybackListenerManager playbackListenerManager, 
-            IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService, IMediator mediator)
+            IPlaybackController playbackController, ISpotifyPlayerService spotifyPlayerService, IMediator mediator,
+            IPlaybackInfoProvider playbackInfoProvider)
         {
             _userManager = userManager;
             _playbackListenerManager = playbackListenerManager;
             _playbackController = playbackController;
             _spotifyPlayerService = spotifyPlayerService;
             _mediator = mediator;
+            _playbackInfoProvider = playbackInfoProvider;
         }
         
         public override async Task OnConnectedAsync()
         {
             // turn playback on if its turned off
-            if (_playbackController.IsPlaying() == false)
+            if (_playbackInfoProvider.IsPlaying() == false)
             {
                 _playbackController.TurnOn(PlaybackControllerCommands.TrackPlayerOnOff);
             }
             
             // send caller updated playback info
-            var infoModelFactory = new PlaybackInfoFactory(_playbackController);
+            var infoModelFactory = new PlaybackInfoFactory(_playbackController, _playbackInfoProvider);
             var userInfo = infoModelFactory.CreateUserInfoModel();
             await Clients.Caller.SendAsync("ReceivePlaybackInfo", userInfo);
 
@@ -58,9 +62,9 @@ namespace pjfm.Hubs
                 await Clients.Caller.SendAsync("SubscribeTime", _playbackListenerManager.GetUserSubscribeTime(user.Id));
             }
             
-            await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackController.GetPlaybackSettings().IsPlaying);
+            await Clients.Caller.SendAsync("ReceivePlayingStatus", _playbackInfoProvider.GetPlaybackSettings().IsPlaying);
             
-            var playbackSettings = _playbackController.GetPlaybackSettings();
+            var playbackSettings = _playbackInfoProvider.GetPlaybackSettings();
             
             await Clients.Caller.SendAsync("PlaybackSettings", new UserPlaybackSettingsModel()
             {
