@@ -4,47 +4,78 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Api.Services.SpotifyPlayback.FillerQueueState;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
-using Pjfm.Application.Spotify.Queries;
+using Pjfm.Application.Services;
 using pjfm.Models;
+using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace Pjfm.WebClient.Services
 {
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMediator _mediator;
 
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
         private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>(); 
         
-        private List<TrackDto> _recentlyPlayed = new List<TrackDto>();
-        private TopTrackTermFilter _currentTermFilter;
 
+        private IFillerQueueState _fillerQueueState;
+        private PlaybackQueueSettings _playbackQueueSettings = new PlaybackQueueSettings();
 
-        public List<ApplicationUserDto> IncludedUsers { get; private set; } = new List<ApplicationUserDto>();
-
-        public PlaybackQueue(IServiceProvider serviceProvider)
+        public PlaybackQueue(IServiceProvider serviceProvider, IMediator mediator)
         {
             _serviceProvider = serviceProvider;
-            _currentTermFilter = TopTrackTermFilter.AllTerms;
+            _mediator = mediator;
+            using var scope = _serviceProvider.CreateScope();
+            var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
+            _fillerQueueState = new GenreBrowsingState(this, browserService);
         }
 
         public void Reset()
         {
-            _recentlyPlayed = new List<TrackDto>();
+            _fillerQueueState.Reset();
             _priorityQueue = new Queue<TrackDto>();
             _secondaryQueue = new Queue<TrackRequestDto>();
             _fillerQueue = new Queue<TrackDto>();
         }
 
-        TopTrackTermFilter IPlaybackQueue.CurrentTermFilter
+        TopTrackTermFilter IPlaybackQueue.CurrentTermFilter => _playbackQueueSettings.TopTrackTermFilter;
+        public PlaybackQueueSettings PlaybackQueueSettings => _playbackQueueSettings;
+
+        public void SetFillerQueueState(FillerQueueType fillerQueueType)
         {
-            get => _currentTermFilter;
-            set => _currentTermFilter = value;
+            switch (fillerQueueType)
+            {
+                case FillerQueueType.UserTopTracks: 
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
+                    break;
+                case FillerQueueType.GenreBrowsing:
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
+                    _fillerQueueState = new GenreBrowsingState(this, browserService);
+                    break;
+                }
+                default:
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
+                    break;
+            };
         }
-        
+
+        public FillerQueueType GetFillerQueueState()
+        {
+            return _fillerQueueState switch
+            {
+                UsersTopTracksFillerQueueState _ => FillerQueueType.UserTopTracks,
+                GenreBrowsingState _ => FillerQueueType.GenreBrowsing,
+                _ => FillerQueueType.UserTopTracks
+            };
+        }
+
         public async Task SetUsers()
         {
             using var scope = _serviceProvider.CreateScope();
@@ -54,38 +85,40 @@ namespace Pjfm.WebClient.Services
             var membersResult = await mediator.Send(new GetAllPjMembersQuery());
             if (membersResult.Error == false)
             {
-                IncludedUsers = membersResult.Data;
+                _playbackQueueSettings.IncludedUsers = membersResult.Data;
             }
         }
-        
+
+        public void SetBrowserQueueSettings(BrowserQueueSettings settings)
+        {
+            _playbackQueueSettings.BrowserQueueSettings = settings;
+        }
+
+        public BrowserQueueSettings GetBrowserQueueSettings()
+        {
+            return _playbackQueueSettings.BrowserQueueSettings;
+        }
+
         public void AddUsersToIncludedUsers(ApplicationUserDto user)
         {
-            if (IncludedUsers.Select(x => x.Id).Contains(user.Id) == false)
-            {
-                IncludedUsers.Add(user);
-            }
+            _playbackQueueSettings.AddIncludedUser(user);
         }
 
         public bool TryRemoveUserFromIncludedUsers(ApplicationUserDto user)
         {
-            var item = IncludedUsers.SingleOrDefault(x => x.Id == user.Id);
-            if (item != null)
-            {
-                IncludedUsers.Remove(item);
-                return true;
-            }
-
-            return false;
+            return _playbackQueueSettings.TryRemoveIncludedUser(user);
         }
         
         public int RecentlyPlayedCount()
         {
-            return _recentlyPlayed.Count;
+            return _fillerQueueState.GetRecentlyPlayedAmount();
         }
-        
+
+        public List<ApplicationUserDto> IncludedUsers => _playbackQueueSettings.IncludedUsers;
+
         public void SetTermFilter(TopTrackTermFilter termFilter)
         {
-            _currentTermFilter = termFilter;
+            _playbackQueueSettings.TopTrackTermFilter = termFilter;
         }
 
         public bool TryDequeueTrack(string trackId)
@@ -229,29 +262,20 @@ namespace Pjfm.WebClient.Services
                 nextTrack = _fillerQueue.Dequeue();
             }
             
-            _recentlyPlayed.Add(nextTrack);
+            _fillerQueueState.AddRecentlyPlayed(nextTrack);
             
             return nextTrack;
         }
         public async Task AddToFillerQueue(int amount)
         {
-            using var scope = _serviceProvider.CreateScope();
-            
-            var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            
-            // gets random tracks of included users
-            var result = await _mediator.Send(new GetRandomTopTrackQuery()
+            var result = await _fillerQueueState.RetrieveFillerTracks(amount);
+            if (result.Error == false)
             {
-                NotIncludeTracks = _recentlyPlayed,
-                RequestedAmount = amount,
-                TopTrackTermFilter = _currentTermFilter.ConvertToTopTrackTerms(),
-                IncludedUsersId = IncludedUsers.Select(x => x.Id).ToArray()
-            });
-                
-            // adds queried tracks to the fillerQueue
-            foreach (var fillerTrack in result.Data)
-            {
-                _fillerQueue.Enqueue(fillerTrack);
+                // adds queried tracks to the fillerQueue
+                foreach (var fillerTrack in result.Data)
+                {
+                    _fillerQueue.Enqueue(fillerTrack);
+                }
             }
         }
         

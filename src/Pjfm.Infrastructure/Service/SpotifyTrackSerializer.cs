@@ -52,6 +52,7 @@ namespace Pjfm.Infrastructure.Service
             {
                 Title = track.name,
                 Artists = artistNames.ToArray(),
+                MainArtistId = track.artists[0].id,
                 TrackType = TrackType.RequestedTrack,
                 Id = track.id,
                 SongDurationMs = track.duration_ms,
