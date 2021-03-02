@@ -25,6 +25,7 @@ namespace Pjfm.Application.Services
 
         Task<HttpResponseMessage> CustomRequest(string userId, string accessToken, Uri nextUri);
         Task<HttpResponseMessage> GetRecommendations(RecommendationsSettings settings);
+        Task<HttpResponseMessage> ServerGetMultipleTracks(string[] trackIds);
         Task<HttpResponseMessage> GetSpotifyGenres();
     }
 }

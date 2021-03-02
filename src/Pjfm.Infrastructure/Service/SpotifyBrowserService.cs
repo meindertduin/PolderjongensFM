@@ -142,6 +142,17 @@ namespace Pjfm.Application.Services
             return _spotifyHttpClientService.SendClientCredentialsRequest(request);
         }
 
+        public Task<HttpResponseMessage> ServerGetMultipleTracks(string[] trackIds)
+        {
+            var request = new HttpRequestMessage() {Method = HttpMethod.Get};
+
+            var requestUri = new StringBuilder("https://api.spotify.com/v1/tracks?ids=");
+            requestUri.Append(String.Join(",", trackIds));
+
+            request.RequestUri = new Uri(requestUri.ToString());
+            return _spotifyHttpClientService.SendClientCredentialsRequest(request);
+        }
+
         public Task<HttpResponseMessage> GetSpotifyGenres()
         {
             var request = new HttpRequestMessage() {Method = HttpMethod.Get, 

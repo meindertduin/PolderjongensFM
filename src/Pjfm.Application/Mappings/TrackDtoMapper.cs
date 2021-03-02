@@ -24,6 +24,7 @@ namespace Pjfm.Application.Mappings
                     Id = track.id,
                     Title = track.name,
                     TrackType = TrackType.UserTopTrack,
+                    MainArtistId = track.artists[0].id,
                     Artists = artistNames.ToArray(),
                     SongDurationMs = track.duration_ms,
                 }); 

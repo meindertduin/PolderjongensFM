@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pjfm.Application.AppContexts.Spotify;
@@ -59,9 +61,9 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
             return new RecommendationsSettings()
             {
                 Limit = amount,
-                SeedGenres = String.Join(",", settings.Genres),
-                SeedArtists = String.Join(",", settings.SeedArtists),
-                SeedTracks = String.Join(",", settings.SeedTracks),
+                SeedGenres = String.Join(",", settings.Genres.Distinct()),
+                SeedArtists = String.Join(",", settings.SeedArtists.Distinct()),
+                SeedTracks = String.Join(",", settings.SeedTracks.Distinct()),
                 MinTempo = tempoValues.Min,
                 MaxTempo = tempoValues.Max,
                 TargetTempo = tempoValues.Target,

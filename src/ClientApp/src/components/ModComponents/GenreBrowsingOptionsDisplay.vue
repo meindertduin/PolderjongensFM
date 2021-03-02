@@ -12,6 +12,7 @@
         multiple
         prepend-icon="mdi-filter-variant"
         solo
+        readonly
         outlined
         >
         <template v-slot:selection="{ attrs, item, select, selected }">
@@ -46,15 +47,16 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-col class="col-12">
+      <v-col class="col-6">
         <v-combobox
             v-model="selectedGenres"
             chips
             clearable
-            label="Geselecteerde tracks"
+            label="Geselecteerde genres"
             multiple
             prepend-icon="mdi-filter-variant"
             solo
+            readonly
             outlined
         >
           <template v-slot:selection="{ attrs, item, select, selected }">
@@ -63,7 +65,7 @@
                 :input-value="selected"
                 close
                 @click="select"
-                @click:close="removeTrack(item)"
+                @click:close="removeGenre(item)"
             >
               <strong>{{ item }}</strong>&nbsp;
             </v-chip>
@@ -83,9 +85,20 @@
             hide-details
             label="Genre"
             solo-inverted
+            prepend-icon="mdi-magnify"
             dark
             outlined
         ></v-autocomplete>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col class="col-6">
+        <v-select
+            v-model="browserQueueSettings.valence"
+            :items="selectableValues"
+            label="Valenciteit"
+            outlined
+        ></v-select>
       </v-col>
       <v-col class="col-6">
         <v-select 
@@ -133,15 +146,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="col-6">
-        <v-select
-            v-model="browserQueueSettings.valence"
-            :items="selectableValues"
-            label="Valenciteit"
-            outlined
-        ></v-select>
-      </v-col>
-      <v-col class="col-6">
+      <v-col class="col-12">
         <div v-if="sendMessage !== null" class="orange--text">
           {{sendMessage}}
         </div>
@@ -191,8 +196,7 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     onSelectedGenreChange(newValue: string) {
       this.selectedGenres.push(newValue);
     }
-    
-    
+  
     created(){
       // @ts-ignore
       this.$axios.get("api/playback/mod/spotifyGenres")
@@ -207,18 +211,27 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
     private isLoading: boolean = false;
     
     get browserQueueSettings(): browserQueueSettings {
-      const settings = this.$store.getters["modModule/getBrowserQueueSettings"];
+      const settings: browserQueueSettings = this.$store.getters["modModule/getBrowserQueueSettings"];
       if (this.currentQueueSettings === null) {
         this.currentQueueSettings = settings;
+        this.selectedGenres = settings.genres;
+        
+        if (settings.seedTracks.length > 0){
+          // @ts-ignore
+          this.$axios
+              .get(`track/multiple?trackIds=${settings.seedTracks.join(",")}`)
+              .then((response: AxiosResponse) => this.selectedTracks = response.data);
+        }
       }
       return settings;
     }
     
     applySettings():void{
-      if (this.currentQueueSettings === null) return; 
+      if (this.currentQueueSettings === null) return;
+      
       this.browserQueueSettings.seedTracks = this.selectedTracks.map(track => track.id);
       this.browserQueueSettings.seedArtists = this.selectedTracks.map(track => track.mainArtistId);
-      
+
       // @ts-ignore
       this.$axios.post("api/playback/mod/browserQueueSettings", this.browserQueueSettings)
         .then((response:AxiosResponse) => {
