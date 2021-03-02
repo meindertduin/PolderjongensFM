@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Application.Common;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Common.Dto.Queries;
 using Pjfm.Application.Identity;
@@ -18,6 +19,7 @@ using Pjfm.Domain.Interfaces;
 using Pjfm.Domain.ValueObjects;
 using Pjfm.Infrastructure.Service;
 using Pjfm.WebClient.Services;
+using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace pjfm.Controllers
 {
@@ -354,6 +356,52 @@ namespace pjfm.Controllers
                     return BadRequest();
             }
             return Accepted();
+        }
+
+        /// <summary>
+        /// Sets the fillerQueueState in the playbackQueue Class
+        /// </summary>
+        /// <param name="fillerQueueType"></param>
+        /// <returns>Status 200 on accept</returns>
+        [HttpPut("mod/fillerQueueState")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult SetFillerQueueState([FromQuery] FillerQueueType fillerQueueType)
+        {
+            _playbackController.SetFillerQueueState(fillerQueueType);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Sets the browserQueueSettings in the fillerQueueSettings class that is hold
+        /// by the PlaybackQueue Class
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns>Returns 200 on accept</returns>
+        [HttpPost("mod/browserQueueSettings")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public IActionResult SetBrowserQueueSettings([FromBody] BrowserQueueSettings settings)
+        {
+            _playbackController.SetBrowserQueueSettings(settings);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Gets the genreSeeds of the spotify api
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("mod/spotifyGenres")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.Mod)]
+        public async Task<IActionResult> GetSpotifyGenres()
+        {
+            var response = await _spotifyBrowserService.GetSpotifyGenres();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return Ok(json);
+            }
+
+            return StatusCode((int) response.StatusCode);
         }
         
         private TrackDto SerializeTrackOfResponse(string trackResponseContent)

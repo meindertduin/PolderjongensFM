@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Pjfm.Application.AppContexts.Spotify;
 using Pjfm.Application.Common.Dto;
 
 namespace Pjfm.Application.Services
@@ -23,5 +24,8 @@ namespace Pjfm.Application.Services
             TopTracksRequestDto topTracksRequestDto);
 
         Task<HttpResponseMessage> CustomRequest(string userId, string accessToken, Uri nextUri);
+        Task<HttpResponseMessage> GetRecommendations(RecommendationsSettings settings);
+        Task<HttpResponseMessage> ServerGetMultipleTracks(string[] trackIds);
+        Task<HttpResponseMessage> GetSpotifyGenres();
     }
 }

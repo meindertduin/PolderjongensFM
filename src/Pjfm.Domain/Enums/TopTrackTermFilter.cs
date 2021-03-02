@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
 
 namespace Pjfm.WebClient.Services
