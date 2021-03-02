@@ -129,14 +129,9 @@ namespace Pjfm.Application.Services
                 {
                     var name = property.Name.PascalToSnakeCase();
                     string value;
-                    if (property.PropertyType == typeof(decimal?))
-                    {
-                        value = ((decimal) property.GetValue(settings)).ToString(CultureInfo.CreateSpecificCulture("en-us"));
-                    }
-                    else
-                    {
-                        value = property.GetValue(settings)?.ToString();
-                    }
+                    value = property.PropertyType == typeof(decimal?)
+                        ? ((decimal) property.GetValue(settings)).ToString(CultureInfo.CreateSpecificCulture("en-us")) 
+                        : property.GetValue(settings)?.ToString();
                     
                     uriString.Append($"&{name}={value}");
                 }

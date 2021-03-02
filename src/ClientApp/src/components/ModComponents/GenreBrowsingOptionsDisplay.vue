@@ -88,7 +88,6 @@ import Component from "vue-class-component";
 import Vue from "vue";
 import {browserQueueSettings} from "@/common/types";
 import {AxiosResponse} from "axios";
-import spotifyGenres from "@/common/spotifyGenres";
 
 @Component({
   name: "GenreBrowsingOptionsDisplay"

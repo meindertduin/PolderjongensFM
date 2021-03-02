@@ -4,6 +4,7 @@ namespace Pjfm.Application.AppContexts.Spotify
 {
     public class RecommendationsSettings
     {
+        // Warning: Do not rename these values as the name is important for parsing them to spotify Api requests
         public int Limit { get; set; }
         public string SeedArtists { get; set; }
         public string SeedGenres { get; set; }
