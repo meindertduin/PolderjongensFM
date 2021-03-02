@@ -13,13 +13,13 @@ namespace pjfm.Controllers
 {
     [ApiController]
     [Route("playlist")]
-    public class SpotifyPlaylistController : ControllerBase
+    public class PlaylistController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
         private readonly IMediator _mediator;
 
-        public SpotifyPlaylistController(UserManager<ApplicationUser> userManager, ISpotifyBrowserService spotifyBrowserService, IMediator mediator)
+        public PlaylistController(UserManager<ApplicationUser> userManager, ISpotifyBrowserService spotifyBrowserService, IMediator mediator)
         {
             _userManager = userManager;
             _spotifyBrowserService = spotifyBrowserService;

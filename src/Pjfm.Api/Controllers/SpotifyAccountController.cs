@@ -172,6 +172,7 @@ namespace pjfm.Controllers
 
         private void EmptyUnUsedCachedStates()
         {
+            // iterate over each cachedState and remove it if the authenticationTime is expired
             foreach (var state in _cachedStates)
             {
                 var span = DateTime.Now - state.Value.TimeCached;
@@ -198,6 +199,9 @@ namespace pjfm.Controllers
             return Ok(content);
         }
 
+        /// <summary>
+        /// Generates a random State string to prevent XSRF-attacks
+        /// </summary>
         private string GenerateStateString()
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

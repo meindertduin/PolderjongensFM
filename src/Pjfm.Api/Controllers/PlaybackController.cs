@@ -25,7 +25,7 @@ namespace pjfm.Controllers
 {
     [ApiController]
     [Route("playback")]
-    public class SpotifyWebPlaybackController : ControllerBase
+    public class PlaybackController : ControllerBase
     {
         private readonly IPlaybackController _playbackController;
         private readonly ISpotifyBrowserService _spotifyBrowserService;
@@ -35,7 +35,7 @@ namespace pjfm.Controllers
         private readonly ISpotifyPlayerService _spotifyPlayerService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public SpotifyWebPlaybackController(IPlaybackController playbackController,
+        public PlaybackController(IPlaybackController playbackController,
             ISpotifyBrowserService spotifyBrowserService,
             UserManager<ApplicationUser> userManager,
             IPlaybackInfoTransmitter infoTransmitter,
