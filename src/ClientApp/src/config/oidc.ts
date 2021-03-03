@@ -8,7 +8,7 @@ export const oidcSettings : VuexOidcClientSettings = {
     responseType: 'code',
     scope: 'openid profile IdentityServerApi Role',
     postLogoutRedirectUri: `${process.env.VUE_APP_BASE_URL}`,
-    silentRedirectUri: `${process.env.VUE_APP_BASE_URL}/oidc-client-silent-renew.html`,
+    silentRedirectUri: `${process.env.VUE_APP_BASE_URL}/oidc-silent-callback`,
     automaticSilentRenew: true,
     automaticSilentSignin: true,
 }

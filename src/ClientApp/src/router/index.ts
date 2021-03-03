@@ -7,6 +7,7 @@ import OidcCallbackError from "@/views/OidcCallbackError.vue";
 import Search from "@/views/Search.vue";
 import AppView from "@/views/AppView.vue";
 import authMiddleware from "../../authMiddleware";
+import OidcSilentCallback from "@/views/OidcSilentCallback.vue";
 
 Vue.use(VueRouter)
 
@@ -44,6 +45,14 @@ const routes: Array<RouteConfig> = [
       isPublic: true,
     }
   },
+  {
+    path: '/oidc-silent-callback',
+    name: 'OidcSilentCallback',
+    component: OidcSilentCallback,
+    meta: {
+      isPublic: true,
+    }
+  }
 ]
 
 const router = new VueRouter({

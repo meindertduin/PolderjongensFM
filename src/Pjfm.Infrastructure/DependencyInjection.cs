@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using IdentityServer4.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Pjfm.Application.Common.Interfaces;
 using Pjfm.Application.Configuration;
 using Pjfm.Application.Interfaces;
