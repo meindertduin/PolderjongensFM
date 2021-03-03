@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using pjfm.Hubs;
-using pjfm.Models;
-using pjfm.Services;
+using Pjfm.Api.Hubs;
+using Pjfm.Api.Interfaces;
+using Pjfm.Api.Models;
 
 namespace Pjfm.Api.Services
 {

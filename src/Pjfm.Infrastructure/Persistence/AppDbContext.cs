@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Pjfm.Application.Identity;
+using Pjfm.Application.Common.Interfaces;
 using Pjfm.Domain.Entities;
-using Pjfm.Domain.Interfaces;
 
 namespace Pjfm.Infrastructure.Persistence
 {

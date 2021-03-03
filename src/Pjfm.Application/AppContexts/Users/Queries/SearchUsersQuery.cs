@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Interfaces;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.MediatR.Users.Queries
+namespace Pjfm.Application.AppContexts.Users.Queries
 {
     public class SearchUsersQuery : IRequestWrapper<List<ApplicationUserDto>>
     {

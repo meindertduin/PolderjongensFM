@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Enums;
-using pjfm.Models;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback.PlaybackStates
 {
     public class RoundRobinPlaybackState : IPlaybackState, IObserver<bool>
     {

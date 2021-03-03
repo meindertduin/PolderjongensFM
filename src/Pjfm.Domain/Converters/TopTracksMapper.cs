@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
-using Pjfm.Domain.ValueObjects;
+using Pjfm.Domain.Extensions;
 
 namespace Pjfm.Domain.Converters
 {

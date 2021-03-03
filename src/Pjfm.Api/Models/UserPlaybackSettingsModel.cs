@@ -1,6 +1,6 @@
 ﻿using Pjfm.Domain.Enums;
 
-namespace pjfm.Models
+namespace Pjfm.Api.Models
 {
     public class UserPlaybackSettingsModel
     {

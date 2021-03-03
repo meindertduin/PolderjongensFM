@@ -1,6 +1,6 @@
-﻿using Pjfm.Application.Common.Dto;
+﻿using Pjfm.Application.AppContexts.Users;
 
-namespace pjfm.Models
+namespace Pjfm.Application.AppContexts.Tracks
 {
     public class TrackRequestDto
     {

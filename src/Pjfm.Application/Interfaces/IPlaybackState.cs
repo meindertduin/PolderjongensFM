@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.Common.Mediatr;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Application.Interfaces
 {
     public interface IPlaybackState
     {

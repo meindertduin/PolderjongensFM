@@ -5,9 +5,9 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
-using Pjfm.Application.Identity;
+using Pjfm.Domain.Entities;
 
-namespace pjfm.Services
+namespace Pjfm.Infrastructure.Service
 {
     public class ProfileService : IProfileService
     {

@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Pjfm.Application.Auth.Querys;
-using Pjfm.Application.Identity;
-using Pjfm.Application.Services;
-using Pjfm.Domain.Interfaces;
-using Pjfm.WebClient.Services;
+using Pjfm.Application.AppContexts.Auth.Commands;
+using Pjfm.Application.AppContexts.Auth.Querys;
+using Pjfm.Application.Configuration;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Entities;
 using Serilog;
 
-namespace pjfm.Controllers
+namespace Pjfm.Api.Controllers
 {
     [ApiController]
     [Route("auth")]

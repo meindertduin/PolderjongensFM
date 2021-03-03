@@ -1,4 +1,6 @@
-﻿namespace Pjfm.WebClient.Services
+﻿using Pjfm.Application.Common.Interfaces;
+
+namespace Pjfm.Api.Services.SpotifyPlayback.Commands
 {
     public class NoCommand : ICommand
     {

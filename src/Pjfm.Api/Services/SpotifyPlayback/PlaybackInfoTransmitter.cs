@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Api.Hubs;
 using Pjfm.Application.Interfaces;
-using pjfm.Hubs;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class PlaybackInfoTransmitter : IPlaybackInfoTransmitter, IObserver<bool>
     {

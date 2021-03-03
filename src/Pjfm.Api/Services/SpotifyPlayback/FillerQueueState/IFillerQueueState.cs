@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.Common.Mediatr;
 
-namespace Pjfm.WebClient.Services.FillerQueueState
+namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
 {
     public interface IFillerQueueState
     {

@@ -6,14 +6,14 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Common;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
+using Pjfm.Domain.Common;
 using Serilog;
 
-namespace Pjfm.Application.Spotify.Commands
+namespace Pjfm.Application.AppContexts.Users.Commands
 {
     /// <summary>
     /// Class used with mediatr to request a new access-token and refresh-token from spotify api

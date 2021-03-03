@@ -14,18 +14,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Pjfm.Api.Hubs;
+using Pjfm.Api.Interfaces;
+using Pjfm.Api.Models;
 using Pjfm.Api.Services;
+using Pjfm.Api.Services.SpotifyPlayback;
 using Pjfm.Application;
 using Pjfm.Application.Common;
-using Pjfm.Application.Identity;
+using Pjfm.Application.Configuration;
 using Pjfm.Application.Interfaces;
-using Pjfm.Domain.Interfaces;
-using pjfm.Hubs;
+using Pjfm.Application.Mappings;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Persistence;
-using pjfm.Models;
-using pjfm.Services;
-using Pjfm.WebClient.Services;
 using Serilog;
 
 namespace Pjfm.Api

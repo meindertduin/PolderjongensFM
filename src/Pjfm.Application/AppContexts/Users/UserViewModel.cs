@@ -1,4 +1,4 @@
-﻿namespace pjfm.Models
+﻿namespace Pjfm.Application.AppContexts.Users
 {
     public class UserViewModel
     {

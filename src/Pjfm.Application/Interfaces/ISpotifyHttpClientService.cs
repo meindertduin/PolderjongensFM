@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Pjfm.Domain.Interfaces
+namespace Pjfm.Application.Interfaces
 {
     public interface ISpotifyHttpClientService
     {

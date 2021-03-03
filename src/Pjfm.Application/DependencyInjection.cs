@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Pjfm.Application.Auth.Querys;
+using Pjfm.Application.AppContexts.Auth.Commands;
 
 namespace Pjfm.Application
 {

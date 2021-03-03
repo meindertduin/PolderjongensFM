@@ -1,6 +1,6 @@
-﻿using pjfm.Models;
+﻿using Pjfm.Api.Models;
 
-namespace pjfm.Interfaces
+namespace Pjfm.Api.Interfaces
 {
     public interface IPlaybackInfoFactory
     {

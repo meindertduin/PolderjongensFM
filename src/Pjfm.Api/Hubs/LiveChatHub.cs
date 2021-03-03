@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
-using Pjfm.Application.Identity;
+using Pjfm.Api.Models;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Configuration;
 using Pjfm.Domain.Entities;
-using Pjfm.Domain.Interfaces;
-using pjfm.Models;
 
-namespace pjfm.Hubs
+namespace Pjfm.Api.Hubs
 {
     public class LiveChatHub : Hub
     {

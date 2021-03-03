@@ -2,7 +2,7 @@
 using System.Text;
 using System.Web;
 
-namespace Pjfm.Domain.ValueObjects
+namespace Pjfm.Domain.Extensions
 {
     public static class HttpExtensions
     {

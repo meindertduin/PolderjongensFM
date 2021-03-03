@@ -2,11 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.Spotify.Queries;
-using Pjfm.WebClient.Services;
-using Pjfm.WebClient.Services.FillerQueueState;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Tracks.Queries;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Domain.Enums;
 
 namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
 {

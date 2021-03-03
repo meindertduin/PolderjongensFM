@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.Identity
+﻿namespace Pjfm.Application.Configuration
 {
     public struct ApplicationIdentityConstants
     {

@@ -5,15 +5,16 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Common.Dto.Queries;
-using Pjfm.Application.Identity;
+using Pjfm.Api.Models;
+using Pjfm.Api.Services.SpotifyPlayback;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Playback.Queries;
+using Pjfm.Application.Configuration;
 using Pjfm.Application.Interfaces;
-using Pjfm.Domain.Interfaces;
-using pjfm.Models;
-using Pjfm.WebClient.Services;
+using Pjfm.Domain.Entities;
+using Pjfm.Domain.Enums;
 
-namespace pjfm.Hubs
+namespace Pjfm.Api.Hubs
 {
     public class RadioHub : Hub
     {

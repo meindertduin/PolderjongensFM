@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-using Pjfm.Application.AppContexts.Tracks;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
 using Pjfm.Domain.Enums;
 
-namespace Pjfm.Application.Spotify.Queries
+namespace Pjfm.Application.AppContexts.Tracks.Queries
 {
     public class GetRandomTopTrackQuery : IRequestWrapper<List<TrackDto>>
     {

@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.Spotify.Commands
+﻿namespace Pjfm.Application.AppContexts.Users
 {
     public class AccessTokensRequestResult
     {

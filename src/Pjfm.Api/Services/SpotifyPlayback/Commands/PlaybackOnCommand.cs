@@ -1,6 +1,8 @@
-﻿using Pjfm.Domain.Interfaces;
+﻿using Pjfm.Api.Services.SpotifyPlayback.PlaybackStates;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Interfaces;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback.Commands
 {
     public class PlaybackOnCommand : ICommand
     {

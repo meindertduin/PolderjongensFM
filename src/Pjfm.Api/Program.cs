@@ -3,11 +3,10 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Pjfm.Api;
 using Serilog;
 using Serilog.Events;
 
-namespace pjfm
+namespace Pjfm.Api
 {
     public class Program
     {

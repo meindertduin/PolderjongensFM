@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
-using Pjfm.Domain.Interfaces;
-using pjfm.Hubs;
-using pjfm.Models;
+using Pjfm.Api.Hubs;
+using Pjfm.Api.Models;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Entities;
 using Serilog;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class PlaybackListenerManager : IPlaybackListenerManager
     {

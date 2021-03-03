@@ -2,10 +2,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR.Users.Queries;
+using Pjfm.Application.AppContexts.Users.Queries;
+using Pjfm.Application.Configuration;
 
-namespace pjfm.Controllers
+namespace Pjfm.Api.Controllers
 {
     [ApiController]
     [Route("user")]

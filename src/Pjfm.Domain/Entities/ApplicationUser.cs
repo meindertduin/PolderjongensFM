@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
-using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Identity
+namespace Pjfm.Domain.Entities
 {
     public class ApplicationUser : IdentityUser
     {

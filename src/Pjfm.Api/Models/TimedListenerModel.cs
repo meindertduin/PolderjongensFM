@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace pjfm.Models
+namespace Pjfm.Api.Models
 {
     public class TimedListenerModel
     {

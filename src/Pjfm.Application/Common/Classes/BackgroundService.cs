@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 
-namespace Pjfm.Application.Services
+namespace Pjfm.Application.Common.Classes
 {
     public abstract class BackgroundService : IHostedService, IDisposable
     {

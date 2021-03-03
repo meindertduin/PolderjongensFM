@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.Common
+﻿namespace Pjfm.Application.Configuration
 {
     public struct ApplicationConstants
     {

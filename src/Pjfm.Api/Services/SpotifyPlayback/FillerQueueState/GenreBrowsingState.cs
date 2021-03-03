@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pjfm.Application.AppContexts.Spotify;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Interfaces;
 using Pjfm.Application.Mappings;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.Services;
 using Pjfm.Domain.Common;
-using Pjfm.WebClient.Services;
-using Pjfm.WebClient.Services.FillerQueueState;
 
 namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
 {

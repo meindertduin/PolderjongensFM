@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,18 +7,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Application.Services;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
+using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Common;
 using Pjfm.Domain.Converters;
 using Pjfm.Domain.Entities;
-using Pjfm.Domain.Interfaces;
-using Pjfm.Domain.ValueObjects;
 using Serilog;
 
-namespace Pjfm.Application.Spotify.Commands
+namespace Pjfm.Application.AppContexts.Users.Commands
 {
     /// <summary>
     /// used by mediatr to handle updating a user's topTracks with the spotify api

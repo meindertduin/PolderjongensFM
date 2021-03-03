@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Tracks;
 
-namespace pjfm.Models
+namespace Pjfm.Api.Models
 {
     public abstract class PlayerUpdateInfoModel
     {

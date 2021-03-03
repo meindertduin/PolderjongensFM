@@ -8,13 +8,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Pjfm.Application.Identity;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Configuration;
 using Pjfm.Application.Interfaces;
-using Pjfm.Application.Services;
-using Pjfm.Domain.Interfaces;
+using Pjfm.Domain.Entities;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
-using pjfm.Services;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 

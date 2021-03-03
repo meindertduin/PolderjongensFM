@@ -3,13 +3,12 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
 using Pjfm.Application.Configuration;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
-using pjfm.Models;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Auth.Querys
+namespace Pjfm.Application.AppContexts.Auth.Querys
 {
     public class IdentityProfileQuery : IRequestWrapper<IdentityProfileViewModel>
     {

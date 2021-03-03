@@ -1,7 +1,7 @@
-﻿using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
+﻿using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Domain.Entities;
 
-namespace pjfm.Models
+namespace Pjfm.Api.Models
 {
     public class ConnectedUser
     {

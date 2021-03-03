@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
-using Pjfm.Application.Services;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Playlists;
+using Pjfm.Application.Configuration;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Entities;
 
-namespace pjfm.Controllers
+namespace Pjfm.Api.Controllers
 {
     [ApiController]
     [Route("playlist")]

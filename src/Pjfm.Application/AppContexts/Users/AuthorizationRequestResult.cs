@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.Spotify
+﻿namespace Pjfm.Application.AppContexts.Users
 {
     public class AuthorizationRequestResult
     {

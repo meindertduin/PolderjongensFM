@@ -1,6 +1,8 @@
-﻿using Pjfm.Domain.Interfaces;
+﻿using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback.Commands.PlayTermCommands
 {
     public class PlaybackModeAllTermCommand : ICommand
     {

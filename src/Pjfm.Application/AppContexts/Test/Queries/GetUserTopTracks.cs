@@ -1,15 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
 using Pjfm.Domain.Entities;
-using Pjfm.Domain.Interfaces;
 
-namespace Pjfm.Application.Test.Queries
+namespace Pjfm.Application.AppContexts.Test.Queries
 {
     public class GetUserTopTracksQuery : IRequestWrapper<List<TopTrack>>
     {

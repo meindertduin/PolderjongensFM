@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Pjfm.Application.Common.Dto
+namespace Pjfm.Application.AppContexts.Playlists
 {
     public class SpotifyPlaylistDto
     {

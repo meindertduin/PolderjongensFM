@@ -3,12 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Interfaces;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Common.Dto.Queries
+namespace Pjfm.Application.AppContexts.Playback.Queries
 {
     public class GetPlaybackDevicesQuery : IRequestWrapper<List<PlaybackDevice>>
     {

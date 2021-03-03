@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -10,13 +9,13 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Pjfm.Application.Spotify.Commands;
-using Pjfm.Domain.Interfaces;
-using Pjfm.Domain.ValueObjects;
+using Pjfm.Application.AppContexts.Users.Commands;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Extensions;
 using Polly;
 using Polly.Retry;
 
-namespace Pjfm.Application.Services
+namespace Pjfm.Infrastructure.Service
 {
     public class SpotifyHttpClientService : ISpotifyHttpClientService
     {

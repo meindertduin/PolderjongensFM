@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,17 +8,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
 using Pjfm.Application.Configuration;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
 using Pjfm.Domain.Common;
-using Pjfm.Domain.Interfaces;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Spotify.Commands
+namespace Pjfm.Application.AppContexts.Users.Commands
 {
     /// <summary>
     /// used with mediatr to update a users new access token with the users refresh token

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Playlists;
 using Pjfm.Application.AppContexts.Spotify;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Interfaces;
-using Pjfm.Domain.ValueObjects;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Extensions;
 
-namespace Pjfm.Application.Services
+namespace Pjfm.Infrastructure.Service
 {
     public class SpotifyBrowserService : ISpotifyBrowserService
     {

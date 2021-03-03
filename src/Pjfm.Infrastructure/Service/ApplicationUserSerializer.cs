@@ -1,5 +1,5 @@
-﻿using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
+﻿using Pjfm.Application.AppContexts.Users;
+using Pjfm.Domain.Entities;
 
 namespace Pjfm.Infrastructure.Service
 {

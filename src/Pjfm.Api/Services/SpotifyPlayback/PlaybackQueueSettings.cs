@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Spotify;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class PlaybackQueueSettings
     {

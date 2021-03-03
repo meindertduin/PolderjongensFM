@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Tracks;
 using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Common
+namespace Pjfm.Application.Mappings
 {
     public class MappingProfile : Profile
     {

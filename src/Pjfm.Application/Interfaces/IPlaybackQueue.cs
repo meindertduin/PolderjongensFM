@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Pjfm.Application.Common.Dto;
-using pjfm.Models;
-using Pjfm.WebClient.Services.FillerQueueState;
+using Pjfm.Application.AppContexts.Spotify;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Application.Interfaces
 {
     public interface IPlaybackQueue
     {

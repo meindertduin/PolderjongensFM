@@ -3,7 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Pjfm.Domain.ValueObjects
+namespace Pjfm.Domain.Extensions
 {
     public static class HttpRequestMessageExtensions
     {

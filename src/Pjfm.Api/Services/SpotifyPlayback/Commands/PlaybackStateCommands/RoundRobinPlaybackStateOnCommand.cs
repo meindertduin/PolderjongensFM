@@ -1,4 +1,8 @@
-﻿namespace Pjfm.WebClient.Services.PlaybackStateCommands
+﻿using Pjfm.Api.Services.SpotifyPlayback.PlaybackStates;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Interfaces;
+
+namespace Pjfm.Api.Services.SpotifyPlayback.Commands.PlaybackStateCommands
 {
     public class RoundRobinPlaybackStateOnCommand : ICommand
     {

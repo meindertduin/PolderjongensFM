@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
-using Pjfm.Domain.Interfaces;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
 
-namespace Pjfm.Application.Spotify.Commands
+namespace Pjfm.Application.AppContexts.Users.Commands
 {
     /// <summary>
     /// used by mediatr to handle refreshing all users spotify toptracks

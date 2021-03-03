@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using Pjfm.Application.AppContexts.Spotify;
+using Pjfm.Application.AppContexts.Users;
 using Pjfm.Domain.Enums;
-using Pjfm.WebClient.Services;
-using Pjfm.WebClient.Services.FillerQueueState;
 
-namespace Pjfm.Application.Common.Dto
+namespace Pjfm.Application.AppContexts.Playback
 {
     public class PlaybackSettingsDto
     {

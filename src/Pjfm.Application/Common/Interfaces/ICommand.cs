@@ -1,4 +1,4 @@
-﻿namespace Pjfm.WebClient.Services
+﻿namespace Pjfm.Application.Common.Interfaces
 {
     public interface ICommand
     {

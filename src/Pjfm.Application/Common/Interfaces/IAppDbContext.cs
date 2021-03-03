@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Pjfm.Application.Identity;
 using Pjfm.Domain.Entities;
 
-namespace Pjfm.Domain.Interfaces
+namespace Pjfm.Application.Common.Interfaces
 {
     public interface IAppDbContext
     {

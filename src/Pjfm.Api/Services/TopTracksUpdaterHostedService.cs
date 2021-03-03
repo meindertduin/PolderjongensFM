@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Pjfm.Application.Spotify.Commands;
+using Pjfm.Application.AppContexts.Users.Commands;
 using Serilog;
 
-namespace pjfm.Services
+namespace Pjfm.Api.Services
 {
     public class TopTracksUpdaterHostedService : IHostedService, IDisposable
     {

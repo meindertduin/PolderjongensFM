@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Api.Services.SpotifyPlayback.FillerQueueState;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR.Users.Queries;
-using Pjfm.Application.Services;
-using pjfm.Models;
-using Pjfm.WebClient.Services.FillerQueueState;
+using Pjfm.Application.AppContexts.Spotify;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.AppContexts.Users.Queries;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class PlaybackQueue : IPlaybackQueue
     {

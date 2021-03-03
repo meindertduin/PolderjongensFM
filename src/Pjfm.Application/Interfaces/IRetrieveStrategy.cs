@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Pjfm.Domain.Entities;
 
-namespace Pjfm.Domain.Interfaces
+namespace Pjfm.Application.Interfaces
 {
     public interface IRetrieveStrategy
     {

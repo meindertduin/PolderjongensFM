@@ -1,9 +1,8 @@
-﻿using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
+﻿using System.Threading.Tasks;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Application.Interfaces
 {
     public interface IPlaybackListenerManager
     {

@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using Pjfm.Application.Auth.Querys;
-using Pjfm.Application.Identity;
+using Pjfm.Application.AppContexts.Auth.Commands;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.WebClient.Pages.Account
+namespace Pjfm.Api.Pages.Account
 {
     public class Register : PageModel
     {

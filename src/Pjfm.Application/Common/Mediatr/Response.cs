@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.MediatR
+﻿namespace Pjfm.Application.Common.Mediatr
 {
     public static class Response
     {

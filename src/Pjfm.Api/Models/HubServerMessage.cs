@@ -1,4 +1,4 @@
-﻿namespace pjfm.Models
+﻿namespace Pjfm.Api.Models
 {
     public class HubServerMessage
     {

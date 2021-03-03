@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Pjfm.Application.Identity;
 using Pjfm.Domain.Enums;
 
 namespace Pjfm.Domain.Entities

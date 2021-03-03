@@ -3,7 +3,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace Pjfm.Application.Identity
+namespace Pjfm.Application.Configuration
 {
     public static class ApplicationIdentityConfiguration
     {

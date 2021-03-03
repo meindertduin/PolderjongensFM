@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pjfm.WebClient.Services
+﻿namespace Pjfm.Application.AppContexts.Spotify
 {
     public class BrowserQueueSettings
     {

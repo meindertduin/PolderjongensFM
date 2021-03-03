@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Common;
-using Pjfm.Domain.Entities;
-using Pjfm.Domain.Interfaces;
 
-namespace Pjfm.Application.Services
+namespace Pjfm.Infrastructure.Service
 {
     public class SpotifyPlayerService : ISpotifyPlayerService
     {

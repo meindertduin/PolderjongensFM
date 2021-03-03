@@ -1,4 +1,4 @@
-﻿namespace Pjfm.WebClient.Services.FillerQueueState
+﻿namespace Pjfm.Domain.Enums
 {
     public enum FillerQueueType
     {

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Api.Services.SpotifyPlayback.PlaybackStates;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
 using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Enums;
-using Pjfm.Domain.Interfaces;
-using Pjfm.WebClient.Services;
 
 namespace Pjfm.Api.Services
 {

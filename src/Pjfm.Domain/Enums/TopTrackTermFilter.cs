@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Domain.Enums
 {
     public enum TopTrackTermFilter
     {

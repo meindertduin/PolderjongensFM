@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using pjfm.Models;
+using Pjfm.Application.AppContexts.Tracks;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services
 {
     public class RoundRobinTrackRequestDtoList<T> : ICollection
     {

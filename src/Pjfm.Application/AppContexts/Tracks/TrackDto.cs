@@ -1,6 +1,7 @@
-﻿using Pjfm.Domain.Enums;
+﻿using Pjfm.Application.AppContexts.Users;
+using Pjfm.Domain.Enums;
 
-namespace Pjfm.Application.Common.Dto
+namespace Pjfm.Application.AppContexts.Tracks
 {
     public class TrackDto
     {

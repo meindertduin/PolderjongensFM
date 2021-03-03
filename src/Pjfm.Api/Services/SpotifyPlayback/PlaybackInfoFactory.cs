@@ -1,8 +1,8 @@
-﻿using Pjfm.Application.Interfaces;
-using pjfm.Interfaces;
-using pjfm.Models;
+﻿using Pjfm.Api.Interfaces;
+using Pjfm.Api.Models;
+using Pjfm.Application.Interfaces;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class PlaybackInfoFactory : IPlaybackInfoFactory
     {

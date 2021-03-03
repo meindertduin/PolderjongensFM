@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Interfaces;
 using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback.PlaybackStates
 {
     public class DefaultPlaybackState : IPlaybackState
     {

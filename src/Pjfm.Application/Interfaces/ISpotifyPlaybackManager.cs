@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
-using Pjfm.Domain.Entities;
-using Pjfm.WebClient.Services;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Tracks;
 
-namespace Pjfm.Domain.Interfaces
+namespace Pjfm.Application.Interfaces
 {
     public interface ISpotifyPlaybackManager : IObservable<bool>
     {

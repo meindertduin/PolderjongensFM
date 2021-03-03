@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Moq;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Identity;
-using Pjfm.Domain.Interfaces;
-using pjfm.Hubs;
-using Pjfm.WebClient.Services;
+using Pjfm.Api.Hubs;
+using Pjfm.Api.Services.SpotifyPlayback;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Entities;
 using Xunit;
 
 namespace Pjfm.WebClient.UnitTests.ServicesTests

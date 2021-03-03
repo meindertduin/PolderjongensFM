@@ -1,6 +1,6 @@
-﻿using Pjfm.Application.Auth.Querys;
+﻿using Pjfm.Application.AppContexts.Auth.Querys;
 
-namespace pjfm.Models
+namespace Pjfm.Application.AppContexts.Auth
 {
     public class IdentityProfileViewModel
     {

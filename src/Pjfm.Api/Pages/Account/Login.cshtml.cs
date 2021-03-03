@@ -5,9 +5,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using Pjfm.Application.Auth.Querys;
+using Pjfm.Application.AppContexts.Auth.Commands;
 
-namespace Pjfm.WebClient.Pages.Account
+namespace Pjfm.Api.Pages.Account
 {
     public class Login : PageModel
     {

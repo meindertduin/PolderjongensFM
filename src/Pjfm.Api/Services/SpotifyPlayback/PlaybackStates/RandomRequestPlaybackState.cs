@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.MediatR;
-using pjfm.Models;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Interfaces;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback.PlaybackStates
 {
     public class RandomRequestPlaybackState : IPlaybackState, IObserver<bool>
     {

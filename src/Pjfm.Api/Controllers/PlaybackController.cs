@@ -5,20 +5,21 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Application.Common.Dto.Queries;
-using Pjfm.Application.Identity;
+using Pjfm.Api.Services.SpotifyPlayback;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Playback.Queries;
+using Pjfm.Application.AppContexts.Spotify;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.AppContexts.Users.Queries;
+using Pjfm.Application.Configuration;
 using Pjfm.Application.Interfaces;
-using Pjfm.Application.MediatR.Users.Queries;
-using Pjfm.Application.Services;
+using Pjfm.Domain.Entities;
 using Pjfm.Domain.Enums;
-using Pjfm.Domain.Interfaces;
-using Pjfm.Domain.ValueObjects;
+using Pjfm.Domain.Extensions;
 using Pjfm.Infrastructure.Service;
-using Pjfm.WebClient.Services;
-using Pjfm.WebClient.Services.FillerQueueState;
 
-namespace pjfm.Controllers
+namespace Pjfm.Api.Controllers
 {
     [ApiController]
     [Route("playback")]

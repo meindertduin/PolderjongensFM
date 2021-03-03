@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using IdentityServer4.Services;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Auth.Querys
+namespace Pjfm.Application.AppContexts.Auth.Commands
 {
     public class LogoutCommand : IRequestWrapper<string>
     {

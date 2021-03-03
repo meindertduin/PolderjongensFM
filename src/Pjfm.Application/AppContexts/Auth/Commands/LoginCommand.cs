@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Pjfm.Application.Identity;
-using Pjfm.Application.MediatR;
-using Pjfm.Application.MediatR.Wrappers;
+using Pjfm.Application.Common.Mediatr;
+using Pjfm.Application.Common.Mediatr.Wrappers;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.Application.Auth.Querys
+namespace Pjfm.Application.AppContexts.Auth.Commands
 {
     public class LoginCommand : IRequestWrapper<ApplicationUser>
     {

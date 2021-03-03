@@ -3,23 +3,21 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
+using Pjfm.Api.Models;
+using Pjfm.Application.AppContexts.Users.Commands;
+using Pjfm.Application.Common.Interfaces;
 using Pjfm.Application.Configuration;
-using Pjfm.Application.Identity;
-using Pjfm.Application.Services;
-using Pjfm.Application.Spotify.Commands;
-using Pjfm.Domain.Interfaces;
-using pjfm.Models;
+using Pjfm.Application.Interfaces;
+using Pjfm.Domain.Entities;
 using Serilog;
 
-namespace pjfm.Controllers
+namespace Pjfm.Api.Controllers
 {
     [ApiController]
     [Route("spotify/account")]

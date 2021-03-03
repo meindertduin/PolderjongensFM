@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Enums;
+using Pjfm.Application.AppContexts.Tracks;
 
-namespace pjfm.Models
+namespace Pjfm.Api.Models
 {
     public class UserPlaybackInfoModel : PlayerUpdateInfoModel
     {

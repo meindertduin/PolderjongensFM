@@ -4,13 +4,14 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Pjfm.Application.Common.Dto;
-using Pjfm.Domain.Interfaces;
-using pjfm.Models;
-using pjfm.Services;
+using Pjfm.Api.Interfaces;
+using Pjfm.Api.Models;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.Interfaces;
 using Serilog;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class SpotifyPlaybackManager : ISpotifyPlaybackManager
     {

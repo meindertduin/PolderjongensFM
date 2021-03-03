@@ -3,14 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Pjfm.Application.Identity;
+using Pjfm.Application.Configuration;
+using Pjfm.Application.Interfaces;
 using Pjfm.Application.Mappings;
-using Pjfm.Application.Services;
 using Pjfm.Domain.Common;
-using Pjfm.Infrastructure.Service;
 
-namespace pjfm.Controllers
+namespace Pjfm.Api.Controllers
 {
     [ApiController]
     [Route("track")]

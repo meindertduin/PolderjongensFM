@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
 
 namespace Pjfm.Application.Interfaces
 {

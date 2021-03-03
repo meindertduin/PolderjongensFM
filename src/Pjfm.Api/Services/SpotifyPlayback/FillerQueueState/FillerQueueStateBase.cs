@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Tracks;
 
-namespace Pjfm.WebClient.Services.FillerQueueState
+namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
 {
     public class FillerQueueStateBase
     {

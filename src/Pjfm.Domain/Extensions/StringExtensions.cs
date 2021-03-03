@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Pjfm.Domain.ValueObjects
+namespace Pjfm.Domain.Extensions
 {
     public static class StringExtensions
     {

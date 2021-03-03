@@ -1,8 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Application.AppContexts.Playback;
 
-namespace Pjfm.Domain.Interfaces
+namespace Pjfm.Application.Interfaces
 {
     public interface ISpotifyPlayerService
     {

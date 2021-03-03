@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using Pjfm.Application.Identity;
+using Pjfm.Application.Configuration;
+using Pjfm.Domain.Entities;
 
-namespace Pjfm.WebClient.Pages.Account
+namespace Pjfm.Api.Pages.Account
 {
     [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
     public class SetupEmailConfirm : PageModel

@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.Common.Dto
+﻿namespace Pjfm.Application.AppContexts.Playback
 {
     public class PlaylistTracksRequestDto
     {

@@ -1,4 +1,4 @@
-﻿namespace Pjfm.Application.Auth.Querys
+﻿namespace Pjfm.Application.AppContexts.Auth.Querys
 {
     public class UserProfileViewModel
     {

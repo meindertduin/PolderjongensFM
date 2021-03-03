@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace pjfm.Models
+namespace Pjfm.Api.Models
 {
     public class CachedAuthenticationState
     {

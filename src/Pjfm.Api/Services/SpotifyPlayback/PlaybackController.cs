@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Pjfm.Application.Common.Dto;
+using Pjfm.Api.Hubs;
+using Pjfm.Api.Models;
+using Pjfm.Api.Services.SpotifyPlayback.Commands;
+using Pjfm.Api.Services.SpotifyPlayback.Commands.PlaybackStateCommands;
+using Pjfm.Api.Services.SpotifyPlayback.Commands.PlayTermCommands;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Spotify;
+using Pjfm.Application.AppContexts.Tracks;
+using Pjfm.Application.AppContexts.Users;
+using Pjfm.Application.Common.Interfaces;
+using Pjfm.Application.Common.Mediatr;
 using Pjfm.Application.Interfaces;
-using Pjfm.Application.MediatR;
-using Pjfm.Domain.Interfaces;
-using pjfm.Hubs;
-using pjfm.Models;
-using Pjfm.WebClient.Services.FillerQueueState;
-using Pjfm.WebClient.Services.PlaybackStateCommands;
+using Pjfm.Domain.Enums;
 
-namespace Pjfm.WebClient.Services
+namespace Pjfm.Api.Services.SpotifyPlayback
 {
     public class PlaybackController : IPlaybackController
     {

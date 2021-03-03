@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Pjfm.Application.AppContexts.Playback;
+using Pjfm.Application.AppContexts.Playlists;
 using Pjfm.Application.AppContexts.Spotify;
-using Pjfm.Application.Common.Dto;
 
-namespace Pjfm.Application.Services
+namespace Pjfm.Application.Interfaces
 {
     public interface ISpotifyBrowserService
     {

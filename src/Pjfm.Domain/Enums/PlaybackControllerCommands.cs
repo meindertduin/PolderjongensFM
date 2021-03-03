@@ -1,4 +1,4 @@
-﻿namespace Pjfm.WebClient.Services
+﻿namespace Pjfm.Domain.Enums
 {
     public enum PlaybackControllerCommands
     {
