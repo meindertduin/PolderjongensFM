@@ -205,7 +205,7 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
   
     created(){
       // @ts-ignore
-      this.$axios.get("api/playback/mod/spotifyGenres")
+      this.$axios.get("playback/mod/spotifyGenres")
           .then((response: AxiosResponse) => {
             this.genres = response.data.genres;
           });
