@@ -21,6 +21,7 @@ namespace Pjfm.Bff
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureBff(services);
+            ConfigureAuthentication(services);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

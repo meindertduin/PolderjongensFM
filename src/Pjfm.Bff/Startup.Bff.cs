@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,14 +30,6 @@ namespace Pjfm.Bff
 
                 services.AddHttpContextAccessor();
                 services.AddHttpClient();
-            }
-        }
-
-        private static void RunApiProxy(IApplicationBuilder config, string apiServiceUrl, params string[] scopes)
-        {
-            if (string.IsNullOrEmpty(apiServiceUrl))
-            {
-                throw new ArgumentNullException(nameof(apiServiceUrl));
             }
         }
     }

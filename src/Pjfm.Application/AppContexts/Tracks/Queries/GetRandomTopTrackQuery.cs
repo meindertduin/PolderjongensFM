@@ -4,9 +4,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
-using Pjfm.Application.AppContexts.Tracks;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
@@ -34,7 +33,7 @@ namespace Pjfm.Application.Spotify.Queries
         public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request,
             CancellationToken cancellationToken)
         {
-            using (var connection = new MySqlConnection(_configuration["ConnectionStrings:ApplicationDb"]))
+            using (var connection = new SqlConnection(_configuration["ConnectionStrings:ApplicationDb"]))
             {
                 var result = await connection.QueryAsync<dynamic>(
                     GenerateRandomTracksSqlQuery(request.IncludedUsersId.Length > 0), new
