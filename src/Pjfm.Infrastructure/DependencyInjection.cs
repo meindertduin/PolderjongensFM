@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -13,7 +13,6 @@ using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
 using pjfm.Services;
-using Serilog;
 
 namespace Pjfm.Infrastructure
 {
@@ -95,18 +94,16 @@ namespace Pjfm.Infrastructure
                     .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
             }
             
-            identityServiceBuilder.AddDeveloperSigningCredential();
             
-            // TODO: this is temporary commented out
-            // if (webHostEnvironment.IsProduction())
-            // {
-            //     identityServiceBuilder.AddSigningCredential(
-            //         new X509Certificate2(configuration["Crypt:Cert"], configuration["Crypt:Password"]));
-            // }
-            // else
-            // {
-            //     identityServiceBuilder.AddDeveloperSigningCredential();
-            // }
+            if (webHostEnvironment.IsProduction())
+            {
+                identityServiceBuilder.AddSigningCredential(
+                    new X509Certificate2(configuration["Crypt:Cert"], configuration["Crypt:Password"]));
+            }
+            else
+            {
+                identityServiceBuilder.AddDeveloperSigningCredential();
+            }
             
             services.AddLocalApiAuthentication();
 
