@@ -1,13 +1,11 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using IdentityServer4.Services;
+﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Interfaces;
 using Pjfm.Application.Services;
@@ -15,8 +13,6 @@ using Pjfm.Domain.Interfaces;
 using Pjfm.Infrastructure.Persistence;
 using Pjfm.Infrastructure.Service;
 using pjfm.Services;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace Pjfm.Infrastructure
 {
@@ -37,12 +33,11 @@ namespace Pjfm.Infrastructure
             
             services.AddDbContext<AppDbContext>(config =>
             {
-                config.UseMySql(connectionString, 
-                    builder =>
-                    {
-                        builder.MigrationsAssembly("Pjfm.Api");
-                        builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
-                    });
+                config.UseSqlServer(new SqlConnection(connectionString), builder =>
+                {
+                    builder.EnableRetryOnFailure();
+                    builder.MigrationsAssembly("Pjfm.Api");
+                });
             }, ServiceLifetime.Transient);
             
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -77,18 +72,17 @@ namespace Pjfm.Infrastructure
             {
                 identityServiceBuilder.AddConfigurationStore(options =>
                     {
-                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        options.ConfigureDbContext = builder => builder.UseSqlServer(new SqlConnection(connectionString), builder =>
                         {
+                            builder.EnableRetryOnFailure();
                             builder.MigrationsAssembly("Pjfm.Api");
-                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                         });
                     })
                     .AddOperationalStore(options =>
                     {
-                        options.ConfigureDbContext = builder => builder.UseMySql(connectionString, builder =>
+                        options.ConfigureDbContext = builder => builder.UseSqlServer(new SqlConnection(connectionString), builder =>
                         {
                             builder.MigrationsAssembly("Pjfm.Api");
-                            builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                         });
                     });
             }
@@ -99,7 +93,8 @@ namespace Pjfm.Infrastructure
                     .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
                     .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
             }
-
+            
+            
             if (webHostEnvironment.IsProduction())
             {
                 identityServiceBuilder.AddSigningCredential(

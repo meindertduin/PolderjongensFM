@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Interfaces;
 using Pjfm.Infrastructure.Persistence;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace Pjfm.Infrastructure.Service
 {
@@ -22,12 +20,12 @@ namespace Pjfm.Infrastructure.Service
         public DatabaseFacade CreateDatabase()
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            
-            optionsBuilder.UseMySql(_configuration["ConnectionStrings:ApplicationDb"],
+
+            var connectionString = _configuration["ConnectionStrings:ApplicationDb"];
+            optionsBuilder.UseSqlServer(new SqlConnection(connectionString),
                 builder =>
                 {
                     builder.MigrationsAssembly("Pjfm.Api");
-                    builder.ServerVersion(new ServerVersion(new Version(10, 3, 25), ServerType.MariaDb));
                 });
             var context = new AppDbContext(optionsBuilder.Options);
             return context.Database;

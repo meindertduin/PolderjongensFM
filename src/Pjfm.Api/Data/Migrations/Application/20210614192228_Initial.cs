@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Pjfm.WebClient.Data.Migrations.Application
+namespace Pjfm.Api.Data.Migrations.Application
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,16 +25,16 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    Id = table.Column<string>(maxLength: 100, nullable: false),
+                    UserName = table.Column<string>(maxLength: 100, nullable: true),
+                    NormalizedUserName = table.Column<string>(maxLength: 100, nullable: true),
+                    Email = table.Column<string>(maxLength: 200, nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(nullable: false),
                     PasswordHash = table.Column<string>(nullable: true),
                     SecurityStamp = table.Column<string>(nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(maxLength: 50, nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
@@ -43,7 +42,7 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     Member = table.Column<bool>(nullable: true),
-                    DisplayName = table.Column<string>(nullable: true),
+                    DisplayName = table.Column<string>(maxLength: 50, nullable: true),
                     SpotifyAuthenticated = table.Column<bool>(nullable: true),
                     SpotifyRefreshToken = table.Column<string>(nullable: true),
                     SpotifyAccessToken = table.Column<string>(nullable: true)
@@ -58,7 +57,7 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(nullable: true),
                     Message = table.Column<string>(nullable: true),
                     TimeSend = table.Column<DateTime>(nullable: false)
@@ -73,7 +72,7 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -94,7 +93,7 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -179,13 +178,13 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    SpotifyTrackId = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true),
-                    Artists = table.Column<string>(nullable: true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SpotifyTrackId = table.Column<string>(maxLength: 50, nullable: true),
+                    Title = table.Column<string>(maxLength: 100, nullable: true),
+                    Artists = table.Column<string>(maxLength: 200, nullable: true),
                     Term = table.Column<int>(nullable: false),
                     SongDurationMs = table.Column<int>(nullable: false),
-                    ApplicationUserId = table.Column<string>(nullable: true),
+                    ApplicationUserId = table.Column<string>(maxLength: 100, nullable: true),
                     TimeAdded = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -196,7 +195,7 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -208,7 +207,8 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -234,7 +234,8 @@ namespace Pjfm.WebClient.Data.Migrations.Application
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TopTracks_ApplicationUserId",

@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "start": "concurrently npm:start-frontend npm:start-dotnet",
+    "start-dotnet": "cd .. && dotnet watch run --urls https://localhost:5005",
+    "start-frontend": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
   "dependencies": {
     "@microsoft/signalr": "^3.1.12",
     "axios": "^0.21.1",
+    "concurrently": "^6.2.0",
     "core-js": "^3.8.3",
     "oidc-client": "^1.11.5",
     "vue": "^2.6.12",
