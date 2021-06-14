@@ -26,12 +26,12 @@ namespace Pjfm.Infrastructure
 
             services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
             services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
-
+            
             services.AddTransient<IAppDbContext>(provider => provider.GetService<AppDbContext>());
             services.AddTransient<IAppDbContextFactory, DatabaseFactory>();
 
             var connectionString = configuration["ConnectionStrings:ApplicationDb"];
-
+            
             services.AddDbContext<AppDbContext>(config =>
             {
                 config.UseSqlServer(new SqlConnection(connectionString), builder =>
@@ -40,7 +40,7 @@ namespace Pjfm.Infrastructure
                     builder.MigrationsAssembly("Pjfm.Api");
                 });
             }, ServiceLifetime.Transient);
-
+            
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
@@ -69,24 +69,34 @@ namespace Pjfm.Infrastructure
 
             identityServiceBuilder.AddProfileService<ProfileService>();
 
-            identityServiceBuilder.AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = builder => builder.UseSqlServer(new SqlConnection(connectionString),
-                        builder =>
+            if (webHostEnvironment.IsProduction())
+            {
+                identityServiceBuilder.AddConfigurationStore(options =>
+                    {
+                        options.ConfigureDbContext = builder => builder.UseSqlServer(new SqlConnection(connectionString), builder =>
                         {
                             builder.EnableRetryOnFailure();
                             builder.MigrationsAssembly("Pjfm.Api");
                         });
-                })
-                .AddOperationalStore(options =>
-                {
-                    options.ConfigureDbContext = builder =>
-                        builder.UseSqlServer(new SqlConnection(connectionString),
-                            builder => { builder.MigrationsAssembly("Pjfm.Api"); });
-                });
-
+                    })
+                    .AddOperationalStore(options =>
+                    {
+                        options.ConfigureDbContext = builder => builder.UseSqlServer(new SqlConnection(connectionString), builder =>
+                        {
+                            builder.MigrationsAssembly("Pjfm.Api");
+                        });
+                    });
+            }
+            else
+            {
+                identityServiceBuilder
+                    .AddInMemoryIdentityResources(ApplicationIdentityConfiguration.GetIdentityResources())
+                    .AddInMemoryClients(ApplicationIdentityConfiguration.GetClients())
+                    .AddInMemoryApiScopes(ApplicationIdentityConfiguration.GetApiScopes());
+            }
+            
             identityServiceBuilder.AddDeveloperSigningCredential();
-
+            
             // TODO: this is temporary commented out
             // if (webHostEnvironment.IsProduction())
             // {
@@ -97,7 +107,7 @@ namespace Pjfm.Infrastructure
             // {
             //     identityServiceBuilder.AddDeveloperSigningCredential();
             // }
-
+            
             services.AddLocalApiAuthentication();
 
             services.ConfigureApplicationCookie(config =>
@@ -105,11 +115,13 @@ namespace Pjfm.Infrastructure
                 config.LoginPath = "/Account/Login";
                 config.LogoutPath = "/api/auth/logout";
             });
-
+            
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(ApplicationIdentityConstants.Policies.User,
-                    builder => { builder.RequireAuthenticatedUser(); });
+                options.AddPolicy(ApplicationIdentityConstants.Policies.User, builder =>
+                {
+                    builder.RequireAuthenticatedUser();
+                });
                 options.AddPolicy(ApplicationIdentityConstants.Policies.Mod, builder =>
                 {
                     var defaultPolicy = options.DefaultPolicy;
@@ -118,7 +130,7 @@ namespace Pjfm.Infrastructure
                         ApplicationIdentityConstants.Roles.Mod);
                 });
             });
-
+            
             return services;
         }
     }
