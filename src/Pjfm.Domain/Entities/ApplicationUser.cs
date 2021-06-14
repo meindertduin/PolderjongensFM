@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Pjfm.Domain.Entities;
 
@@ -13,9 +11,8 @@ namespace Pjfm.Application.Identity
             DisplayName = userName;
         }
         
-        public ICollection<TopTrack> TopTracks { get; set; }
+        public virtual ICollection<TopTrack> TopTracks { get; set; }
         public bool Member { get; set; }
-        [MaxLength(50)]
         public string DisplayName { get; set; }
         public bool SpotifyAuthenticated { get; set; }
         public string SpotifyRefreshToken { get; set; }
