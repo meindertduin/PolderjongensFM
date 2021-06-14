@@ -39,7 +39,7 @@ namespace Pjfm.Application.Identity
                 new Client
                 {
                     ClientId = "pjfm_web_client",
-                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowedGrantTypes = GrantTypes.Hybrid,
                     
                     RedirectUris = new[]
                     {

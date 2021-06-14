@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
+using ProxyKit;
 
 namespace Pjfm.Bff
 {
@@ -31,6 +35,28 @@ namespace Pjfm.Bff
                 services.AddHttpContextAccessor();
                 services.AddHttpClient();
             }
+        }
+
+        private static void RunProxy(IApplicationBuilder config, string apiServiceUrl, params string[] scopes)
+        {
+            if (string.IsNullOrEmpty(apiServiceUrl))
+            {
+                throw new ArgumentNullException(nameof(apiServiceUrl));
+            }
+            
+            config.RunProxy(async context =>
+            {
+                var forwardContext = context.ForwardTo(apiServiceUrl);
+                forwardContext.AddXForwardedHeaders();
+
+                if (context.User?.Identity?.IsAuthenticated == true)
+                {
+                    var token = await context.GetClientAccessTokenAsync();
+                    forwardContext.UpstreamRequest.SetBearerToken(token);
+                } 
+
+                return await forwardContext.Send();
+            });
         }
     }
 }

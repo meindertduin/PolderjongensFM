@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,17 @@ namespace Pjfm.Bff
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            app.Use(async (context, next) =>
+            {
+                if (!context.User.Identity.IsAuthenticated)
+                {
+                    await context.ChallengeAsync();
+                    return;
+                }
+            
+                await next();
+            });
 
             if (env.IsDevelopment())
             {
