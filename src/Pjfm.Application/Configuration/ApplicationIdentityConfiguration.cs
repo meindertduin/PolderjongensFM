@@ -39,12 +39,13 @@ namespace Pjfm.Application.Identity
                 new Client
                 {
                     ClientId = "pjfm_web_client",
-                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    ClientSecrets = new List<Secret>() { new Secret("test_secret")},
+                    AllowedGrantTypes = GrantTypes.Code,
                     
                     RedirectUris = new[]
                     {
-                        "https://localhost:5005/oidc-callback",
-                        "https://localhost:5005/oidc-client-silent-renew.html",
+                        "https://localhost:5005",
+                        "https://localhost:5005/signin-oidc",
                     },
                     PostLogoutRedirectUris = new[]
                     {
@@ -64,9 +65,8 @@ namespace Pjfm.Application.Identity
                     },
 
                     AlwaysIncludeUserClaimsInIdToken = true,
-                    
-                    RequirePkce = true,
-                    
+
+                    RequirePkce =  true,
                     AllowAccessTokensViaBrowser = true,
                     RequireClientSecret = false,
                 }

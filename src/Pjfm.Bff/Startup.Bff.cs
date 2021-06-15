@@ -37,7 +37,7 @@ namespace Pjfm.Bff
             }
         }
 
-        private static void RunProxy(IApplicationBuilder config, string apiServiceUrl, params string[] scopes)
+        private static void RunApiProxy(IApplicationBuilder config, string apiServiceUrl)
         {
             if (string.IsNullOrEmpty(apiServiceUrl))
             {

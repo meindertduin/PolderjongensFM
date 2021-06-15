@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,9 +21,10 @@ namespace Pjfm.Bff
                 {
                     options.Authority = "https://localhost:5001";
                     options.ClientId = "pjfm_web_client";
+                    options.ClientSecret = "test_secret";
 
                     options.SignedOutRedirectUri = "https://localhost:5005";
-                    options.ResponseType = "code id_token";
+                    options.ResponseType = "code";
                     options.GetClaimsFromUserInfoEndpoint = true;
                     
                     options.Scope.Clear();
@@ -33,6 +33,7 @@ namespace Pjfm.Bff
                     options.Scope.Add("IdentityServerApi");
                     options.Scope.Add("Role");
 
+                    options.UsePkce = true;
                     options.SaveTokens = true;
 
                     options.TokenValidationParameters = new TokenValidationParameters()
@@ -41,16 +42,6 @@ namespace Pjfm.Bff
                         RoleClaimType = "role",
                     };
                 });
-            
-
-            services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
-            {
-                options.Authority = "https://localhost:5001";
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateAudience = true,
-                };
-            });
         }
     }
 }
