@@ -52,7 +52,7 @@ const router = new VueRouter({
   routes: routes,
 })
 
-router.beforeEach(authMiddleware(store, "oidcStore"));
+// router.beforeEach(authMiddleware(store, "oidcStore"));
 
 
 export default router

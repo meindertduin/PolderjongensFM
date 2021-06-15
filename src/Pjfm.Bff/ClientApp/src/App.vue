@@ -48,10 +48,10 @@ export default class App extends Vue{
   }
   
   private async setRadioConnection():Promise<void> {
-    let radioConnection: HubConnection | null = null;
+    let radioConnection: HubConnection | null;
 
     radioConnection = new HubConnectionBuilder()
-        .withUrl(process.env.VUE_APP_API_BASE_URL + "/radio")
+        .withUrl(`${process.env.VUE_APP_API_BASE_URL}/api/radio`)
         .build();
 
     radioConnection.start()
@@ -97,7 +97,7 @@ export default class App extends Vue{
   }
   
   @Watch('accessToken')
-  setAxiosInterceptor(newValue:any, oldValue:any){
+  setAxiosInterceptor(){
     this.$store.dispatch('profileModule/getUserProfile');
   }
 }

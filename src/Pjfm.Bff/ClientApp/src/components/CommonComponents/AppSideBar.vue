@@ -181,7 +181,7 @@ export default class AppSideBar extends Vue{
   }
   
   private songRequestIsAvailable(): boolean {
-    if(!this.oidcAuthenticated) return false; // Login check
+    // if(!this.oidcAuthenticated) return false; // Login check
     if(this.playbackState == 0 && this.isMod == false) return false; // Request mode check
     
     // Add max song request check

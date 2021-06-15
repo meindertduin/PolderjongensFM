@@ -1,4 +1,4 @@
-﻿import axios from '@/plugins/axios';
+﻿import axios from "axios";
 
 import { GetterTree, MutationTree, ActionTree } from "vuex"
 import {applicationUser, identityProfile, trackDto} from "@/common/types";

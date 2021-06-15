@@ -3,12 +3,10 @@ import {
     applicationUser, browserQueueSettings,
     djPlaybackInfo,
     fillerQueueType,
-    modLocalSettings,
     playbackSettings,
     playbackState
 } from "@/common/types";
 import axios from "axios";
-import set = Reflect.set;
 
 class State {
     public playbackInfo: djPlaybackInfo | null = null;
