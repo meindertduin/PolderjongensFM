@@ -225,7 +225,7 @@ export default class GenreBrowsingOptionsDisplay extends Vue {
         if (settings.seedTracks.length > 0){
           // @ts-ignore
           this.$axios
-              .get(`track/multiple?trackIds=${settings.seedTracks.join(",")}`)
+              .get(`api/track/multiple?trackIds=${settings.seedTracks.join(",")}`)
               .then((response: AxiosResponse) => this.selectedTracks = response.data);
         }
       }
