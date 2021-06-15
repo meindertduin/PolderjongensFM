@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Auth.Querys;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
+using Pjfm.Domain.Common;
 using Pjfm.Domain.Interfaces;
 using Pjfm.WebClient.Services;
 using Serilog;
@@ -22,6 +23,7 @@ namespace pjfm.Controllers
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
+        private readonly PjfmPrincipal _principal;
 
         public AuthController(IMediator mediator, IPlaybackListenerManager playbackListenerManager, 
             UserManager<ApplicationUser> userManager, ISpotifyPlayerService spotifyPlayerService)
@@ -30,6 +32,7 @@ namespace pjfm.Controllers
             _playbackListenerManager = playbackListenerManager;
             _userManager = userManager;
             _spotifyPlayerService = spotifyPlayerService;
+            // _principal = new PjfmPrincipal(HttpContext?.User);
         }
 
         /// <summary>

@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR.Users.Queries;
+using Pjfm.Domain.Common;
 
 namespace pjfm.Controllers
 {
@@ -12,10 +15,20 @@ namespace pjfm.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly PjfmPrincipal _principal;
 
         public UserController(IMediator mediator)
         {
             _mediator = mediator;
+            // _principal = new PjfmPrincipal(HttpContext.User);
+        }
+
+        [HttpGet("/me")]
+        public IActionResult GetCurrentUser()
+        {
+            // var roles = _principal.Roles;
+
+            return Ok();
         }
 
         /// <summary>
