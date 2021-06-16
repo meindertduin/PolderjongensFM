@@ -34,6 +34,7 @@ namespace pjfm.Controllers
             var principal = HttpContext.User.GetPjfmPrincipal();
             var responseModel =  new GetUserResponseModel()
             {
+                Id = user.Id,
                 Roles = principal.Roles,
                 Username = user.DisplayName,
                 EmailConfirmed = user.EmailConfirmed,

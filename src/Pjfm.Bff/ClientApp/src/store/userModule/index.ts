@@ -1,5 +1,5 @@
 import {ActionContext, ActionTree, GetterTree, Module, MutationTree} from "vuex";
-import {User} from "@/store/userModule/user";
+import {User, UserRole} from "@/store/userModule/user";
 import axios from "axios";
 
 class UserState {
@@ -7,7 +7,11 @@ class UserState {
 }
 
 const getters: GetterTree<UserState, any> = {
-    user: (state) => state.user,
+    user: (state): User | undefined => state.user,
+    userISMod: (state): boolean => state.user?.roles.includes(UserRole.Mod) ?? false,
+    userEmailConfirmed: (state): boolean => state.user?.emailConfirmed ?? false,
+    userSpotifyAuthenticated: (state): boolean => state.user?.spotifyAuthenticated ?? false,
+    userId: (state): string | undefined => state.user?.id,
 }
 
 const mutations: MutationTree<UserState> = {
