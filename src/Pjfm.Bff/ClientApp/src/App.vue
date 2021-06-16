@@ -1,16 +1,16 @@
 <template>
   <v-app>
-    <AppSideBar />
-    <AppBar />
+    <AppSideBar/>
+    <AppBar/>
     <v-main>
       <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
-    <AppBottomBar />
-    <ModServerMessageHandler v-if="isMod" />
+    <AppBottomBar/>
+    <ModServerMessageHandler v-if="isMod"/>
   </v-app>
-  
+
 </template>
 
 <script lang="ts">
@@ -24,6 +24,7 @@ import ModServerMessageHandler from "@/components/ModComponents/ModServerMessage
 import AppSideBar from "@/components/CommonComponents/AppSideBar.vue";
 import AppBar from "@/components/CommonComponents/AppBar.vue";
 import AppBottomBar from "@/components/CommonComponents/AppBottomBar.vue";
+import axios from "axios";
 
 @Component({
   name: 'App',
@@ -36,18 +37,20 @@ import AppBottomBar from "@/components/CommonComponents/AppBottomBar.vue";
   }
 })
 
-export default class App extends Vue{
-  
-  created(){
+export default class App extends Vue {
+
+  created() {
     this.setUserPreferences();
     this.setRadioConnection();
+
+    this.$store.dispatch('userModule/getUser');
   }
-  
-  get isMod(){
+
+  get isMod() {
     return this.$store.getters['profileModule/isMod'];
   }
-  
-  private async setRadioConnection():Promise<void> {
+
+  private async setRadioConnection(): Promise<void> {
     let radioConnection: HubConnection | null;
 
     radioConnection = new HubConnectionBuilder()
@@ -55,49 +58,50 @@ export default class App extends Vue{
         .build();
 
     radioConnection.start()
-      .then(() => {});
-    
+        .then(() => {
+        });
+
     radioConnection.on("ReceivePlaybackInfo", (playbackInfo: userPlaybackInfo) => {
-        this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo);
-        this.$store.dispatch('profileModule/tryCalculateRequestedAmount');
+      this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo);
+      this.$store.dispatch('profileModule/tryCalculateRequestedAmount');
     });
 
-    radioConnection.on("IsConnected", (connected:boolean) => {
-        this.$store.commit('playbackModule/SET_CONNECTED_STATUS', connected);
+    radioConnection.on("IsConnected", (connected: boolean) => {
+      this.$store.commit('playbackModule/SET_CONNECTED_STATUS', connected);
     });
-    
+
     radioConnection.on("SubscribeTime", ((minutes: number) => {
-      this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);  
+      this.$store.commit('playbackModule/SET_SUBSCRIBE_TIME', minutes);
     }))
-    
-    radioConnection.on("ListenersCountUpdate", ((amount: number)=> {
+
+    radioConnection.on("ListenersCountUpdate", ((amount: number) => {
       this.$store.commit('playbackModule/SET_LISTENERS_COUNT', amount);
     }));
-    
-    radioConnection.on("ReceivePlayingStatus", (isPlaying:boolean) => {
+
+    radioConnection.on("ReceivePlayingStatus", (isPlaying: boolean) => {
       this.$store.commit("playbackModule/SET_PLAYBACK_PLAYING_STATUS", isPlaying);
     });
-    
+
     radioConnection.on("PlaybackSettings", (playbackSettings: userPlaybackSettings) => {
       this.$store.commit("playbackModule/SET_PLAYBACK_SETTINGS", playbackSettings);
       this.$store.dispatch("profileModule/tryCalculateRequestedAmount");
     })
-    
+
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
   }
-  
-  private setUserPreferences():void{
-    const userSettings:userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
+
+  private setUserPreferences(): void {
+    const userSettings: userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
     // @ts-ignore
     this.$vuetify.theme.dark = userSettings.darkMode;
   }
-  
-  get accessToken():string{
+
+  get accessToken(): string {
     return this.$store.state.oidcStore.access_token;
   }
-  
+
   @Watch('accessToken')
-  setAxiosInterceptor(){
+  setAxiosInterceptor() {
     this.$store.dispatch('profileModule/getUserProfile');
   }
 }

@@ -1,12 +1,15 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Application.Common.Extensions;
+using Pjfm.Application.Configuration;
 using Pjfm.Application.Identity;
 using Pjfm.Application.MediatR.Users.Queries;
-using Pjfm.Domain.Common;
+using Pjfm.Domain.ValueObjects;
+using pjfm.Models.Users;
 
 namespace pjfm.Controllers
 {
@@ -15,20 +18,29 @@ namespace pjfm.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly PjfmPrincipal _principal;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(IMediator mediator)
+        public UserController(IMediator mediator, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
-            // _principal = new PjfmPrincipal(HttpContext.User);
+            _userManager = userManager;
         }
 
-        [HttpGet("/me")]
-        public IActionResult GetCurrentUser()
+        [HttpGet("me")]
+        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
+        public async Task<IActionResult> GetCurrentUser()
         {
-            // var roles = _principal.Roles;
-
-            return Ok();
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var principal = HttpContext.User.GetPjfmPrincipal();
+            var responseModel =  new GetUserResponseModel()
+            {
+                Roles = principal.Roles,
+                Username = user.DisplayName,
+                EmailConfirmed = user.EmailConfirmed,
+                SpotifyAuthenticated = principal.SpotifyAuthenticated,
+            };
+            
+            return Ok(responseModel);
         }
 
         /// <summary>
@@ -42,7 +54,7 @@ namespace pjfm.Controllers
                 QueryString = query,
             });
 
-            return Ok(result.Data);    
+            return Ok(result.Data);
         }
 
         /// <summary>
@@ -55,7 +67,7 @@ namespace pjfm.Controllers
             var result = await _mediator.Send(new GetAllPjMembersQuery());
             return Ok(result.Data);
         }
-        
+
         /// <summary>
         /// Gets all user profiles
         /// </summary>

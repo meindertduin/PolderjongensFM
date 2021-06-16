@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Auth.Querys;
+using Pjfm.Application.Common.Classes;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Common;

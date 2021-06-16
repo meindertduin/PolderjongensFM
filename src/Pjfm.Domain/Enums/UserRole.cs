@@ -1,8 +1,8 @@
 ﻿namespace Pjfm.Domain.Enums
 {
-    public enum GebrukerRol
+    public enum UserRole
     {
-        Auth,
+        User,
         Mod,
     }
 }
