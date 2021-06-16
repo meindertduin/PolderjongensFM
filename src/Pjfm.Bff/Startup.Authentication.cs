@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Pjfm.Bff
 {
@@ -12,6 +11,7 @@ namespace Pjfm.Bff
                 {
                     options.DefaultScheme = "cookies";
                     options.DefaultChallengeScheme = "oidc";
+                    options.DefaultSignOutScheme = "oidc";
                 })
                 .AddCookie("cookies", options =>
                 {
@@ -20,27 +20,27 @@ namespace Pjfm.Bff
                 }).AddOpenIdConnect("oidc", options =>
                 {
                     options.Authority = "https://localhost:5001";
+                    
+                    // confidential client using code flow + PKCE + query response mode
                     options.ClientId = "pjfm_web_client";
                     options.ClientSecret = "test_secret";
-
-                    options.SignedOutRedirectUri = "https://localhost:5005";
                     options.ResponseType = "code";
+                    options.ResponseMode = "query";
+                    
                     options.GetClaimsFromUserInfoEndpoint = true;
+                    options.UsePkce = true;
+
+                    // save access and refresh token to enable automatic lifetime management
+                    options.SaveTokens = true;
                     
                     options.Scope.Clear();
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
                     options.Scope.Add("IdentityServerApi");
                     options.Scope.Add("Role");
-
-                    options.UsePkce = true;
-                    options.SaveTokens = true;
-
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        NameClaimType = "name",
-                        RoleClaimType = "role",
-                    };
+                    
+                    // request refresh token
+                    options.Scope.Add("offline_access");
                 });
         }
     }

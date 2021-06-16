@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pjfm.Bff.Internal;
 
 namespace Pjfm.Bff
 {
@@ -37,12 +38,13 @@ namespace Pjfm.Bff
             app.UseRouting();
             app.UseCors();
 
+            app.UseMiddleware<StrictSameSiteExternalAuthenticationMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            // app.Map("/api", config => RunApiProxy(config, Configuration.GetValue<string>("BackendUrl")));
+            app.Map("/api", config => RunApiProxy(config, Configuration.GetValue<string>("BackendUrl")));
 
             app.Use(async (context, next) =>
             {

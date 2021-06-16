@@ -49,7 +49,7 @@ namespace Pjfm.Application.Identity
                     },
                     PostLogoutRedirectUris = new[]
                     {
-                        "https://localhost:5005",
+                        "https://localhost:5005/signout-callback-oidc",
                     },
                     
                     AllowedScopes = new[]
@@ -68,6 +68,7 @@ namespace Pjfm.Application.Identity
 
                     RequirePkce =  true,
                     AllowAccessTokensViaBrowser = true,
+                    AllowOfflineAccess = true,
                     RequireClientSecret = false,
                 }
             };

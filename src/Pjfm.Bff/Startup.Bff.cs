@@ -12,29 +12,30 @@ namespace Pjfm.Bff
     {
         private void ConfigureBff(IServiceCollection services)
         {
+            services.AddProxy();
+            services.AddAccessTokenManagement();
+
+            services.AddControllers();
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+
+            services.AddCors(options =>
             {
-                services.AddControllers();
-                services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
-
-                services.AddCors(options =>
+                options.AddDefaultPolicy(builder =>
                 {
-                    options.AddDefaultPolicy(builder =>
-                    {
-                        builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-                    });
+                    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                 });
+            });
 
-                services.Configure<ForwardedHeadersOptions>(opt =>
-                {
-                    opt.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+            services.Configure<ForwardedHeadersOptions>(opt =>
+            {
+                opt.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
 
-                    opt.KnownNetworks.Clear();
-                    opt.KnownProxies.Clear();
-                });
+                opt.KnownNetworks.Clear();
+                opt.KnownProxies.Clear();
+            });
 
-                services.AddHttpContextAccessor();
-                services.AddHttpClient();
-            }
+            services.AddHttpContextAccessor();
+            services.AddHttpClient();
         }
 
         private static void RunApiProxy(IApplicationBuilder config, string apiServiceUrl)
@@ -43,7 +44,7 @@ namespace Pjfm.Bff
             {
                 throw new ArgumentNullException(nameof(apiServiceUrl));
             }
-            
+
             config.RunProxy(async context =>
             {
                 var forwardContext = context.ForwardTo(apiServiceUrl);
@@ -51,9 +52,9 @@ namespace Pjfm.Bff
 
                 if (context.User?.Identity?.IsAuthenticated == true)
                 {
-                    var token = await context.GetClientAccessTokenAsync();
+                    var token = await context.GetUserAccessTokenAsync();
                     forwardContext.UpstreamRequest.SetBearerToken(token);
-                } 
+                }
 
                 return await forwardContext.Send();
             });
