@@ -99,7 +99,8 @@
         }
         
         private signInOidcClient(){
-            this.$store.dispatch('oidcStore/authenticateOidc');
+          // TODO: navigate to the real login route
+          this.$router.replace('/login')
         }
         
     }

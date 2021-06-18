@@ -23,8 +23,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from "vue-class-component";
-import axios, {AxiosResponse} from 'axios'
-import {applicationUser, trackDto} from "@/common/types";
+import axios from 'axios'
+import {applicationUser} from "@/common/types";
 
 @Component({
   name: "searchUserComponent",
@@ -38,12 +38,7 @@ export default class searchUserComponent extends Vue {
     const loadedUsers: Array<applicationUser> = this.$store.getters['modModule/getLoadedUsers'];
 
     return loadedUsers.filter(u => {
-      const user = includedUsers.find(l => l.id === u.id);
-      if (user) {
-        return false;
-      } else {
-        return true;
-      }
+      return includedUsers.find(l => l.id === u.id) == null;
     })
   }
 
@@ -53,9 +48,8 @@ export default class searchUserComponent extends Vue {
   }
 
   addUser(user: applicationUser) {
-    // @ts-ignore          
     axios.post('api/playback/mod/include', user)
-        .then((response: AxiosResponse) => {
+        .then(() => {
           this.$store.commit('modModule/ADD_INCLUDED_USER', user);
           this.searchUsersResult = this.searchUsersResult.filter(x => x.id !== user.id);
         })
