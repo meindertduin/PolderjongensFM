@@ -47,7 +47,7 @@ export default class App extends Vue {
   }
 
   get isMod() {
-    return this.$store.getters['profileModule/isMod'];
+    return this.$store.getters['userModule/isMod'];
   }
 
   private async setRadioConnection(): Promise<void> {
@@ -63,7 +63,7 @@ export default class App extends Vue {
 
     radioConnection.on("ReceivePlaybackInfo", (playbackInfo: userPlaybackInfo) => {
       this.$store.commit('playbackModule/SET_PLAYBACK_INFO', playbackInfo);
-      this.$store.dispatch('profileModule/tryCalculateRequestedAmount');
+      this.$store.dispatch('userModule/tryCalculateRequestedAmount');
     });
 
     radioConnection.on("IsConnected", (connected: boolean) => {
@@ -84,7 +84,7 @@ export default class App extends Vue {
 
     radioConnection.on("PlaybackSettings", (playbackSettings: userPlaybackSettings) => {
       this.$store.commit("playbackModule/SET_PLAYBACK_SETTINGS", playbackSettings);
-      this.$store.dispatch("profileModule/tryCalculateRequestedAmount");
+      this.$store.dispatch("userModule/tryCalculateRequestedAmount");
     })
 
     this.$store.commit('playbackModule/SET_RADIO_CONNECTION', radioConnection);
@@ -102,7 +102,7 @@ export default class App extends Vue {
 
   @Watch('accessToken')
   setAxiosInterceptor() {
-    this.$store.dispatch('profileModule/getUserProfile');
+    this.$store.dispatch('userModule/getUser');
   }
 }
 </script>

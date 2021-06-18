@@ -46,7 +46,7 @@ export default class Playlist extends Vue {
   
   @Watch("selectedTracks")
   private onSelectedTracksChange(newValue:any, oldValue:any){
-    const isMod:boolean = this.$store.getters['profileModule/isMod'];
+    const isMod:boolean = this.$store.getters['userModule/isMod'];
     
     if (!isMod && newValue.length > this.maxSelectedAmount){
       this.$nextTick(() => {
@@ -62,7 +62,7 @@ export default class Playlist extends Vue {
   }
 
   get userRequestedAmount():number{
-    return this.$store.getters['profileModule/userRequestedAmount'];
+    return this.$store.getters['userModule/userRequestedAmount'];
   }
   
   get maxSelectedAmount(){

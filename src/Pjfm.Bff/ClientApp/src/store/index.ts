@@ -1,7 +1,5 @@
 import Vue from 'vue'
-import Vuex, {ActionTree, GetterTree, MutationTree} from 'vuex'
-import {vuexOidcCreateStoreModule} from "vuex-oidc";
-import {oidcSettings} from "@/config/oidc";
+import Vuex from 'vuex'
 import ProfileModule from "@/store/profileModule";
 import UserSettingsModule from "@/store/userSettingsModule";
 import ModModule from "@/store/modModule";

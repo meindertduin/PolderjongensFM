@@ -33,7 +33,7 @@
   })
   export default class AppView extends Vue {
     get isMod(){
-        return this.$store.getters['profileModule/isMod'];
+        return this.$store.getters['userModule/isMod'];
     }
       
     navigate(uri : string) : void{

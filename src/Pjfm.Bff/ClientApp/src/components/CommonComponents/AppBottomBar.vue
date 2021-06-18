@@ -1,7 +1,7 @@
 ﻿<template>
   <div>
     <!-- Authenticated -->
-    <v-bottom-navigation fixed v-if="oidcAuthenticated">
+    <v-bottom-navigation fixed v-if="userAuthenticated">
       <template>
         <v-row justify="center">
           <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
@@ -51,8 +51,8 @@ export default class AppBottomBar extends Vue{
     return this.$store.getters['playbackModule/getPlayerTimerOverlayActive'];
   }
 
-  get oidcAuthenticated():any|null{
-    return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+  get userAuthenticated():boolean {
+    return this.$store.getters['userModule/userAuthenticated'];
   }
 
   private signInOidcClient(){
@@ -60,7 +60,7 @@ export default class AppBottomBar extends Vue{
   }
   
   private togglePlayerTimerOverlay(){
-    const userSpotifyAuthenticated: boolean = this.$store.getters["profileModule/isSpotifyAuthenticated"];
+    const userSpotifyAuthenticated: boolean = this.$store.getters["userModule/userSpotifyAuthenticated"];
     
     // open playerTimeOverlay only when user is spotify authenticated
     if (userSpotifyAuthenticated) {

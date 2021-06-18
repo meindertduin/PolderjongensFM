@@ -34,8 +34,8 @@
         return this.$store.getters['alertModule/alertId'];
       }
       
-      get oidcAuthenticated(){
-          return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+      get authenticated(){
+          return this.$store.getters['userModule/userAuthenticated'];
       }
 
       get radioConnection(){

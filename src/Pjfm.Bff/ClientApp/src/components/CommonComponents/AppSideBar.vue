@@ -152,11 +152,11 @@ export default class AppSideBar extends Vue{
   }
 
   get isMod(){
-    return this.$store.getters['profileModule/isMod'];
+    return this.$store.getters['userModule/isMod'];
   }
   
   get emailConfirmed():boolean{
-    return this.$store.getters['profileModule/emailConfirmed']
+    return this.$store.getters['userModule/userEmailConfirmed']
   }
   
   private verifyEmail(){

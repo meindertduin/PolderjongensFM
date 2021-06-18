@@ -3,12 +3,13 @@
       app
       clipped-left
   >
-    <v-app-bar-nav-icon @click.stop="toggleDrawer" />
+    <v-app-bar-nav-icon @click.stop="toggleDrawer"/>
     <v-toolbar-title>PJFM</v-toolbar-title>
     <v-spacer></v-spacer>
-    {{screenSize}}
-    <span class="align-bottom overline grey--text" v-if="userProfile != null && this.$vuetify.breakpoint.width > 600">INGELOGD ALS <span class="orange--text">{{userProfile.displayName}}</span></span>
-    <span v-else-if="userProfile != null" class="orange--text">{{userProfile.displayName}}</span>
+    {{ screenSize }}
+    <span class="align-bottom overline grey--text" v-if="user != null && this.$vuetify.breakpoint.width > 600">INGELOGD ALS <span
+        class="orange--text">{{ user.userName }}</span></span>
+    <span v-else-if="user != null" class="orange--text">{{ user.userName }}</span>
     <v-img
         v-if="this.$vuetify.breakpoint.width > 600"
         class="mx-2 float-right"
@@ -23,20 +24,21 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from "vue-class-component";
+import {User} from "@/store/userModule/user";
 
 @Component({
   name: 'AppBar',
 })
-export default class AppBar extends Vue{
-  get userProfile(){
-    return this.$store.getters['profileModule/userProfile'];
+export default class AppBar extends Vue {
+  get user(): User {
+    return this.$store.getters['userModule/user'];
   }
-  
-  get screenSize():number{
+
+  get screenSize(): number {
     return this.$store.getters["userSettingsModule/getScreenSize"];
   }
-  
-  toggleDrawer(){
+
+  toggleDrawer(): void {
     this.$store.commit('userSettingsModule/TOGGLE_SIDE_BAR');
   }
 }

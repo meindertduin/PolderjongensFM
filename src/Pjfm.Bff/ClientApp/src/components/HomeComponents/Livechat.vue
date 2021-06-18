@@ -52,7 +52,7 @@
         }
         
         get oidcAuthenticated(){
-            return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+            return this.$store.getters['userModule/userAuthenticated'];
         }
         
         created(){
