@@ -41,11 +41,13 @@ export default class App extends Vue {
     this.setUserPreferences();
     this.setRadioConnection();
 
-    this.$store.dispatch('userModule/getUser');
+    this.$store.dispatch('userModule/getUser').then(() => {
+      console.log(this.isMod);
+    });
   }
 
   get isMod() {
-    return this.$store.getters['userModule/isMod'];
+    return this.$store.getters['userModule/userIsMod'];
   }
 
   private async setRadioConnection(): Promise<void> {

@@ -176,7 +176,7 @@ export default class SearchBox extends Vue {
   }
 
   get userIsMod(): boolean {
-    return this.$store.getters["userModule/isMod"]
+    return this.$store.getters["userModule/userIsMod"]
   }
 
   get playlistDialogActive(): boolean {

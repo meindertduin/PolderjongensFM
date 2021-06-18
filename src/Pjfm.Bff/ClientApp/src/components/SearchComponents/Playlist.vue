@@ -46,7 +46,7 @@ export default class Playlist extends Vue {
 
   @Watch("selectedTracks")
   private onSelectedTracksChange(newValue: any, oldValue: any) {
-    const isMod: boolean = this.$store.getters['userModule/isMod'];
+    const isMod: boolean = this.$store.getters['userModule/userIsMod'];
 
     if (!isMod && newValue.length > this.maxSelectedAmount) {
       this.$nextTick(() => {

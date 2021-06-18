@@ -60,7 +60,7 @@ export default class QueueTracksList extends Vue {
   }
 
   get isMod(): boolean {
-    return this.$store.getters['userModule/isMod'];
+    return this.$store.getters['userModule/userIsMod'];
   }
 
   private removeTrack(trackId: string) {
