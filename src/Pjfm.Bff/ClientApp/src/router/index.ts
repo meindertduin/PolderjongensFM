@@ -28,22 +28,6 @@ const routes: Array<RouteConfig> = [
       requiresSpotAuth: true,
     }
   },
-  {
-    path: '/oidc-callback',
-    name: 'OidcCallback',
-    component: OidcCallback,
-    meta: {
-      isPublic: true,
-    }
-  },
-  {
-    path: '/signin-oidc-error',
-    name: 'oidcCallbackError',
-    component: OidcCallbackError,
-    meta: {
-      isPublic: true,
-    }
-  },
 ]
 
 const router = new VueRouter({

@@ -90,7 +90,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import JQuery from 'jquery'
 import {alertInfo, trackDto} from "@/common/types";
-import {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "axios";
 import {Watch} from "vue-property-decorator";
 import PlayerTimeSelectComponent from "@/components/HomeComponents/PlayerTimeSelectComponent.vue";
 import Playlist from "@/components/SearchComponents/Playlist.vue";
@@ -201,8 +201,7 @@ export default class SearchBox extends Vue {
 
     this.loading = true;
 
-    // @ts-ignore
-    this.$axios.post(process.env.VUE_APP_API_BASE_URL + `/api/playback/search`, {
+    axios.post('/api/playback/search', {
       query: this.query,
       type: 'track'
     }).then((response: AxiosResponse) => {
@@ -253,8 +252,7 @@ export default class SearchBox extends Vue {
       this.playlists.push({id: "3", name: `${this.user.userName}'s Top 50 (all-time)`})
     }
 
-    // @ts-ignore
-    return this.$axios.get(process.env.VUE_APP_API_BASE_URL + `/api/playlist`).then((playlistResponse: AxiosResponse) => {
+    return axios.get('/api/playlist').then((playlistResponse: AxiosResponse) => {
       playlistResponse.data.items.forEach((playlist: any) => {
         this.playlists.push({id: playlist.id, name: playlist.name})
       })

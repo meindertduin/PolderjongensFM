@@ -32,7 +32,8 @@ const actions: ActionTree<UserState, any> = {
             let userAuthenticated = false;
             if (user != null) {
                 userAuthenticated = true;
-            } 
+            }
+            console.log(user);
             context.commit('SET_USER_AUTHENTICATED', userAuthenticated);
             context.commit('SET_USER', user);
         });
@@ -57,6 +58,8 @@ const actions: ActionTree<UserState, any> = {
 const UserModule: Module<UserState, any> = {
     namespaced: true,
     state: new UserState(),
+    getters: getters,
+    mutations: mutations,
     actions: actions,
 };
 

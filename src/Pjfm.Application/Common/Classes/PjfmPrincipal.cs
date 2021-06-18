@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
-using Pjfm.Application.Identity;
+using Pjfm.Application.Configuration;
 using Pjfm.Domain.Enums;
 
 namespace Pjfm.Application.Common.Classes
@@ -18,7 +18,7 @@ namespace Pjfm.Application.Common.Classes
         public PjfmPrincipal(ClaimsPrincipal principal)
         {
             Roles = GetRolesClaimValues(principal);
-            SpotifyAuthenticated = principal.HasClaim(ApplicationIdentityConstants.Claims.SpAuth, ApplicationIdentityConstants.Roles.Auth);
+            SpotifyAuthenticated = principal.HasClaim(SpotifyIdentityConstants.Claims.SpStatus, SpotifyIdentityConstants.Roles.Auth);
             Principal = principal;
         }
 

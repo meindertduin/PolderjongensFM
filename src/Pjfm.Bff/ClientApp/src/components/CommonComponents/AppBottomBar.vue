@@ -7,7 +7,7 @@
           <v-dialog v-model="playerTimerOverlayActive" persistent max-width="600">
             <PlayerTimeSelectComponent />
           </v-dialog>
-        </v-row>s
+        </v-row>
       </template>
       <v-btn v-if="!playbackConnected" @click="togglePlayerTimerOverlay" block>
         <span>Start</span>
@@ -26,7 +26,6 @@
         <v-icon>mdi-play</v-icon>
       </v-btn>
     </v-bottom-navigation>
-    <!--  -->
   </div>
 </template>
 
@@ -55,8 +54,8 @@ export default class AppBottomBar extends Vue{
     return this.$store.getters['userModule/userAuthenticated'];
   }
 
-  private signInOidcClient(){
-    this.$store.dispatch('oidcStore/authenticateOidc');
+  private signInOidcClient(): void{
+    // TODO: route the user to the login page
   }
   
   private togglePlayerTimerOverlay(){

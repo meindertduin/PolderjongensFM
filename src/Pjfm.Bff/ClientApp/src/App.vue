@@ -24,7 +24,6 @@ import ModServerMessageHandler from "@/components/ModComponents/ModServerMessage
 import AppSideBar from "@/components/CommonComponents/AppSideBar.vue";
 import AppBar from "@/components/CommonComponents/AppBar.vue";
 import AppBottomBar from "@/components/CommonComponents/AppBottomBar.vue";
-import axios from "axios";
 
 @Component({
   name: 'App',
@@ -94,15 +93,6 @@ export default class App extends Vue {
     const userSettings: userSettings = this.$store.getters['userSettingsModule/loadUserSettings'];
     // @ts-ignore
     this.$vuetify.theme.dark = userSettings.darkMode;
-  }
-
-  get accessToken(): string {
-    return this.$store.state.oidcStore.access_token;
-  }
-
-  @Watch('accessToken')
-  setAxiosInterceptor() {
-    this.$store.dispatch('userModule/getUser');
   }
 }
 </script>

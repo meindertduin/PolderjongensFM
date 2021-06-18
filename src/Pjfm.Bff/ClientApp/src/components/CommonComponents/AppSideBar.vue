@@ -98,6 +98,7 @@ import Vue from 'vue';
 import Component from "vue-class-component";
 import {Watch} from "vue-property-decorator";
 import {modLocalSettings} from "@/common/types";
+import axios from "axios";
 
 @Component({
   name: 'AppSideBar',
@@ -171,8 +172,7 @@ export default class AppSideBar extends Vue{
   }
   
   private forceStopPlayback(){
-    // @ts-ignore
-    this.$axios.put('api/playback/forcestop')
+    axios.put('api/playback/forcestop')
       .catch(() => {});
   }
 
