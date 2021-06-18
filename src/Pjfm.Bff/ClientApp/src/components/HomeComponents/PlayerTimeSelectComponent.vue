@@ -84,9 +84,9 @@ export default class PlayerTimeSelectComponent extends Vue {
   ];
 
   private selectedPlaybackTime: timeOption = {text: "30 minuten", minutesAmount: 30};
-
-  get loggedInUserProfile(): User | undefined {
-    return this.$store.getters["userModule/user"];
+  
+  get userAuthenticated(): boolean {
+    return this.$store.getters['userModule/userAuthenticated'];
   }
 
   created() {
@@ -109,8 +109,8 @@ export default class PlayerTimeSelectComponent extends Vue {
   initializePlayerConnection() {
     const selectedMinutes: number = this.selectedPlaybackTime.minutesAmount;
     if (selectedMinutes <= 0) return;
-    // checks before connecting if user is spotify authenticated
-    if (this.loggedInUserProfile != null) {
+    
+    if (this.userAuthenticated) {
       this.connectWithPlayer(selectedMinutes);
     }
   }

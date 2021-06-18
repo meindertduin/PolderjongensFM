@@ -18,7 +18,6 @@ import Vue from 'vue';
 import Component from "vue-class-component";
 import DisplaySettingsItemGroup from "@/components/CommonComponents/DisplaySettingsItemGroup.vue";
 import {userPlaybackInfo, userPlaybackSettings, userSettings} from "@/common/types";
-import {Watch} from "vue-property-decorator";
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 import ModServerMessageHandler from "@/components/ModComponents/ModServerMessageHandler.vue";
 import AppSideBar from "@/components/CommonComponents/AppSideBar.vue";
