@@ -22,7 +22,7 @@
         <!-- refactor to seperate components -->
         <v-tab-item>
           <v-card flat>
-            <div v-if="!loading">
+            <div v-if="!isLoading">
               <v-expansion-panels accordion class="mb-5">
                 <v-expansion-panel
                     v-for="(playlist, i) in this.playlists"
@@ -34,9 +34,9 @@
                 </v-expansion-panel>
               </v-expansion-panels>
             </div>
-            <div class="text-center" v-if="loading">
+            <div class="text-center" v-if="isLoading">
               <v-progress-circular class="ma-4" :size="250" color="orange" indeterminate
-                                   v-if="loading"></v-progress-circular>
+                                   v-if="isLoading"></v-progress-circular>
             </div>
           </v-card>
         </v-tab-item>
@@ -131,14 +131,13 @@ export default class SearchBox extends Vue {
 
   private playlists: Array<any> = [];
 
-  private loading = true;
+  private isLoading = true;
   private tab = null;
 
   private selectedSearchTrackItem: number = 0;
 
   created() {
     this.fetchPlaylists().then(() => {
-      this.loading = false;
     })
 
     window.addEventListener('keydown', this.registerKeyDownEvents);
@@ -176,7 +175,11 @@ export default class SearchBox extends Vue {
   }
 
   get userIsMod(): boolean {
-    return this.$store.getters["userModule/userIsMod"]
+    return this.$store.getters['userModule/userIsMod'];
+  }
+
+  get user(): User | undefined {
+    return this.$store.getters['userModule/userAuthenticated'];
   }
 
   get playlistDialogActive(): boolean {
@@ -188,25 +191,21 @@ export default class SearchBox extends Vue {
   }
 
   get userRequestedAmount(): number {
-    return this.$store.getters['userModule/userRequestedAmount'];
-  }
-
-  get user(): User | undefined {
-    return this.$store.getters['userModule/user'];
+    return this.$store.getters['userModule/getUserRequestedAmount'];
   }
 
   search(force: any) {
     if (!force && this.query.length < 3) return;
-    this.loading = true;
+    this.isLoading = true;
 
-    this.loading = true;
+    this.isLoading = true;
 
     axios.post('/api/playback/search', {
       query: this.query,
       type: 'track'
     }).then((response: AxiosResponse) => {
       this.searchResults = response.data;
-      this.loading = false;
+      this.isLoading = false;
     })
   }
 
@@ -221,7 +220,7 @@ export default class SearchBox extends Vue {
       this.requestMessage = "";
 
       this.$store.dispatch('playbackModule/requestTrack', payload)
-          .then((response: AxiosResponse) => {
+          .then(() => {
             let alert: alertInfo = {
               type: "success",
               message: `${track.artists[0]} - ${track.title} toegevoegd aan de wachtrij.`
@@ -256,9 +255,9 @@ export default class SearchBox extends Vue {
       playlistResponse.data.items.forEach((playlist: any) => {
         this.playlists.push({id: playlist.id, name: playlist.name})
       })
-      this.loading = false;
-    }).catch((error: any) => {
-    });
+    }).catch().finally(() => {
+      this.isLoading = false;
+    })
   }
 }
 </script>
