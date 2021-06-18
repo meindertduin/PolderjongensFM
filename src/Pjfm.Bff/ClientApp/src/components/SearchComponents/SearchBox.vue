@@ -121,7 +121,7 @@ export default class SearchBox extends Vue {
   }
 
   @Watch("searchResultsLength")
-  onSearchResultsChange(newValue: any) {
+  onSearchResultsChange() {
     this.selectedSearchTrackItem = 0
   }
 

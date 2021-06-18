@@ -191,17 +191,15 @@ export default class AppSideBar extends Vue{
   }
 
   private signInOidcClient(){
-    const uri:string =  process.env.VUE_APP_API_BASE_URL + '/Account/Login';
-    window.location.href = uri;
+    window.location.href = '/login';
   }
 
   private register(){
-    const uri:string =  process.env.VUE_APP_API_BASE_URL + '/Account/Register';
-    window.location.href = uri;
+    window.location.href = '/register';
   }
   
   private signOutOidcClient(){
-    this.$router.replace('/logout');
+    window.location.href = '/logout';
   }
 
 }
