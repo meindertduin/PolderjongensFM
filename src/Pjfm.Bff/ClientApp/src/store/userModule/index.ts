@@ -30,16 +30,18 @@ const mutations: MutationTree<UserState> = {
 
 const actions: ActionTree<UserState, any> = {
     getUser(context: ActionContext<UserState, any>) {
-        return axios.get('/api/user/me').then(({data}) => {
-            const user = data as User;
-            let userAuthenticated = false;
-            if (user != null) {
-                userAuthenticated = true;
+        return axios.get('/api/user/me').then((response) => {
+            if (response.status === 200) {
+                const user = response.data as User;
+                console.log(user);
+                let userAuthenticated = false;
+                if (user != null) {
+                    userAuthenticated = true;
+                }
+                context.commit('SET_USER_AUTHENTICATED', userAuthenticated);
+                context.commit('SET_IS_MOD', user.roles.includes(UserRole.Mod));
+                context.commit('SET_USER', user);
             }
-            context.commit('')
-            context.commit('SET_USER_AUTHENTICATED', userAuthenticated);
-            context.commit('SET_IS_MOD', user.roles.includes(UserRole.Mod));
-            context.commit('SET_USER', user);
         });
     },
     tryCalculateRequestedAmount(context: ActionContext<UserState, any>) {

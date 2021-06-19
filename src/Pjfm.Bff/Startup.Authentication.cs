@@ -24,9 +24,11 @@ namespace Pjfm.Bff
                     // confidential client using code flow + PKCE + query response mode
                     options.ClientId = "pjfm_web_client";
                     options.ClientSecret = "test_secret";
-                    options.ResponseType = "code";
+                    options.ResponseType = "code id_token";
                     options.ResponseMode = "query";
-                    
+
+                    options.SignedOutRedirectUri = "https://localhost:5005/signout-callback-oidc";
+
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.UsePkce = true;
 

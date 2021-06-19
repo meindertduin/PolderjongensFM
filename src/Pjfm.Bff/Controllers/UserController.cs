@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Pjfm.Bff.Controllers
@@ -19,7 +20,7 @@ namespace Pjfm.Bff.Controllers
             return Redirect(loginUrl);
         }
         
-        [Route("login")]
+        [Route("register")]
         public IActionResult Register()
         {
             var loginUrl = $"{_configuration.GetValue<string>("BackendUrl")}/account/register";

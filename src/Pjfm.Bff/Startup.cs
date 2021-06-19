@@ -44,18 +44,7 @@ namespace Pjfm.Bff
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            app.Map("/api", config => RunApiProxy(config, Configuration.GetValue<string>("BackendUrl")));
-
-            app.Use(async (context, next) =>
-            {
-                if (!context.User.Identity.IsAuthenticated)
-                {
-                    await context.ChallengeAsync();
-                    return;
-                }
-
-                await next();
-            });
+            app.Map("/api", config => RunApiProxy(config, $"{Configuration.GetValue<string>("BackendUrl")}/api"));
 
             if (env.IsDevelopment())
             {
