@@ -127,7 +127,6 @@ export default class Playlist extends Vue {
         });
   }
 
-  // TODO: Cleanup
   private requestSelectedSongs() {
     this.selectedTracks.forEach((track) => {
       this.requestSong(track);

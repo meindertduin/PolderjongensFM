@@ -47,8 +47,7 @@ namespace Pjfm.Bff
 
             config.RunProxy(async context =>
             {
-                var forwardContext = context.ForwardTo(apiServiceUrl);
-                forwardContext.AddXForwardedHeaders();
+                var forwardContext = context.ForwardTo(apiServiceUrl).CopyXForwardedHeaders().AddXForwardedHeaders();
 
                 if (context.User?.Identity?.IsAuthenticated == true)
                 {

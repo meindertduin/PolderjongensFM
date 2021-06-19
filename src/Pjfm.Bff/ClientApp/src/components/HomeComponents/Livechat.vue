@@ -15,7 +15,7 @@
           </div>
           <div v-else class="chat-input-container">
             <v-row justify="center" align-content="center">
-              <v-btn @click="signInOidcClient" color="primary">Login om mee te chatten</v-btn>
+              <v-btn @click="signIn" color="primary">Login om mee te chatten</v-btn>
             </v-row>
           </div>
       </v-card>
@@ -98,9 +98,8 @@
             return this.socketConnection?.invoke("SendMessage", message);
         }
         
-        private signInOidcClient(){
-          // TODO: navigate to the real login route
-          this.$router.replace('/login')
+        private signIn(){
+          window.location.href = '/login'
         }
         
     }
