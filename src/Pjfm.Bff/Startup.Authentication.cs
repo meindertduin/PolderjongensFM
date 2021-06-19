@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Pjfm.Bff
@@ -19,7 +20,7 @@ namespace Pjfm.Bff
                     options.Cookie.SameSite = SameSiteMode.Strict;
                 }).AddOpenIdConnect("oidc", options =>
                 {
-                    options.Authority = "https://localhost:5001";
+                    options.Authority = Configuration.GetValue<string>("BackendUrl");
                     
                     // confidential client using code flow + PKCE + query response mode
                     options.ClientId = "pjfm_web_client";

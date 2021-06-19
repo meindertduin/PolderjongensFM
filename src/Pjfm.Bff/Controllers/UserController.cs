@@ -18,7 +18,7 @@ namespace Pjfm.Bff.Controllers
         {
             var props = new AuthenticationProperties()
             {
-                RedirectUri = "https://localhost:5005",
+                RedirectUri = _configuration.GetValue<string>("FrontendUrl"),
             };
             return Challenge(props, "cookies", "oidc");
         }
