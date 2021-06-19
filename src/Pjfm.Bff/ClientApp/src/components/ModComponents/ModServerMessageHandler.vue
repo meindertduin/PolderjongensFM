@@ -31,7 +31,7 @@ export default class ModServerMessageHandler extends Vue{
   
   connectToDjHub(){
     this.djHubSocketConnection = new HubConnectionBuilder()
-        .withUrl(`${process.env.VUE_APP_API_BASE_URL}/radio/dj`)
+        .withUrl(`${process.env.VUE_APP_API_BASE_URL}/api/radio/dj`)
         .build();
 
     this.djHubSocketConnection?.on("ServerMessage", (message: hubServerMessage) => {

@@ -13,7 +13,7 @@ using Pjfm.Infrastructure.Service;
 namespace pjfm.Controllers
 {
     [ApiController]
-    [Route("track")]
+    [Route("api/track")]
     public class SpotifyTrackController : ControllerBase
     {
         private readonly ISpotifyBrowserService _spotifyBrowserService;

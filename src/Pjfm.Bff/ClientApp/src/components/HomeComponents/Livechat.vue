@@ -10,12 +10,12 @@
           <div class="message-container" id="livechat-messagebox">
             <Message v-for="(messageModel, index) in messages" :key="index" :message-content="messageModel" />
           </div>
-          <div v-if="oidcAuthenticated" class="chat-input-container">
+          <div v-if="userAuthenticated" class="chat-input-container">
             <MessageInput />
           </div>
           <div v-else class="chat-input-container">
             <v-row justify="center" align-content="center">
-              <v-btn @click="signInOidcClient" color="primary">Login om mee te chatten</v-btn>
+              <v-btn @click="signIn" color="primary">Login om mee te chatten</v-btn>
             </v-row>
           </div>
       </v-card>
@@ -51,8 +51,8 @@
             }, 50);
         }
         
-        get oidcAuthenticated(){
-            return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+        get userAuthenticated(){
+            return this.$store.getters['userModule/userAuthenticated'];
         }
         
         created(){
@@ -94,12 +94,12 @@
         }
         
         sendMessage(message: string){
-            if (this.oidcAuthenticated === false) return;
+            if (this.userAuthenticated === false) return;
             return this.socketConnection?.invoke("SendMessage", message);
         }
         
-        private signInOidcClient(){
-            this.$store.dispatch('oidcStore/authenticateOidc');
+        private signIn(){
+          window.location.href = '/login'
         }
         
     }

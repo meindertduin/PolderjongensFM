@@ -24,7 +24,7 @@
           <v-list-item-title>Verzoekje doen</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item link @click="forceStopPlayback()" v-if="oidcAuthenticated">
+      <v-list-item link @click="forceStopPlayback()" v-if="userAuthenticated">
         <v-list-item-action>
           <v-icon>mdi-stop-circle</v-icon>
         </v-list-item-action>
@@ -35,7 +35,7 @@
       <v-divider></v-divider>
 
       <v-subheader>Account</v-subheader>
-      <div v-if="!oidcAuthenticated">
+      <div v-if="!userAuthenticated">
         <v-list-item link @click="signInOidcClient()">
           <v-list-item-action>
             <v-icon>mdi-account</v-icon>
@@ -82,7 +82,7 @@
           <!--  -->
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="emailConfirmed === false">
+      <v-list-item v-if="!emailConfirmed">
         <v-list-item-content>
           <v-list-item-action>
             <span class="orange--text subtitle-2">Uw email is nog niet geverifieerd<a class="blue--text" @click="verifyEmail"> klik hier</a> om hem te verifieren</span>
@@ -98,6 +98,8 @@ import Vue from 'vue';
 import Component from "vue-class-component";
 import {Watch} from "vue-property-decorator";
 import {modLocalSettings} from "@/common/types";
+import axios from "axios";
+import {RawLocation} from "vue-router";
 
 @Component({
   name: 'AppSideBar',
@@ -131,8 +133,8 @@ export default class AppSideBar extends Vue{
     }
   }
   
-  get oidcAuthenticated():any|null{
-    return this.$store.getters['oidcStore/oidcIsAuthenticated'];
+  get userAuthenticated():boolean {
+    return this.$store.getters['userModule/userAuthenticated'];
   }
   
   get playbackState():any|null{
@@ -152,15 +154,15 @@ export default class AppSideBar extends Vue{
   }
 
   get isMod(){
-    return this.$store.getters['profileModule/isMod'];
+    return this.$store.getters['userModule/userIsMod'];
   }
   
   get emailConfirmed():boolean{
-    return this.$store.getters['profileModule/emailConfirmed']
+    return this.$store.getters['userModule/userEmailConfirmed']
   }
   
   private verifyEmail(){
-    location.href = `${process.env.VUE_APP_API_BASE_URL}/account/setupEmailConfirm`
+    window.location.href = '/setupEmailConfirm';
   }
   
   private isPlaybackConnected() : boolean{
@@ -171,8 +173,7 @@ export default class AppSideBar extends Vue{
   }
   
   private forceStopPlayback(){
-    // @ts-ignore
-    this.$axios.put('api/playback/forcestop')
+    axios.put('api/playback/forcestop')
       .catch(() => {});
   }
 
@@ -181,7 +182,7 @@ export default class AppSideBar extends Vue{
   }
   
   private songRequestIsAvailable(): boolean {
-    if(!this.oidcAuthenticated) return false; // Login check
+    // if(!this.oidcAuthenticated) return false; // Login check
     if(this.playbackState == 0 && this.isMod == false) return false; // Request mode check
     
     // Add max song request check
@@ -190,16 +191,15 @@ export default class AppSideBar extends Vue{
   }
 
   private signInOidcClient(){
-    this.$store.dispatch('oidcStore/authenticateOidc');
+    window.location.href = '/login';
   }
 
   private register(){
-    const uri:string =  process.env.VUE_APP_API_BASE_URL + '/Account/Register';
-    window.location.href = uri;
+    window.location.href = '/register';
   }
   
   private signOutOidcClient(){
-    this.$store.dispatch('oidcStore/signOutOidc');
+    window.location.href = '/logout';
   }
 
 }

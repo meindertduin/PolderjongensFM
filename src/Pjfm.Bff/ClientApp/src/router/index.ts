@@ -28,22 +28,6 @@ const routes: Array<RouteConfig> = [
       requiresSpotAuth: true,
     }
   },
-  {
-    path: '/oidc-callback',
-    name: 'OidcCallback',
-    component: OidcCallback,
-    meta: {
-      isPublic: true,
-    }
-  },
-  {
-    path: '/signin-oidc-error',
-    name: 'oidcCallbackError',
-    component: OidcCallbackError,
-    meta: {
-      isPublic: true,
-    }
-  },
 ]
 
 const router = new VueRouter({
@@ -51,8 +35,5 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes: routes,
 })
-
-router.beforeEach(authMiddleware(store, "oidcStore"));
-
 
 export default router

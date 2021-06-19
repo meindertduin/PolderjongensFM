@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Application.Auth.Querys;
+using Pjfm.Application.Common.Classes;
 using Pjfm.Application.Identity;
 using Pjfm.Application.Services;
+using Pjfm.Domain.Common;
 using Pjfm.Domain.Interfaces;
 using Pjfm.WebClient.Services;
 using Serilog;
@@ -22,6 +24,7 @@ namespace pjfm.Controllers
         private readonly IPlaybackListenerManager _playbackListenerManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISpotifyPlayerService _spotifyPlayerService;
+        private readonly PjfmPrincipal _principal;
 
         public AuthController(IMediator mediator, IPlaybackListenerManager playbackListenerManager, 
             UserManager<ApplicationUser> userManager, ISpotifyPlayerService spotifyPlayerService)
@@ -30,40 +33,9 @@ namespace pjfm.Controllers
             _playbackListenerManager = playbackListenerManager;
             _userManager = userManager;
             _spotifyPlayerService = spotifyPlayerService;
+            // _principal = new PjfmPrincipal(HttpContext?.User);
         }
 
-        /// <summary>
-        /// returns a boolean value if the user has the mod claim or not
-        /// </summary>
-        [HttpGet("mod")]
-        public IActionResult GetModStatus()
-        {
-            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
-                ApplicationIdentityConstants.Roles.Mod);
-
-            return Ok(isMod);
-        }
-        
-        /// <summary>
-        /// query's and returns the user profile identity profile
-        /// </summary>
-        [HttpGet("profile")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task<IActionResult> GetUserProfile()
-        {
-            var response = await _mediator.Send(new IdentityProfileQuery()
-            {
-                UserClaimPrincipal = HttpContext.User,
-            });
-
-            if (response.Error)
-            {
-                return Forbid();
-            }
-
-            return Ok(response);
-        }
-        
         /// <summary>
         /// handles the oidc logout
         /// </summary>

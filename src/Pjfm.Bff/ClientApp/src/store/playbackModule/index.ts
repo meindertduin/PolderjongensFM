@@ -89,7 +89,7 @@ const getters = <GetterTree<State, any>>{
 
 const actions = <ActionTree<State, any>>{
     requestTrack(context, request: trackRequest): Promise<AxiosResponse> {
-        const isMod: boolean = context.rootGetters["profileModule/isMod"]
+        const isMod: boolean = context.rootGetters['userModule/userIsMod'];
         
         let route:string = ""
         

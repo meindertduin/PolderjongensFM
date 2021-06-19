@@ -22,7 +22,7 @@
     import Vue from 'vue';
     import Component from "vue-class-component";
     import {applicationUser} from "@/common/types";
-    import {AxiosResponse} from "axios";
+    import axios from "axios";
 
     @Component({
         name: "IncludedUsersDisplay",
@@ -34,7 +34,7 @@
 
         excludeUser(user: applicationUser){
             // @ts-ignore
-            this.$axios.post("api/playback/mod/exclude", user)
+            axios.post("api/playback/mod/exclude", user)
                 .then(() => {
                     this.$store.commit('modModule/REMOVE_INCLUDED_USER', user);
                 })

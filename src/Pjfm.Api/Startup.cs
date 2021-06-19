@@ -156,9 +156,9 @@ namespace Pjfm.Api
             
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<RadioHub>("/radio");
-                endpoints.MapHub<LiveChatHub>("/livechat");
-                endpoints.MapHub<DjHub>("/radio/dj");
+                endpoints.MapHub<RadioHub>("/api/radio");
+                endpoints.MapHub<LiveChatHub>("/api/livechat");
+                endpoints.MapHub<DjHub>("/api/radio/dj");
                 
                 endpoints.MapControllerRoute(
                     name: "default",
