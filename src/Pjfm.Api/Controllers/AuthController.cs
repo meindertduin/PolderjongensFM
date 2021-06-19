@@ -37,38 +37,6 @@ namespace pjfm.Controllers
         }
 
         /// <summary>
-        /// returns a boolean value if the user has the mod claim or not
-        /// </summary>
-        [HttpGet("mod")]
-        public IActionResult GetModStatus()
-        {
-            var isMod = HttpContext.User.HasClaim(ApplicationIdentityConstants.Claims.Role,
-                ApplicationIdentityConstants.Roles.Mod);
-
-            return Ok(isMod);
-        }
-        
-        /// <summary>
-        /// query's and returns the user profile identity profile
-        /// </summary>
-        [HttpGet("profile")]
-        [Authorize(Policy = ApplicationIdentityConstants.Policies.User)]
-        public async Task<IActionResult> GetUserProfile()
-        {
-            var response = await _mediator.Send(new IdentityProfileQuery()
-            {
-                UserClaimPrincipal = HttpContext.User,
-            });
-
-            if (response.Error)
-            {
-                return Forbid();
-            }
-
-            return Ok(response);
-        }
-        
-        /// <summary>
         /// handles the oidc logout
         /// </summary>
         /// <param name="logoutId">a logout id provided by the client</param>
