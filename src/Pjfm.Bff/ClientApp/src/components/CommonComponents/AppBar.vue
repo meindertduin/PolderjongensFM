@@ -7,9 +7,9 @@
     <v-toolbar-title>PJFM</v-toolbar-title>
     <v-spacer></v-spacer>
     {{ screenSize }}
-    <span class="align-bottom overline grey--text" v-if="user != null && this.$vuetify.breakpoint.width > 600">INGELOGD ALS <span
-        class="orange--text">{{ user.userName }}</span></span>
-    <span v-else-if="user != null" class="orange--text">{{ user.userName }}</span>
+    <span class="align-bottom overline grey--text" v-if="username != null && this.$vuetify.breakpoint.width > 600">INGELOGD ALS <span
+        class="orange--text">{{ username }}</span></span>
+    <span v-else-if="username != null" class="orange--text">{{ username }}}</span>
     <v-img
         v-if="this.$vuetify.breakpoint.width > 600"
         class="mx-2 float-right"
@@ -24,14 +24,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from "vue-class-component";
-import {User} from "@/store/userModule/user";
 
 @Component({
   name: 'AppBar',
 })
 export default class AppBar extends Vue {
-  get user(): User {
-    return this.$store.getters['userModule/user'];
+  get username(): string | undefined {
+    return this.$store.getters['userModule/username'];
   }
 
   get screenSize(): number {

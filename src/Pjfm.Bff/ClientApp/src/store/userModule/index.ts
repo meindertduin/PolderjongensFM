@@ -4,16 +4,16 @@ import axios from "axios";
 import {trackDto} from "@/common/types";
 
 class UserState {
-    user?: User;
+    user: User | null = null;
     userRequestedAmount: number = 0;
     userAuthenticated: boolean = false;
     userEmailConfirmed: boolean = false;
-    isMod: boolean = false;
 }
 
 const getters: GetterTree<UserState, any> = {
-    user: (state): User | undefined => state.user,
-    userIsMod: (state): boolean => state.isMod,
+    user: (state): User | null => state.user,
+    username: (state): string | null => state.user?.username ?? null,
+    userIsMod: (state): boolean => state.user?.roles.includes(UserRole.Mod) ?? false,
     userEmailConfirmed: (state): boolean => state.user?.emailConfirmed ?? false,
     userSpotifyAuthenticated: (state): boolean => state.user?.spotifyAuthenticated ?? false,
     userId: (state): string | undefined => state.user?.id,
@@ -25,7 +25,6 @@ const mutations: MutationTree<UserState> = {
     SET_USER: (state, user: User) => state.user = user,
     SET_USER_REQUESTED_AMOUNT: (state, amount: number) => state.userRequestedAmount = amount,
     SET_USER_AUTHENTICATED: (state, authenticated: boolean) => state.userAuthenticated = authenticated,
-    SET_IS_MOD: (state, isMod: boolean) => state.isMod = isMod,
 }
 
 const actions: ActionTree<UserState, any> = {
@@ -33,13 +32,11 @@ const actions: ActionTree<UserState, any> = {
         return axios.get('/api/user/me').then((response) => {
             if (response.status === 200) {
                 const user = response.data as User;
-                console.log(user);
                 let userAuthenticated = false;
                 if (user != null) {
                     userAuthenticated = true;
                 }
                 context.commit('SET_USER_AUTHENTICATED', userAuthenticated);
-                context.commit('SET_IS_MOD', user.roles.includes(UserRole.Mod));
                 context.commit('SET_USER', user);
             }
         });

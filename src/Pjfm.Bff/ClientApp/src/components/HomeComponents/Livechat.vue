@@ -10,7 +10,7 @@
           <div class="message-container" id="livechat-messagebox">
             <Message v-for="(messageModel, index) in messages" :key="index" :message-content="messageModel" />
           </div>
-          <div v-if="oidcAuthenticated" class="chat-input-container">
+          <div v-if="userAuthenticated" class="chat-input-container">
             <MessageInput />
           </div>
           <div v-else class="chat-input-container">
@@ -51,7 +51,7 @@
             }, 50);
         }
         
-        get oidcAuthenticated(){
+        get userAuthenticated(){
             return this.$store.getters['userModule/userAuthenticated'];
         }
         
@@ -94,7 +94,7 @@
         }
         
         sendMessage(message: string){
-            if (this.oidcAuthenticated === false) return;
+            if (this.userAuthenticated === false) return;
             return this.socketConnection?.invoke("SendMessage", message);
         }
         

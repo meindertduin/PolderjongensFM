@@ -2,7 +2,7 @@
 export interface User {
     id: string,
     roles: UserRole[],
-    userName: string,
+    username: string,
     emailConfirmed: boolean,
     spotifyAuthenticated: boolean,
 }

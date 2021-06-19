@@ -246,9 +246,9 @@ export default class SearchBox extends Vue {
 
   private fetchPlaylists(): Promise<void> {
     if (this.user != null) {
-      this.playlists.push({id: "1", name: `${this.user.userName}'s Top 50 (vier weken)`})
-      this.playlists.push({id: "2", name: `${this.user.userName}'s Top 50 (zes maanden)`})
-      this.playlists.push({id: "3", name: `${this.user.userName}'s Top 50 (all-time)`})
+      this.playlists.push({id: "1", name: `${this.user.username}'s Top 50 (vier weken)`})
+      this.playlists.push({id: "2", name: `${this.user.username}'s Top 50 (zes maanden)`})
+      this.playlists.push({id: "3", name: `${this.user.username}'s Top 50 (all-time)`})
     }
 
     return axios.get('/api/playlist').then((playlistResponse: AxiosResponse) => {
