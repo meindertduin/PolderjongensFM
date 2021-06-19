@@ -162,7 +162,7 @@ export default class AppSideBar extends Vue{
   }
   
   private verifyEmail(){
-    location.href = `${process.env.VUE_APP_API_BASE_URL}/account/setupEmailConfirm`
+    window.href = '/setupEmailConfirm';
   }
   
   private isPlaybackConnected() : boolean{

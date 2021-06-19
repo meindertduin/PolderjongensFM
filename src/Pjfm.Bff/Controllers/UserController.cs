@@ -35,5 +35,12 @@ namespace Pjfm.Bff.Controllers
         {
             return SignOut("cookies", "oidc");
         }
+
+        [Route("setupEmailConfirm")]
+        public IActionResult SetupEmailConfirm()
+        {
+            var url = $"{_configuration.GetValue<string>("BackendUrl")}/account/setupEmailConfirm";
+            return Redirect(url);
+        }
     }
 }
