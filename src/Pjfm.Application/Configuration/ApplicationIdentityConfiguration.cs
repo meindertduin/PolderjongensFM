@@ -40,7 +40,7 @@ namespace Pjfm.Application.Identity
                 {
                     ClientId = "pjfm_web_client",
                     ClientSecrets = new List<Secret>() { new Secret("test_secret")},
-                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    AllowedGrantTypes = GrantTypes.Code,
                     
                     RedirectUris = new[]
                     {

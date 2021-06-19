@@ -16,10 +16,13 @@ namespace Pjfm.Bff.Controllers
         [Route("login")]
         public IActionResult Login()
         {
-            var loginUrl = $"{_configuration.GetValue<string>("BackendUrl")}/account/login";
-            return Redirect(loginUrl);
+            var props = new AuthenticationProperties()
+            {
+                RedirectUri = "https://localhost:5005",
+            };
+            return Challenge(props, "cookies", "oidc");
         }
-        
+
         [Route("register")]
         public IActionResult Register()
         {
