@@ -21,3 +21,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: ${{ env.frontendLocation }}
+      - name: Build ClientApp
+        run: npm build
+        working-directory: ${{  env.frontendLocation }}
