@@ -7,10 +7,10 @@ on:
 
 env:
   frontendLocation: 'src/Pjfm.Bff/ClientApp'
+  bffLocation: 'src/Pjfm.Bff'
   
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,3 +25,16 @@ jobs:
       - name: Build ClientApp
         run: npm build
         working-directory: ${{  env.frontendLocation }}
+      - name: Use Dotnet SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore Bff
+        run: dotnet restore
+        working-directory: ${{ env.bffLocation }}
+      - name: Build Bff
+        run: dotnet build --configuration Release --no-restore
+        working-directory: ${{ env.bffLocation }}
+      - name: Publish Frontend
+        run: dotnet publish --no-build --configuration Release --output publish/out
+        
