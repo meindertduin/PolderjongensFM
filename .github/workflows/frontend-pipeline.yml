@@ -6,8 +6,9 @@ on:
     branches: [ test/main ]
 
 env:
-  frontendLocation: 'src/Pjfm.Bff/ClientApp'
-  bffLocation: 'src/Pjfm.Bff'
+  SPA_LOCATION: 'src/Pjfm.Bff/ClientApp'
+  BFF_LOCATION: 'src/Pjfm.Bff'
+  BUILD_CONFIGURATION: 'Release'
   
 jobs:
   build:
@@ -21,20 +22,21 @@ jobs:
           node-version: '14.x.x'
       - name: Install dependencies
         run: npm ci
-        working-directory: ${{ env.frontendLocation }}
+        working-directory: ${{ env.SPA_LOCATION }}
       - name: Build ClientApp
         run: npm build
-        working-directory: ${{  env.frontendLocation }}
+        working-directory: ${{ env.SPA_LOCATION }}
       - name: Use Dotnet SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.x
       - name: Restore Bff
         run: dotnet restore
-        working-directory: ${{ env.bffLocation }}
+        working-directory: ${{ env.BFF_LOCATION }}
       - name: Build Bff
-        run: dotnet build --configuration Release --no-restore
-        working-directory: ${{ env.bffLocation }}
+        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} e --no-restore
+        working-directory: ${{ env.BFF_LOCATION }}
       - name: Publish Frontend
-        run: dotnet publish --no-build --configuration Release --output publish/out
+        run: dotnet publish --no-build --configuration ${{ env.BUILD_CONFIGURATION }} --output publish/out
+        working-directory: ${{ env.BFF_LOCATION }}
         
