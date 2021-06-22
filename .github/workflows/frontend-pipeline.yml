@@ -34,7 +34,7 @@ jobs:
         run: dotnet restore
         working-directory: ${{ env.BFF_LOCATION }}
       - name: Build Bff
-        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} e --no-restore
+        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
         working-directory: ${{ env.BFF_LOCATION }}
       - name: Publish Frontend
         run: dotnet publish --no-build --configuration ${{ env.BUILD_CONFIGURATION }} --output publish/out
