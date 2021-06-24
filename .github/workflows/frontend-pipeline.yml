@@ -37,6 +37,7 @@ jobs:
         run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
         working-directory: ${{ env.BFF_LOCATION }}
       - name: Publish Frontend
+        if: ${{ github.event == 'pull-request' && github.event.action == 'closed' }}
         run: dotnet publish --no-build --configuration ${{ env.BUILD_CONFIGURATION }} --output publish/out
         working-directory: ${{ env.BFF_LOCATION }}
       
@@ -46,6 +47,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           
       - name: Build and push image
+        if: ${{ github.event == 'pull-request' && github.event.action == 'closed' }}
         uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
@@ -56,6 +58,7 @@ jobs:
          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/polderjongensfm:${{ github.sha }}
          
       - name: Deploy to Azure Container Instances
+        if: ${{ github.event == 'pull-request' && github.event.action == 'closed' }}
         uses: azure/aci-deploy@v1
         with:
           resource-group: ${{ secrets.RESOURCE_GROUP }}
