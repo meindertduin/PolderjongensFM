@@ -40,6 +40,7 @@ export default class App extends Vue {
   created() {
     this.setUserPreferences();
     this.setRadioConnection();
+    this.$store.dispatch('userModule/getUser');
   }
 
   get isMod(): boolean {
