@@ -1,4 +1,4 @@
-﻿import {ActionTree, GetterTree, MutationTree} from "vuex"
+﻿import {ActionTree, GetterTree, Module, MutationTree} from "vuex"
 import {
     applicationUser, browserQueueSettings,
     djPlaybackInfo,
@@ -8,7 +8,7 @@ import {
 } from "@/common/types";
 import axios from "axios";
 
-class State {
+class ModState {
     public playbackInfo: djPlaybackInfo | null = null;
     public includedUsers: Array<applicationUser> = [];
     public loadedUsers: Array<applicationUser> = [];
@@ -28,7 +28,7 @@ class State {
     public isConnected: boolean = false;
 }
 
-const mutations = <MutationTree<State>>{
+const mutations = <MutationTree<ModState>>{
     SET_INCLUDED_USERS: (state, users: Array<applicationUser>) => state.includedUsers = users,
     ADD_INCLUDED_USER: (state, user: applicationUser) => state.includedUsers.push(user),
     REMOVE_INCLUDED_USER: (state, user: applicationUser) => state.includedUsers = state.includedUsers.filter(x => x.id !== user.id),
@@ -52,7 +52,7 @@ const mutations = <MutationTree<State>>{
     },
 }
 
-const getters = <GetterTree<State, any>>{
+const getters = <GetterTree<ModState, any>>{
     getIncludedUsers: state => state.includedUsers,
     getLoadedUsers: state => state.loadedUsers,
     getPlaybackState: state => state.playbackState,
@@ -63,7 +63,7 @@ const getters = <GetterTree<State, any>>{
     listenersCount: state => state.listenersCount,
 }
 
-const actions = <ActionTree<State, any>>{
+const actions = <ActionTree<ModState, any>>{
     loadIncludedUsers(context) {
         return axios.get('api/playback/mod/include')
             .then((response) => {
@@ -80,9 +80,9 @@ const actions = <ActionTree<State, any>>{
     },
 }
 
-const ModModule = {
+const ModModule: Module<ModState, any> = {
     namespaced: true,
-    state: new State(),
+    state: new ModState(),
     mutations: mutations,
     getters: getters,
     actions: actions
