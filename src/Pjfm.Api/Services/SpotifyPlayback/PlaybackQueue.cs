@@ -31,8 +31,8 @@ namespace Pjfm.WebClient.Services
             _serviceProvider = serviceProvider;
             _mediator = mediator;
             using var scope = _serviceProvider.CreateScope();
-            var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
-            _fillerQueueState = new GenreBrowsingState(this, browserService);
+            // var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
+            _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
         }
 
         public void Reset()

@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using Dapper;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR;
 using Pjfm.Application.MediatR.Wrappers;
@@ -27,29 +22,38 @@ namespace Pjfm.Application.Spotify.Queries
 
     public class GetRandomTopTrackQueryHandler : IHandlerWrapper<GetRandomTopTrackQuery, List<TrackDto>>
     {
-        private readonly IConfiguration _configuration;
         private readonly IAppDbContext _appDbContext;
-        private readonly IMapper _mapper;
 
-        public GetRandomTopTrackQueryHandler(IConfiguration configuration, IAppDbContext appDbContext, IMapper mapper)
+        public GetRandomTopTrackQueryHandler(IAppDbContext appDbContext)
         {
-            _configuration = configuration;
             _appDbContext = appDbContext;
-            _mapper = mapper;
         }
 
-        public async Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request,
+        public Task<Response<List<TrackDto>>> Handle(GetRandomTopTrackQuery request,
             CancellationToken cancellationToken)
         {
-            var tracksResult = _appDbContext.TopTracks
+            var tracks = _appDbContext.TopTracks
                 .OrderBy(_ => Guid.NewGuid())
                 .Take(request.RequestedAmount)
+                .Select(track => new TrackDto()
+                {
+                    Id = track.SpotifyTrackId,
+                    Artists = track.Artists,
+                    Term = track.Term,
+                    Title = track.Title,
+                    SongDurationMs = track.SongDurationMs,
+                    User = new ApplicationUserDto()
+                    {
+                        DisplayName = track.ApplicationUser.DisplayName,
+                        Id = track.ApplicationUser.Id,
+                        Member = track.ApplicationUser.Member,
+                        SpotifyAuthenticated = track.ApplicationUser.SpotifyAuthenticated,
+                    }
+                })
                 .AsNoTracking()
                 .ToList();
 
-            var tracks = _mapper.Map<List<TrackDto>>(tracksResult);
-            
-            return Response.Ok("queried tracks successfully", tracks);
+            return Task.FromResult(Response.Ok("queried tracks successfully", tracks));
         }
     }
 }
