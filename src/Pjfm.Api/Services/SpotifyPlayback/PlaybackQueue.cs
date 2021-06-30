@@ -27,13 +27,12 @@ namespace Pjfm.WebClient.Services
         private IFillerQueueState _fillerQueueState;
         private PlaybackQueueSettings _playbackQueueSettings = new PlaybackQueueSettings();
 
-        public PlaybackQueue(IServiceProvider serviceProvider, IAppDbContext appDbContext, IServiceCollection serviceCollection)
+        public PlaybackQueue(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _appDbContext = appDbContext;
             using var scope = _serviceProvider.CreateScope();
-            // var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
-            _fillerQueueState = new UsersTopTracksFillerQueueState(this, _appDbContext);
+            var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+            _fillerQueueState = new UsersTopTracksFillerQueueState(this, appDbContext);
         }
 
         public void Reset()
@@ -52,8 +51,12 @@ namespace Pjfm.WebClient.Services
             switch (fillerQueueType)
             {
                 case FillerQueueType.UserTopTracks:
-                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _appDbContext);
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, appDbContext);
                     break;
+                }
                 case FillerQueueType.GenreBrowsing:
                 {
                     using var scope = _serviceProvider.CreateScope();
@@ -61,9 +64,6 @@ namespace Pjfm.WebClient.Services
                     _fillerQueueState = new GenreBrowsingState(this, browserService);
                     break;
                 }
-                default:
-                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _appDbContext);
-                    break;
             }
 
             ;
