@@ -27,7 +27,7 @@ namespace Pjfm.Infrastructure
             services.AddTransient<ISpotifyPlayerService, SpotifyPlayerService>();
             services.AddTransient<ISpotifyBrowserService, SpotifyBrowserService>();
 
-            services.AddTransient<IAppDbContext>(provider => provider.GetService<AppDbContext>());
+            services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
             services.AddTransient<IAppDbContextFactory, DatabaseFactory>();
 
             var connectionString = configuration["ConnectionStrings:ApplicationDb"];

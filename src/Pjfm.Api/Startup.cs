@@ -58,7 +58,7 @@ namespace Pjfm.Api
             services.AddTransient<IPlaybackController, PlaybackController>();
             services.AddTransient<IDjHubMessageService, DjHubMessageService>();
 
-            services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
+            // services.AddMediatR(typeof(SpotifyPlaybackManager).Assembly);
             
             services.AddAutoMapper(typeof(MappingProfile), typeof(ViewModelMappingProfile));
 
