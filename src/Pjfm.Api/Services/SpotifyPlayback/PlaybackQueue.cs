@@ -31,8 +31,8 @@ namespace Pjfm.WebClient.Services
         {
             _serviceProvider = serviceProvider;
             var scope = _serviceProvider.CreateScope();
-            var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
-            _fillerQueueState = new UsersTopTracksFillerQueueState(this, appDbContext);
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
         }
 
         public void Reset()
@@ -53,8 +53,8 @@ namespace Pjfm.WebClient.Services
                 case FillerQueueType.UserTopTracks:
                 {
                     var scope = _serviceProvider.CreateScope();
-                    var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
-                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, appDbContext);
+                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
                     break;
                 }
                 case FillerQueueType.GenreBrowsing:
@@ -273,10 +273,13 @@ namespace Pjfm.WebClient.Services
 
         public async Task AddToFillerQueue(int amount)
         {
-            var tracks = await _fillerQueueState.RetrieveFillerTracks(amount);
-            foreach (var fillerTrack in tracks)
+            var tracksResult = await _fillerQueueState.RetrieveFillerTracks(amount);
+            if (tracksResult.Error == false)
             {
-                _fillerQueue.Enqueue(fillerTrack);
+                foreach (var fillerTrack in tracksResult.Data)
+                {
+                    _fillerQueue.Enqueue(fillerTrack);
+                }
             }
         }
     }

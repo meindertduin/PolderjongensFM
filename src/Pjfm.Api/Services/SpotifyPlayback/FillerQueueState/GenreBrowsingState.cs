@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Pjfm.Application.AppContexts.Spotify;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.Mappings;
+using Pjfm.Application.MediatR;
 using Pjfm.Application.Services;
 using Pjfm.Domain.Common;
 using Pjfm.WebClient.Services;
@@ -24,7 +25,7 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
             _playbackQueue = playbackQueue;
             _spotifyBrowserService = spotifyBrowserService;
         }
-        public async Task<List<TrackDto>> RetrieveFillerTracks(int amount)
+        public async Task<Response<List<TrackDto>>> RetrieveFillerTracks(int amount)
         {
             var recommendedSettings = GetRecommendationsSettings(amount);
             var response = await _spotifyBrowserService.GetRecommendations(recommendedSettings);
@@ -40,10 +41,10 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
                 var mapper = new TrackDtoMapper();
                 var tracks = mapper.MapObjects(objectResult);
 
-                return tracks;
+                return Response.Ok("Tracks retrieved successfully.", tracks);
             }
 
-            return new List<TrackDto>();
+            return Response.Fail<List<TrackDto>>(response.ReasonPhrase);
         }
 
         private RecommendationsSettings GetRecommendationsSettings(int amount)
