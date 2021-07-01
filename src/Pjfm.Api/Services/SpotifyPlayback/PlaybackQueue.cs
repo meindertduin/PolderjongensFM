@@ -30,7 +30,7 @@ namespace Pjfm.WebClient.Services
         public PlaybackQueue(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            using var scope = _serviceProvider.CreateScope();
+            var scope = _serviceProvider.CreateScope();
             var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
             _fillerQueueState = new UsersTopTracksFillerQueueState(this, appDbContext);
         }
@@ -52,14 +52,14 @@ namespace Pjfm.WebClient.Services
             {
                 case FillerQueueType.UserTopTracks:
                 {
-                    using var scope = _serviceProvider.CreateScope();
+                    var scope = _serviceProvider.CreateScope();
                     var appDbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
                     _fillerQueueState = new UsersTopTracksFillerQueueState(this, appDbContext);
                     break;
                 }
                 case FillerQueueType.GenreBrowsing:
                 {
-                    using var scope = _serviceProvider.CreateScope();
+                    var scope = _serviceProvider.CreateScope();
                     var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
                     _fillerQueueState = new GenreBrowsingState(this, browserService);
                     break;
@@ -81,7 +81,7 @@ namespace Pjfm.WebClient.Services
 
         public async Task SetUsers()
         {
-            using var scope = _serviceProvider.CreateScope();
+            var scope = _serviceProvider.CreateScope();
 
             // sets all users that are member to be included
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
