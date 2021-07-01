@@ -34,6 +34,9 @@ namespace Pjfm.Application.Spotify.Queries
         {
             var tracks = _appDbContext.TopTracks
                 .OrderBy(_ => Guid.NewGuid())
+                .Where(x => request.NotIncludeTracks.Select(r => r.Id).Contains(x.SpotifyTrackId) == false)
+                .Where(x => request.TopTrackTermFilter.Contains(x.Term))
+                .Where(x => request.IncludedUsersId.Length <= 0 || request.IncludedUsersId.Contains(x.ApplicationUserId))
                 .Take(request.RequestedAmount)
                 .Select(track => new TrackDto()
                 {
