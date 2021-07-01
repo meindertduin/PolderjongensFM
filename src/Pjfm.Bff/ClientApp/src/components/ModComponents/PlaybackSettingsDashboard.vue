@@ -190,11 +190,11 @@ export default class PlaybackSettingsDashboard extends Vue {
   }
 
   @Watch("activeFillerQueueState")
-  onActiveFillerQueueChange(newValue: any, oldValue: any) {
+  onActiveFillerQueueChange(newValue: fillerQueueType | null, oldValue: fillerQueueType | null) {
     if (oldValue === null) return;
     if (oldValue === newValue) return;
 
-    // Todo: send request to change fillerQueueState
+    axios.put(`/api/mod/fillerQueueState?fillerQueueType=${newValue}`);
   }
 
   private maxRequestAmount: number | null = null;

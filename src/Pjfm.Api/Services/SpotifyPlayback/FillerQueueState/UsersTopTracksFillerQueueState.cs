@@ -24,14 +24,15 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
         public Task<Response<List<TrackDto>>> RetrieveFillerTracks(int amount)
         {
             var settings = _playbackQueue.PlaybackQueueSettings;
-            return _mediator.Send(new GetRandomTopTrackQuery()
-                {
-                    NotIncludeTracks = RecentlyPlayed,
-                    RequestedAmount = amount,
-                    TopTrackTermFilter = settings.TopTrackTermFilter.ConvertToTopTrackTerms(),
-                    IncludedUsersId = settings.IncludedUsers.Select(user => user.Id).ToArray(),
-                });
-        }
+            var result = _mediator.Send(new GetRandomTopTrackQuery()
+            {
+                NotIncludeTracks = RecentlyPlayed,
+                RequestedAmount = amount,
+                TopTrackTermFilter = settings.TopTrackTermFilter.ConvertToTopTrackTerms(),
+                IncludedUsersId = settings.IncludedUsers.Select(user => user.Id).ToArray(),
+            });
 
+            return result;
+        }
     }
 }

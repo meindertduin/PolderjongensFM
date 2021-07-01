@@ -8,6 +8,7 @@ using Pjfm.Api.Services.SpotifyPlayback.FillerQueueState;
 using Pjfm.Application.Common.Dto;
 using Pjfm.Application.MediatR.Users.Queries;
 using Pjfm.Application.Services;
+using Pjfm.Domain.Interfaces;
 using pjfm.Models;
 using Pjfm.WebClient.Services.FillerQueueState;
 
@@ -16,23 +17,22 @@ namespace Pjfm.WebClient.Services
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IMediator _mediator;
+        private readonly IAppDbContext _appDbContext;
 
         private Queue<TrackDto> _fillerQueue = new Queue<TrackDto>();
         private Queue<TrackDto> _priorityQueue = new Queue<TrackDto>();
-        private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>(); 
-        
+        private Queue<TrackRequestDto> _secondaryQueue = new Queue<TrackRequestDto>();
+
 
         private IFillerQueueState _fillerQueueState;
         private PlaybackQueueSettings _playbackQueueSettings = new PlaybackQueueSettings();
 
-        public PlaybackQueue(IServiceProvider serviceProvider, IMediator mediator)
+        public PlaybackQueue(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _mediator = mediator;
-            using var scope = _serviceProvider.CreateScope();
-            var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
-            _fillerQueueState = new GenreBrowsingState(this, browserService);
+            var scope = _serviceProvider.CreateScope();
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
         }
 
         public void Reset()
@@ -50,20 +50,23 @@ namespace Pjfm.WebClient.Services
         {
             switch (fillerQueueType)
             {
-                case FillerQueueType.UserTopTracks: 
-                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
+                case FillerQueueType.UserTopTracks:
+                {
+                    var scope = _serviceProvider.CreateScope();
+                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, mediator);
                     break;
+                }
                 case FillerQueueType.GenreBrowsing:
                 {
-                    using var scope = _serviceProvider.CreateScope();
+                    var scope = _serviceProvider.CreateScope();
                     var browserService = scope.ServiceProvider.GetRequiredService<ISpotifyBrowserService>();
                     _fillerQueueState = new GenreBrowsingState(this, browserService);
                     break;
                 }
-                default:
-                    _fillerQueueState = new UsersTopTracksFillerQueueState(this, _mediator);
-                    break;
-            };
+            }
+
+            ;
         }
 
         public FillerQueueType GetFillerQueueState()
@@ -78,8 +81,8 @@ namespace Pjfm.WebClient.Services
 
         public async Task SetUsers()
         {
-            using var scope = _serviceProvider.CreateScope();
-            
+            var scope = _serviceProvider.CreateScope();
+
             // sets all users that are member to be included
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var membersResult = await mediator.Send(new GetAllPjMembersQuery());
@@ -108,7 +111,7 @@ namespace Pjfm.WebClient.Services
         {
             return _playbackQueueSettings.TryRemoveIncludedUser(user);
         }
-        
+
         public int RecentlyPlayedCount()
         {
             return _fillerQueueState.GetRecentlyPlayedAmount();
@@ -125,7 +128,7 @@ namespace Pjfm.WebClient.Services
         {
             TrackDto[] tracks = { };
             Action<TrackDto> addTrackAction = null;
-            
+
             // based in what queue the track is in, clear queue and move out tracks
             if (_priorityQueue.Any(x => x.Id == trackId))
             {
@@ -133,7 +136,7 @@ namespace Pjfm.WebClient.Services
                 _priorityQueue.Clear();
                 addTrackAction = (track) => _priorityQueue.Enqueue(track);
             }
-            else if(_fillerQueue.Any(x => x.Id == trackId))
+            else if (_fillerQueue.Any(x => x.Id == trackId))
             {
                 tracks = _fillerQueue.ToArray();
                 _fillerQueue.Clear();
@@ -176,6 +179,7 @@ namespace Pjfm.WebClient.Services
                 }
             }
         }
+
         public void AddPriorityTrack(TrackDto track)
         {
             _priorityQueue.Enqueue(track);
@@ -209,10 +213,10 @@ namespace Pjfm.WebClient.Services
             {
                 result.Add(request);
             }
-            
+
             return result;
         }
-        
+
         private List<TrackDto> GetTracksOfQueue(Queue<TrackDto> queue)
         {
             var result = new List<TrackDto>();
@@ -221,14 +225,14 @@ namespace Pjfm.WebClient.Services
             {
                 result.Add(track);
             }
-            
+
             return result;
         }
-        
+
         private List<TrackDto> GetTracksOfQueue(Queue<TrackRequestDto> queue)
         {
             var result = new List<TrackDto>();
-            
+
             // maps the trackRequestDto in queue to TrackDto
             foreach (var request in queue)
             {
@@ -239,15 +243,15 @@ namespace Pjfm.WebClient.Services
 
                 result.Add(trackDto);
             }
-            
+
             return result;
         }
-        
+
         public async Task<TrackDto> GetNextQueuedTrack()
         {
             // gets the next queuedTrack based on the hierarchy of queues to pick out off
             TrackDto nextTrack;
-            
+
             if (_priorityQueue.Count > 0)
             {
                 nextTrack = _priorityQueue.Dequeue();
@@ -261,23 +265,22 @@ namespace Pjfm.WebClient.Services
                 await AddToFillerQueue(1);
                 nextTrack = _fillerQueue.Dequeue();
             }
-            
+
             _fillerQueueState.AddRecentlyPlayed(nextTrack);
-            
+
             return nextTrack;
         }
+
         public async Task AddToFillerQueue(int amount)
         {
-            var result = await _fillerQueueState.RetrieveFillerTracks(amount);
-            if (result.Error == false)
+            var tracksResult = await _fillerQueueState.RetrieveFillerTracks(amount);
+            if (tracksResult.Error == false)
             {
-                // adds queried tracks to the fillerQueue
-                foreach (var fillerTrack in result.Data)
+                foreach (var fillerTrack in tracksResult.Data)
                 {
                     _fillerQueue.Enqueue(fillerTrack);
                 }
             }
         }
-        
     }
 }

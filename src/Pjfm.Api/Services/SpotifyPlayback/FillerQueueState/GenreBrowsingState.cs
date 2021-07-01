@@ -41,10 +41,10 @@ namespace Pjfm.Api.Services.SpotifyPlayback.FillerQueueState
                 var mapper = new TrackDtoMapper();
                 var tracks = mapper.MapObjects(objectResult);
 
-                return Response.Ok("retrieving tracks was succesfull", tracks);
+                return Response.Ok("Tracks retrieved successfully.", tracks);
             }
 
-            return Response.Fail<List<TrackDto>>("failed to retrieve tracks");
+            return Response.Fail<List<TrackDto>>(response.ReasonPhrase);
         }
 
         private RecommendationsSettings GetRecommendationsSettings(int amount)
